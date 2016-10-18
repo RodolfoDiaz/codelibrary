@@ -1,0 +1,22 @@
+header {
+    font-family: Arial;
+    background-color: lightblue;
+    padding: 10px;
+}
+
+h1 {
+    padding: 10px;
+    border: 5px solid rgb(40, 100, 100);
+}
+
+.bungee {
+    font-family: 'Bungee Outline', Arial;
+}
+
+.dancingScript {
+    font-family: 'Dancing Script', Georgia;
+}
+
+.poiret {
+    font-family: 'Poiret One', Verdana, sans-serif;
+}
