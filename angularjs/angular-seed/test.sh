@@ -2,9 +2,9 @@
 cd angular-seed
 cp karma.conf.js karma.conf.js.bak
 # Inside '/angular-seed/karma.conf.js' file:
-# 1- inside browsers section, change: ['Chrome'] to be: ['PhantomJS']
+# -inside browsers section, change: ['Chrome'] to be: ['PhantomJS']
 sed -i -e 's/Chrome/PhantomJS/g' karma.conf.js
-# 2- inside plugins section, change: 'karma-chrome-launcher' to be 'karma-phantomjs-launcher',
+# -inside plugins section, change: 'karma-chrome-launcher' to be 'karma-phantomjs-launcher'
 sed -i -e 's/karma-chrome-launcher/karma-phantomjs-launcher/g' karma.conf.js
 npm install phantomjs-prebuilt --save-dev
 npm install karma-phantomjs-launcher --save-dev
