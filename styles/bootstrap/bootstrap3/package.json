@@ -1,0 +1,24 @@
+{
+  "name": "bootstrap3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -a $IP -p $PORT -c-1 ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RodolfoDiaz/codelibrary.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RodolfoDiaz/codelibrary/issues"
+  },
+  "homepage": "https://github.com/RodolfoDiaz/codelibrary#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "http-server": "^0.9.0"
+  }
+}
