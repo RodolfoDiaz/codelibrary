@@ -4,7 +4,7 @@ app/bower_components
 .tmp/
 dist/
 **/*.tmp
-**/*.js
-**/*.js.map
 typings/
 *.log
+app/*.js
+app/*.js.map
