@@ -1,4 +1,5 @@
-rm -rf ./angular-seed
+rm -rf ~/workspace/angularjs/angular-seed/angular-seed
+cd ~/workspace/angularjs/angular-seed
 # Clone angular-seed repo and install the necessary packages
 git clone https://github.com/angular/angular-seed.git angular-seed
 cd angular-seed

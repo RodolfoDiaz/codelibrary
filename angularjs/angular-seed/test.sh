@@ -1,5 +1,5 @@
 # Configure Karma conf with PhantomJS to run in Cloud9
-cd angular-seed
+cd ~/workspace/angularjs/angular-seed/angular-seed
 cp karma.conf.js karma.conf.js.bak
 # Inside '/angular-seed/karma.conf.js' file:
 # -inside browsers section, change: ['Chrome'] to be: ['PhantomJS']
