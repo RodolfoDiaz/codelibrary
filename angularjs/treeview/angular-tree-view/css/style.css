@@ -35,6 +35,7 @@
 .tree .tree-item:hover,
 .tree .tree-item:focus {
 	background-color: #F0F7FC;
+	/*tree view hover color*/
 	outline: none;
 }
 
@@ -53,7 +54,9 @@
 	z-index: 2;
 	/* top: -1px; */
 	color: #80a6cd;
-	font-size: 20px;  /* icon size */
+	/* icon color */
+	font-size: 20px;
+	/* icon size */
 	/* tree view icon size*/
 }
 
@@ -86,6 +89,7 @@
 	bottom: 16px;
 	left: -14px;
 	border: 1px dotted #67b2dd;
+	/*vertical dotted line*/
 	border-width: 0 0 0 1px;
 }
 
@@ -123,6 +127,7 @@
 	width: 18px;
 	height: 0;
 	border-top: 1px dotted #67b2dd;
+	/* horizontal dotted line */
 	z-index: 1;
 }
 
@@ -139,17 +144,29 @@
 .tree .tree-folder .tree-folder-header {
 	margin: 0;
 	padding: 5px 3px;
+	/* node item padding - icon */
 	color: #4D6878;
+	/* text color */
 	border: 1px solid #FFF;
 	display: block;
 	text-decoration: none;
-	font-size:14px; /* folder/file Font size */
+	font-size: 14px;
+	/* folder/file Font size */
 }
 
 .tree .tree-item.selected,
 .tree .tree-folder .tree-folder-header.selected {
 	border-color: #62a8d1;
 	background-color: #F0F7FC;
+	/* selected item bar */
+	color: #00BFFF;
+	/* selected item text color*/
+}
+
+.tree .tree-item.selected,
+.tree .tree-folder .tree-folder-header.selected>[class*="fa fa-"]:first-child {
+	color: #00BFFF;
+	/* selected item - icon color*/
 }
 
 .tree .tree-item:hover,
@@ -245,10 +262,12 @@
 
 .tree {
 	padding-left: 22px;
+	/* tree view dotted line for root node*/
 }
 
 .tree:before {
 	margin-left: 9px;
+	/* tree view dotted line for root node*/
 }
 
 .tree .tree-item {
