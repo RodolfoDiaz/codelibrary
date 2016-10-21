@@ -1,0 +1,25 @@
+{
+  "name": "angular-tree-view",
+  "version": "1.0.0",
+  "description": "Code example taken from https://github.com/axel-zarate/angular-tree-view",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -a $IP -p $PORT -c-1 ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RodolfoDiaz/codelibrary.git"
+  },
+  "author": "https://github.com/axel-zarate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RodolfoDiaz/codelibrary/issues"
+  },
+  "dependencies": {
+    "angular": "^1.5.8",
+    "bootstrap": "^3.3.7",
+    "font-awesome": "^4.6.3",
+    "http-server": "^0.9.0",
+    "jquery": "^3.1.1"
+  }
+}
