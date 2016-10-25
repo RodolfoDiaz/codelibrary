@@ -1,1 +1,0 @@
-nvm install 6 && nvm alias default 6
