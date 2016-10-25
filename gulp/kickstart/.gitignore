@@ -1,0 +1,12 @@
+node_modules/
+bower_components/
+app/bower_components
+.tmp/
+dist/
+**/*.tmp
+.sass-cache/
+*.log
+.idea
+.DS_Store
+coverage
+typings/
