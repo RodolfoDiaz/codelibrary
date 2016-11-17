@@ -1,17 +1,39 @@
 $ mongo  --> to start the MongoDB shell
-> db  --> to show current database
-> show collections  --> to show collections (tables) inside current database
-> db.myTestCollection.save({_id:1, x:10})  --> saves a document (record) in 'myTestCollection' into current database
-> db.system.indexes.find()  --> Check the indexes
-> ObjectId()  --> get object ID value
-> ObjectId().getTimestamp()  --> get Timestamp (used for document creation date/time)
-> db.users.save({name: 'Rodolfo'})  --> saves a document in 'users' collection into current database
-> db.users.find()  --> returns the documents inside 'users' collection
-> db.color.insert({_id: 'R', name: 'Rojo'})  --> inserts a document into 'color' collection
-> db.color.insert({_id: 'R', name: 'Rosa'})  --> you cannot insert another document with the same _id
-> db.color.save({_id: 'R', name: 'Rosa'})  --> save command allows you to either insert or update an existing document
-> db.color.find()  --> you can check the change
-> db.color.insert({_id: 'A', name: 'Azul'})
-> db.color.insert({_id: 'V', name: 'Verde'})
-> db.color.find() --> find command returns multiple documents
-> db.color.findOne({_id: 'A'})  --> findOne returns one document (or null) based on the search criteria
+# https://docs.mongodb.com/manual/mongo/
+    > db  --> to show current database
+    > use databaseName --> switch to database. If a database does not exist, MongoDB creates the database when you first store data for that database.
+    > show dbs  --> show existing databases
+    > show collections  --> to show collections (tables) inside current database
+    > db.myTestCollection.save({_id:1, x:10})  --> saves a document (record) in 'myTestCollection'. If a collection does not exist, MongoDB creates the collection when you first store data for that collection. 
+    > ObjectId()  --> get object ID value
+    > ObjectId().getTimestamp()  --> get Timestamp (used for document creation date/time)
+# https://docs.mongodb.com/manual/crud/
+    > db.users.save({name: 'Rodolfo'})  --> saves a document in 'users' collection into current database
+    > db.users.find()  --> returns the documents inside 'users' collection
+    > db.color.insert({_id: 'R', name: 'Rojo'})  --> inserts a document into 'color' collection
+    > db.color.insert({_id: 'R', name: 'Rosa'})  --> you cannot insert another document with the same _id
+    > db.color.save({_id: 'R', name: 'Rosa'})  --> save command allows you to either insert or update an existing document
+    > db.color.find()  --> you can check the change
+    > db.color.insert({_id: 'A', name: 'Azul'})
+    > db.color.insert({_id: 'V', name: 'Verde'})
+    > db.color.find() --> find command returns multiple documents
+    > db.color.findOne({_id: 'A'})  --> findOne returns one document (or null) based on the search criteria
+    > db.color.find({_id: 'A'}) --> find a document whose _id is 'A' in the collection color
+    > db.color.find({_id: 'A'}, {_id:1}) --> find a document whose _id is 'A' in the collection color.  Using a projection to retrieve only a desired field
+    > db.users.count()  --> return the number of documents in this collection
+    > db.users.find({}, {name:1})       --> Return all documents with no search criteria, only the name field
+    > var c = db.users.find({}, {name:1})   --> capture the cursor in a variable
+    > c.size()      --> get the number of documents retrieved
+    > c.hasNext()   --> query the cursor to know if it has more items
+    > c.forEach(function(d){print(d.name)})     --> for each element in the cursor, apply a function to the values returned
+    > db.users.find({}, {name:1}).sort({name:1})  --> sorting the documents retrieved by name ascending
+    > db.users.find({}, {name:1}).sort({name:-1})  --> sorting the documents retrieved by name descending
+    > db.users.find({}, {name:1}).sort({name:1}).limit(3)  --> limit the number of documents retrieved
+# https://docs.mongodb.com/manual/text-search/
+    > db.users.find({}, {name:1}).explain()  --> explain function is used to know how MongoDB will return the documents
+    > db.users.ensureIndex({name:1})    --> create index on name (ascending)
+    > db.users.find({name: 'sue'}).explain()  --> use explain to check the way MongoDB will retrieve the document(s). Check: winningPlan > indexName
+    > db.users.getIndexes()     --> get a list of all indexes in 'users' collection
+    > db.users.dropIndex("name_1")  --> remove an index using its name.  The index on the _id field cannot be droppped
+    > db.users.ensureIndex({name:1}, {unique:true})  --> create a unique index on name, you cannot insert another user with the same name
+    > db.users.ensureIndex({age:1}, {name:'ByAge'})  --> create an index and use certain name for it (in this case 'ByAge'). Index name should be larger than 128 characters.
