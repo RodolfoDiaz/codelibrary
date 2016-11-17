@@ -36,4 +36,4 @@ $ mongo  --> to start the MongoDB shell
     > db.users.getIndexes()     --> get a list of all indexes in 'users' collection
     > db.users.dropIndex("name_1")  --> remove an index using its name.  The index on the _id field cannot be droppped
     > db.users.ensureIndex({name:1}, {unique:true})  --> create a unique index on name, you cannot insert another user with the same name
-    > db.users.ensureIndex({age:1}, {name:'ByAge'})  --> create an index and use certain name for it (in this case 'ByAge'). Index name should be larger than 128 characters.
+    > db.users.ensureIndex({age:1}, {name:'ByAge'})  --> create an index and use certain name for it (in this case 'ByAge'). Index name should be 128 characters or less.
