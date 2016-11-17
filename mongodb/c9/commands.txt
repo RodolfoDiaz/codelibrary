@@ -1,0 +1,17 @@
+$ mongo  --> to start the MongoDB shell
+> db  --> to show current database
+> show collections  --> to show collections (tables) inside current database
+> db.myTestCollection.save({_id:1, x:10})  --> saves a document (record) in 'myTestCollection' into current database
+> db.system.indexes.find()  --> Check the indexes
+> ObjectId()  --> get object ID value
+> ObjectId().getTimestamp()  --> get Timestamp (used for document creation date/time)
+> db.users.save({name: 'Rodolfo'})  --> saves a document in 'users' collection into current database
+> db.users.find()  --> returns the documents inside 'users' collection
+> db.color.insert({_id: 'R', name: 'Rojo'})  --> inserts a document into 'color' collection
+> db.color.insert({_id: 'R', name: 'Rosa'})  --> you cannot insert another document with the same _id
+> db.color.save({_id: 'R', name: 'Rosa'})  --> save command allows you to either insert or update an existing document
+> db.color.find()  --> you can check the change
+> db.color.insert({_id: 'A', name: 'Azul'})
+> db.color.insert({_id: 'V', name: 'Verde'})
+> db.color.find() --> find command returns multiple documents
+> db.color.findOne({_id: 'A'})  --> findOne returns one document (or null) based on the search criteria
