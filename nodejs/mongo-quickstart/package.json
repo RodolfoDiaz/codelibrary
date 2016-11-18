@@ -1,0 +1,22 @@
+{
+  "name": "mongo-quickstart",
+  "version": "1.0.0",
+  "description": "Tests and examples from MongoDB Docs.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RodolfoDiaz/codelibrary.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RodolfoDiaz/codelibrary/issues"
+  },
+  "homepage": "https://github.com/RodolfoDiaz/codelibrary#readme",
+  "dependencies": {
+    "mongodb": "^2.2.11"
+  }
+}
