@@ -1,0 +1,100 @@
+{
+    "env": {
+        "es6": true,
+        "browser": true,
+        "node": true
+    },
+    "globals": {
+        "angular": true
+    },
+    "plugins": [
+        "angular"
+    ],
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "strict": [
+            "error",
+            "function"
+        ],
+
+        // ** eslint plugin angular - https://www.npmjs.com/package/eslint-plugin-angular **
+
+        // Disabled
+        "angular/di-order": 0,
+        "angular/component-name": 0,
+        "angular/directive-name": 0,
+        "angular/filter-name": 0,
+        "angular/module-name": 0,
+        "angular/no-angular-mock": 0,
+        "angular/no-controller": 0,
+        "angular/no-digest": 0,
+        "angular/no-service-method": 0,
+        "angular/no-services": 0,
+        "angular/rest-service": 0,
+        "angular/service-name": 0,
+        "angular/watchers-execution": 0,
+        "angular/file-name": 0,
+
+        // Warning
+        "angular/no-inline-template": 1,
+        "angular/component-limit": 1,
+        "angular/no-private-call": 1,
+        "angular/deferred": 1,
+        "angular/module-dependency-order": 1,
+
+        // Error
+        "angular/angularelement": 2,
+        "angular/controller-as": 2,
+        "angular/controller-as-route": 2,
+        "angular/controller-as-vm": [2, "vm"],
+        "angular/controller-name": [2, "/[A-Z].*Controller$/"],
+        "angular/definedundefined": 2,
+        "angular/di": [2, "function"],
+        "angular/document-service": 2,
+        "angular/empty-controller": 2,
+        "angular/interval-service": 2,
+        "angular/json-functions": 2,
+        "angular/log": 2,
+        "angular/module-getter": 2,
+        "angular/module-setter": 2,
+        "angular/no-cookiestore": 2,
+        "angular/no-jquery-angularelement": 2,
+        "angular/on-watch": 2,
+        "angular/timeout-service": 2,
+        "angular/typecheck-array": 2,
+        "angular/typecheck-date": 2,
+        "angular/typecheck-function": 2,
+        "angular/typecheck-number": 2,
+        "angular/typecheck-object": 2,
+        "angular/typecheck-string": 2,
+        "angular/window-service": 2,
+        "angular/no-http-callback": 2,
+        "angular/no-run-logic": 2,
+        "angular/no-directive-replace": 2,
+        "angular/directive-restrict": 2,
+        "angular/di-unused": 2,
+        "angular/function-type": [2, "named"],
+        "angular/foreach": 2
+
+        // ** eslint plugin angular **
+    }
+}
