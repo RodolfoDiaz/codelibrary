@@ -1,5 +1,4 @@
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
+var MongoClient = require('mongodb').MongoClient, assert = require('assert');
 
 // Connection URL
 var url = 'mongodb://localhost:27017/myproject';
@@ -12,21 +11,21 @@ MongoClient.connect(url, function(err, db) {
     findDocuments(db, function() {
       db.close();
     });
-    
-//   insertDocuments(db, function() {
-//       updateDocument(db, function() {
-//           removeDocument(db, function() {
-//               db.close();
-//           });
-//       });
-//   });
+
+    //   insertDocuments(db, function() {
+    //       updateDocument(db, function() {
+    //           removeDocument(db, function() {
+    //               db.close();
+    //           });
+    //       });
+    //   });
 
     // insertDocuments(db, function() {
     //     indexCollection(db, function() {
     //         db.close();
     //     });
     // });
-  
+
 });
 
 var insertDocuments = function(db, callback) {
@@ -60,13 +59,13 @@ var updateDocument = function(db, callback) {
   // Get the documents collection
   var collection = db.collection('documents');
   // Update document where a is 2, set b equal to 1
-  collection.updateOne({ a : 2 }
-    , { $set: { b : 1 } }, function(err, result) {
+  collection.updateOne({ a : 2 }, { $set: { b : 1 } }, function(err, result)
+  {
     assert.equal(err, null);
     assert.equal(1, result.result.n);
     console.log("Updated the document with the field a equal to 2");
     callback(result);
-  });  
+  });
 };
 
 var removeDocument = function(db, callback) {
@@ -78,7 +77,7 @@ var removeDocument = function(db, callback) {
     assert.equal(1, result.result.n);
     console.log("Removed the document with the field a equal to 3");
     callback(result);
-  });    
+  });
 };
 
 var indexCollection = function(db, callback) {
