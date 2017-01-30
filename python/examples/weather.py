@@ -7,7 +7,13 @@ def current_weather():
     weather_json = r.json()
     print(weather_json)
 
+    location = weather_json['name']
     min = weather_json['main']['temp_min']
     max = weather_json['main']['temp_max']
 
-    print("The forecast in Heredia is", min , " as the low and", max, " as the high")
+    print("The forecast in {0} is {1} as the low and {2} as the high".format(location, min, max))
+
+def main():
+    current_weather()
+
+main()
