@@ -1,5 +1,8 @@
-# This program adds two numbers
-# https://www.programiz.com/python-programming/examples/add-number
+# -*- coding: utf-8 -*-
+"""This program adds two numbers.
+
+https://www.programiz.com/python-programming/examples/add-number
+"""
 
 num1 = 1.5
 num2 = 6.3

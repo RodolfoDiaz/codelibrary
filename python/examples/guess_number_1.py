@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+"""Code sample: using random numbers and loops."""
+
 import random
 
 minNumber = 1  # input('Enter the minimum number: ')
-maxNumber = 5 # input('Enter the maximum number: ')
+maxNumber = 5  # input('Enter the maximum number: ')
 attempts = 3
 
 if (minNumber < maxNumber):
@@ -9,7 +12,9 @@ if (minNumber < maxNumber):
     count = 0
     while count < attempts:
         count = count + 1
-        guess = int(input("Guess the 'Magic Number'. Enter a value between {0} and {1}: ".format(minNumber, maxNumber)))
+        guess = int(input("Guess the 'Magic Number'."
+                          " Enter a value between {0} and {1}: "
+                          .format(minNumber, maxNumber)))
         if random_number == guess:
             print('You got it, the magic number was {0}'.format(guess))
             break

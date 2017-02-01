@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+"""Code sample: using random numbers and loops."""
+
 import random
 
 print("Hello, what is your favorite number?")
@@ -16,15 +19,15 @@ found = False
 
 while not found:
     print("Guess what it is?")
-    guess  =  int(input())
-    
+    guess = int(input())
+
     if guess == magicNumber:
         found = True
         print("***")
     if guess < magicNumber:
         print("Too low")
-        
+
     if guess > magicNumber:
-        print( "Too high" )    
+        print("Too high")
 
 print("You got it!")
