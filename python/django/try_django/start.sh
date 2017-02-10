@@ -5,3 +5,5 @@ echo "IP is:" $IP " and PORT is:" $PORT
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'codelibrary-rodolfodc.c9users.io']
 cd Treasuregram
 python manage.py runserver $IP:$PORT
+# Create a super user, for you to access the admin page at /admin/
+# python manage.py createsuperuser
