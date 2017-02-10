@@ -7,3 +7,5 @@ cd Treasuregram
 python manage.py runserver $IP:$PORT
 # Create a super user, for you to access the admin page at /admin/
 # python manage.py createsuperuser
+# Interact with the Django shell
+# python manage.py shell
