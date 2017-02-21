@@ -31,3 +31,6 @@ Then you can use grep to compare both file (original vs converted)
 For reference about **grep** command see:
 * [Linux](https://ss64.com/bash/grep.html)
 * [macOS](https://ss64.com/osx/grep.html)
+ 
+
+See more examples [here](http://mindspill.net/computing/linux-notes/determine-and-change-file-character-encoding/).
