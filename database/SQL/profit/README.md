@@ -13,13 +13,13 @@ To convert from one encoding to another you use a tool, such as iconv. For examp
         iconv -f iso-8859-1 -t utf-8 < original.txt > converted.txt
 
 For reference about **iconv** see:
-    * [Linux](https://ss64.com/bash/iconv.html)
-    * [macOS](https://ss64.com/osx/iconv.html)
-    
+* [Linux](https://ss64.com/bash/iconv.html)
+* [macOS](https://ss64.com/osx/iconv.html)
+
 Then you can use grep to compare both file (original vs converted)
 
         grep -Fxvf original.txt converted.txt
 
 For reference about **grep** see:
-    * [Linux](https://ss64.com/bash/grep.html)
-    * [macOS](https://ss64.com/osx/grep.html)
+* [Linux](https://ss64.com/bash/grep.html)
+* [macOS](https://ss64.com/osx/grep.html)
