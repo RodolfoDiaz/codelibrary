@@ -8,11 +8,19 @@ The three standards represent the computer effort to provide a coding system to 
 
 ## Tools
 
+If you want to determine what character encoding is used by a file ([MIME type](https://en.wikipedia.org/wiki/Media_type)).
+
+        file -bi filename
+
+For reference about **file** command see:
+* [Linux](https://ss64.com/bash/file.html)
+* [macOS](https://ss64.com/osx/file.html)
+
 To convert from one encoding to another you use a tool, such as iconv. For example:
 
         iconv -f iso-8859-1 -t utf-8 < original.txt > converted.txt
 
-For reference about **iconv** see:
+For reference about **iconv** command see:
 * [Linux](https://ss64.com/bash/iconv.html)
 * [macOS](https://ss64.com/osx/iconv.html)
 
@@ -20,6 +28,6 @@ Then you can use grep to compare both file (original vs converted)
 
         grep -Fxvf original.txt converted.txt
 
-For reference about **grep** see:
+For reference about **grep** command see:
 * [Linux](https://ss64.com/bash/grep.html)
 * [macOS](https://ss64.com/osx/grep.html)
