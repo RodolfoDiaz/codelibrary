@@ -4,7 +4,8 @@ In computing, a character encoding is used to represent a repertoire of characte
 
 ## What is ASCII, ISO-8859-1 and UTF-8?
 
-The three standards represent the computer effort to provide a coding system to represent the characters used in all languages. The first effort was made by ASCII and it was for the English language (128 characters), then due to its insufficiency to represent other characters such as Latin for example, it was born ISO-8859-1 (also called LATIN-1 or ASCII extended) but since it could not represent characters from other languages appears the UNICODE standard (of which UTF-8 is part).
+The three standards represent the computer effort to provide a coding system to represent the characters used in all languages. 
+The first effort made was [ASCII](https://en.wikipedia.org/wiki/ASCII), a character encoding created for the English language (128 characters).  Due to its insufficiency to represent other characters for Latin-based languages, it was born [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) (also called LATIN-1 or ASCII extended) but since it could not represent characters from all languages (such as arabic, hebrew, chinese, japanese, etc.) appeared the UNICODE standard (of which [UTF-8](https://en.wikipedia.org/wiki/UTF-8) character encoding is part).
 
 ## Tools
 
@@ -31,6 +32,5 @@ Then you can use grep to compare both file (original vs converted)
 For reference about **grep** command see:
 * [Linux](https://ss64.com/bash/grep.html)
 * [macOS](https://ss64.com/osx/grep.html)
- 
 
 See more examples [here](http://mindspill.net/computing/linux-notes/determine-and-change-file-character-encoding/).
