@@ -1,4 +1,4 @@
-# Character encoding [wiki](https://en.wikipedia.org/wiki/Character_encoding)
+# Character encoding
 
 In computing, a character encoding is used to represent a repertoire of characters by some kind of encoding system.
 
@@ -6,6 +6,8 @@ In computing, a character encoding is used to represent a repertoire of characte
 
 The three standards represent the computer effort to provide a coding system to represent the characters used in all languages. 
 The first effort made was [ASCII](https://en.wikipedia.org/wiki/ASCII), a character encoding created for the English language (128 characters).  Due to its insufficiency to represent other characters for Latin-based languages, it was born [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) (also called LATIN-1 or ASCII extended) but since it could not represent characters from all languages (such as arabic, hebrew, chinese, japanese, etc.) appeared the UNICODE standard (of which [UTF-8](https://en.wikipedia.org/wiki/UTF-8) character encoding is part).
+
+For more reference see the [wiki](https://en.wikipedia.org/wiki/Character_encoding) page.
 
 ## Tools
 
