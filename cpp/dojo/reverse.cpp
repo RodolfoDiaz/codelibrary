@@ -3,6 +3,10 @@
 #include <string.h>
 
 int main (int argc, char* argv[]) {
+        if (argv[1] == NULL){
+                printf("Error: enter a word or phrase to reverse.");
+                return -1;
+        }
         int size = strlen(argv[1]);
         char* data = argv[1];
         printf("original: %s\n", data);
