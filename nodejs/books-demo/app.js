@@ -3,7 +3,7 @@
     var express = require('express');
     var mongoose = require('mongoose');
 
-    var db = mongoose.connect('mongodb://localhost/bookAPI');
+    mongoose.connect('mongodb://localhost/bookAPI');
 
     var Book = require('./models/bookModel');
 
@@ -17,11 +17,31 @@
     bookRouter.route('/books')
         //http://localhost:8080/api/books
         .get(function(req, res) {
-            Book.find(function(err, books) {
+
+            var query = {};
+            // support of queries such as: http://localhost:8080/api/books?genre=Historical%20Fiction
+            if (req.query.genre) {
+                query.genre = req.query.genre;
+            }
+
+            Book.find(query, function(err, books) {
                 if (err) {
                     res.status(500).send(err);
                 } else {
                     res.json(books);
+                }
+            });
+        });
+
+    bookRouter.route('/books/:bookId')
+        //support a query by ID, for example: http://localhost:8080/api/books/58a747202ba0ef40e1188b2b
+        .get(function(req, res) {
+
+            Book.findById(req.params.bookId, function(err, book) {
+                if (err) {
+                    res.status(500).send(err);
+                } else {
+                    res.json(book);
                 }
             });
         });
