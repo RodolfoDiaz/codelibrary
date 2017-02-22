@@ -4,7 +4,12 @@
     var mongoose = require('mongoose');
     var bodyParser = require('body-parser');
 
-    mongoose.connect('mongodb://localhost/bookAPI');
+    var db;
+    if (process.env.ENV === 'Test') {
+        db = mongoose.connect('mongodb://localhost/bookAPI_test');
+    } else {
+        db = mongoose.connect('mongodb://localhost/bookAPI');
+    }
 
     var Book = require('./models/bookModel');
 
@@ -30,5 +35,7 @@
         console.log('Listening on ' + hostname + ' and port: ' + port);
         // you should be able to browse to http://localhost:{PORT}
     });
+
+    module.exports = app;
 
 }());
