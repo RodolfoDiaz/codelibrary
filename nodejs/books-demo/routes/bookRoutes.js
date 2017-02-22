@@ -27,7 +27,12 @@
             //support a query by ID, for example: http://localhost:8080/api/books/58a747202ba0ef40e1188b2b
             .get(function(req, res) {
                 // Get an specific book by _id
-                res.json(req.book);
+                //res.json(req.book);
+                var returnBook = req.book.toJSON();
+                returnBook.links = {};
+                var newLink = 'http://' + req.headers.host + '/api/books?genre=' + returnBook.genre;
+                returnBook.links.FilterByThisGenre = newLink.replace(' ', '%20');
+                res.json(returnBook);
             })
             .put(function(req, res) {
                 // Change/update an specific book by _id (replaces all attributes)
