@@ -1,15 +1,28 @@
 (function() {
     'use strict';
     var bookController = function(Book) {
+
+        /**
+         * post - Create a new book
+         *
+         * @param  {Object} req request object
+         * @param  {Object} res response object
+         * @return {undefined}     void
+         */
         var post = function(req, res) {
-            // Create a new book
             var book = new Book(req.body);
             book.save();
             res.status(201).send(book);
         };
 
+        /**
+         * get - Get all books
+         *
+         * @param  {Object} req request object
+         * @param  {Object} res response object
+         * @return {undefined}     void
+         */
         var get = function(req, res) {
-            // Get all books
             var query = {};
             // support of queries such as: http://localhost:8080/api/books?genre=Historical%20Fiction
             if (req.query.genre) {
