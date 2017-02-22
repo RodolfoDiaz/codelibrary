@@ -7,11 +7,13 @@
 
         bookRouter.route('/')
             .post(function(req, res) {
+                // Create a new book
                 var book = new Book(req.body);
                 book.save();
                 res.status(201).send(book);
             })
             .get(function(req, res) {
+                // Get all books
                 var query = {};
                 // support of queries such as: http://localhost:8080/api/books?genre=Historical%20Fiction
                 if (req.query.genre) {
@@ -46,9 +48,11 @@
         bookRouter.route('/:bookId')
             //support a query by ID, for example: http://localhost:8080/api/books/58a747202ba0ef40e1188b2b
             .get(function(req, res) {
+                // Get an specific book by _id
                 res.json(req.book);
             })
             .put(function(req, res) {
+                // Change/update an specific book by _id (replaces all attributes)
                 req.book.title = req.body.title;
                 req.book.author = req.body.author;
                 req.book.genre = req.body.genre;
@@ -62,6 +66,7 @@
                 });
             })
             .patch(function(req, res) {
+                // Change/update an attribute from an specific book by _id
                 if (req.body._id) {
                     delete req.body._id;
                 }
@@ -75,6 +80,15 @@
                         res.status(500).send(err);
                     } else {
                         res.json(req.book);
+                    }
+                });
+            })
+            .delete(function(req, res) {
+                req.book.remove(function(err) {
+                    if (err) {
+                        res.status(500).send(err);
+                    } else {
+                        res.status(204).send('Removed');
                     }
                 });
             });
