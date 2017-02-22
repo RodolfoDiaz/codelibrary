@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express');
 var mongoose = require('mongoose');
 
@@ -15,9 +16,9 @@ var bookRouter = express.Router();
 bookRouter.route('/books')
     .get(function(req, res) {
         Book.find(function(err, books) {
-            if (err)
+            if (err) {
                 res.status(500).send(err);
-            else {
+            } else {
                 res.json(books);
             }
         });
