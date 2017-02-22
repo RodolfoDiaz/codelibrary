@@ -30,14 +30,27 @@
                 });
             });
 
-        bookRouter.route('/books/:bookId')
+        bookRouter.route('/:bookId')
             //support a query by ID, for example: http://localhost:8080/api/books/58a747202ba0ef40e1188b2b
             .get(function(req, res) {
-
                 Book.findById(req.params.bookId, function(err, book) {
                     if (err) {
                         res.status(500).send(err);
                     } else {
+                        res.json(book);
+                    }
+                });
+            })
+            .put(function(req, res) {
+                Book.findById(req.params.bookId, function(err, book) {
+                    if (err) {
+                        res.status(500).send(err);
+                    } else {
+                        book.title = req.body.title;
+                        book.author = req.body.author;
+                        book.genre = req.body.genre;
+                        book.read = req.body.read;
+                        book.save();
                         res.json(book);
                     }
                 });
