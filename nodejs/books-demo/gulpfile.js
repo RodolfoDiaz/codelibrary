@@ -4,7 +4,10 @@
     var nodemon = require('gulp-nodemon');
     var gulpMocha = require('gulp-mocha');
     var env = require('gulp-env');
-    var supertest = require('supertest');
+    //var supertest = require('supertest');
+    var jshint = require('gulp-jshint');
+
+    var jsFiles = ['*.js', 'controllers/**/*.js', 'models/**/*.js', 'routes/**/*.js'];
 
     gulp.task('default', function() {
         nodemon({
@@ -31,6 +34,14 @@
             })
             .pipe(gulpMocha({
                 reporter: 'nyan'
+            }));
+    });
+
+    gulp.task('style', function() {
+        gulp.src(jsFiles)
+            .pipe(jshint('.jshintrc'))
+            .pipe(jshint.reporter('jshint-stylish', {
+                verbose: true
             }));
     });
 

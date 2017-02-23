@@ -21,6 +21,9 @@
   },
   "devDependencies": {
     "gulp-env": "^0.4.0",
+    "gulp-jshint": "^2.0.4",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
     "supertest": "^3.0.0"
   }
 }
