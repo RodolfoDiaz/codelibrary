@@ -1,4 +1,5 @@
 brew update
+brew upgrade
 brew install python
 brew install python3
 brew install node
@@ -7,6 +8,8 @@ apm install atom-beautify
 brew install uncrustify
 pip install jsbeautifier
 pip install autopep8
+npm install -g typescript
+npm install -g typescript-formatter
 echo "---INSTALL ATOM PACKAGE---"
 apm install atom-easy-jsdoc
 echo "---INSTALL ATOM PACKAGE---"
