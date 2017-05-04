@@ -1,5 +1,4 @@
-brew update
-brew upgrade
+brew update && brew upgrade && brew cleanup; brew doctor
 brew install python
 brew install python3
 brew install node
