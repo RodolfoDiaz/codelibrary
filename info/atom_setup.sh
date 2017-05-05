@@ -1,7 +1,3 @@
-brew update && brew upgrade && brew cleanup; brew doctor
-brew install python
-brew install python3
-brew install node
 echo "---INSTALL ATOM PACKAGE---"
 apm install atom-beautify
 brew install uncrustify
