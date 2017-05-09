@@ -1,7 +1,12 @@
 # Install Git
 # https://git-scm.com/download/linux
 if [ "$(uname)" == "Darwin" ]; then
-    echo "Do something under Mac OS X platform"
+    echo "Install Git in macOS"
+    # First you need to Cchange the '~/.bash_profile' file, as follows:
+    #       export PATH=/usr/local/bin:$PATH
+    # http://blog.grayghostvisuals.com/git/how-to-keep-git-updated/
+    brew install git
+    brew upgrade git
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
     sudo apt-get install git -y
