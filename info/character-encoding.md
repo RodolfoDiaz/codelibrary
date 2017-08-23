@@ -13,7 +13,7 @@ The first effort made was [ASCII](https://en.wikipedia.org/wiki/ASCII), a charac
 
 If you want to determine what character encoding is used by a file ([MIME type](https://en.wikipedia.org/wiki/Media_type)).
 
-        file -bi filename
+        file -bI original.srt
 
 For reference about **file** command see:
 * [Linux](https://ss64.com/bash/file.html)
@@ -21,7 +21,7 @@ For reference about **file** command see:
 
 To convert from one encoding to another you use a tool, such as iconv. For example:
 
-        iconv -f iso-8859-1 -t utf-8 < original.txt > converted.txt
+        iconv -f iso-8859-1 -t utf-8 < original.srt > converted.srt
 
 For reference about **iconv** command see:
 * [Linux](https://ss64.com/bash/iconv.html)
@@ -29,7 +29,7 @@ For reference about **iconv** command see:
 
 Then you can use grep to compare both file (original vs converted)
 
-        grep -Fxvf original.txt converted.txt
+        grep -Fxvf original.srt converted.srt
 
 For reference about **grep** command see:
 * [Linux](https://ss64.com/bash/grep.html)

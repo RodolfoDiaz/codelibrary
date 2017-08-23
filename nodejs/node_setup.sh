@@ -1,5 +1,6 @@
 # Install Node.js
 # https://nodejs.org/
+# Get .gitignore templates at this link: https://github.com/github/gitignore/blob/master/Node.gitignore
 if [ "$(uname)" == "Darwin" ]; then
     brew install node
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
