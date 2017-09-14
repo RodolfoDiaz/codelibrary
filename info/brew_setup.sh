@@ -15,6 +15,7 @@ if [ "$1" == "u" ]; then
    brew uninstall python
    brew uninstall python3
    brew uninstall unrar
+   brew uninstall mongodb
    # uninstalling dependencies for node
    brew uninstall icu4c
    # uninstalling dependecies for python
@@ -33,4 +34,5 @@ if [ "$1" == "i" ]; then
    brew install python
    brew install python3
    brew install unrar
+   brew install mongodb
 fi
