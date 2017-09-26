@@ -1,3 +1,5 @@
+# Install Xcode Command Line Tools
+xcode-select --install
 # Homebrew - The missing package manager for macOS
 # https://brew.sh/
 if brew ls --versions > /dev/null; then
