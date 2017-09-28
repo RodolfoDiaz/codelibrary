@@ -1,9 +1,10 @@
 # Remove all Mac generated files '._'
 # man dot_clean
+find . -name '._*'
 dot_clean -n .
 # An alternative is to use the following:  find . -name '._*' -exec rm -rf {} \;
 # Find .DS_Store files
-find . -name ".DS_Store"
+find . -name '.DS_Store'
 # man find
 # Recursively Remove .DS_Store
 find . -name '.DS_Store' -type f -delete
