@@ -54,7 +54,7 @@
 
         function setFields(movie) {
             document.getElementById('movieTitle').innerHTML = movie.title + '(' + movie.year + ')';
-            document.getElementById('moviesFound').innerHTML = 'More movies found: ';
+            document.getElementById('moviesFound').innerHTML = 'Movies found with this search criteria: ';
             document.getElementById("movieLink").href = movie.url.url;
             document.getElementById("movieLink").innerHTML = '*';
             document.getElementById("descriptionText").value = movie.description;
@@ -71,7 +71,6 @@
 
             for (var i = 0, l = movies.length; i < l; ++i) {
                 var li = document.createElement("li");
-                // <a id="movieLink" href="" target="_blank" title='Link to IMDB'></a>
                 var nodeText = movies[i].title + ' (' + movies[i].year + ') ';
                 nodeText = nodeText + ' - ' + movies[i].url.url;
                 li.appendChild(document.createTextNode(nodeText));
