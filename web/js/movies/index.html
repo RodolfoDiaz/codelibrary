@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <script src="app.js"></script>
+    <h1>Search</h1>
+    <p>
+        Title: <input type="text" id="titleText" value="Transformers"><br> Year: <input type="text" id="yearText" value="2007"><br>
+    </p>
+    <input type="button" id="searchButton" value="Search" onclick="getMovieData()">
+    <p>
+        <h3><span id="movieTitle"></span>&nbsp;<a id="movieLink" href="" target="_blank" title='Link to IMDB'></a></h3>
+        <textarea rows="4" cols="50" id="descriptionText"></textarea>
+    </p>
+    <p>
+        <img id="posterImg" src=""></img>
+    </p>
+    <p> <h3><span id="moviesFound"></span></h3>
+        <ul id='fullList'></ul>
+    </p>
+    <script>
+        function getMovieData() {
+            var url = getSearchURL(document.getElementById("titleText").value, document.getElementById("yearText").value);
+            clearFields();
+            setSearchButton(true);
+            getJSON(url,
+                function(err, data) {
+                    if (err !== null) {
+                        document.getElementById("descriptionText").value = err;
+                    }
+                    else {
+                        console.log('Found ' + data.length + ' movies matching the search criteria!')
+                        if (data[0]) {
+                            setFields(data[0]);
+                        }
+                        else {
+                            document.getElementById("descriptionText").value = 'Movie not found!';
+                        }
+                        createFullList(data);
+                        setSearchButton(false);
+                    }
+                });
+        }
+
+        function clearFields() {
+            document.getElementById('movieTitle').innerHTML = '';
+            document.getElementById('moviesFound').innerHTML = '';
+            document.getElementById("movieLink").innerHTML = '';
+            document.getElementById("descriptionText").value = '';
+            document.getElementById("posterImg").src = '';
+            var ul = document.getElementById("fullList");
+            while(ul.firstChild) ul.removeChild(ul.firstChild);
+        }
+
+        function setFields(movie) {
+            document.getElementById('movieTitle').innerHTML = movie.title + '(' + movie.year + ')';
+            document.getElementById('moviesFound').innerHTML = 'More movies found: ';
+            document.getElementById("movieLink").href = movie.url.url;
+            document.getElementById("movieLink").innerHTML = '*';
+            document.getElementById("descriptionText").value = movie.description;
+            document.getElementById("posterImg").src = movie.poster.thumb;
+        }
+
+        function setSearchButton(wait) {
+            document.getElementById("searchButton").disabled = wait;
+            document.getElementById("searchButton").value = wait ? 'Wait...' : 'Search';
+        }
+
+        function createFullList(movies) {
+            var ul = document.getElementById("fullList");
+
+            for (var i = 0, l = movies.length; i < l; ++i) {
+                var li = document.createElement("li");
+                // <a id="movieLink" href="" target="_blank" title='Link to IMDB'></a>
+                var nodeText = movies[i].title + ' (' + movies[i].year + ') ';
+                nodeText = nodeText + ' - ' + movies[i].url.url;
+                li.appendChild(document.createTextNode(nodeText));
+                ul.appendChild(li);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
