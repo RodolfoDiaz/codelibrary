@@ -12,7 +12,8 @@ var server = http.createServer((req, res) => {
 });
 
 server.listen(port, hostname, () => {
-    // Below you can see the usage of Back quote or back-tick character,
+    // Below you can see the usage of backquote or back-tick character,
     // in JavaScript this called Template literals (contain place holders)
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
     console.log(`Server running at http://${hostname}:${port}/`);
 });
