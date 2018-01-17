@@ -1,14 +1,19 @@
 {
     "env": {
-        "browser": true,
         "es6": true,
-        "node": true
+        "browser": true,
+        "node": true,
+        "jasmine": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
         "sourceType": "module"
     },
     "rules": {
+        "no-console": "off",
+        "valid-jsdoc": "warn",
+        "eol-last": "warn",
+        "no-multiple-empty-lines":"warn",
         "indent": [
             "error",
             2
@@ -24,7 +29,6 @@
         "semi": [
             "error",
             "always"
-        ],
-        "no-console": "off"
+        ]
     }
 }
