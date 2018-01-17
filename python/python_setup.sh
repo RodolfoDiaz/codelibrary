@@ -1,9 +1,10 @@
 if [ "$(uname)" == "Darwin" ]; then
-    echo "Install Python and pip in macOS"
+    echo "Install Python and pip in macOS using Homebrew"
     brew install python
     brew install python3
     # Installing Packages - https://packaging.python.org/tutorials/installing-packages/
-    easy_install pip
+    python2 -m pip install --upgrade pip setuptools wheel
+    python3 -m pip install --upgrade pip setuptools wheel
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Python in Linux"
     sudo apt-get update
