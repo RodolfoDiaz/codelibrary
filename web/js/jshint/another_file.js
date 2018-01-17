@@ -3,8 +3,8 @@
 const pi = 3.1415;
 
 function main() {
-    'use strict';
-    console.log('The value of Pi is ' + pi);
+  'use strict';
+  console.log('The value of Pi is ' + pi);
 }
 
 main();

@@ -1,6 +1,6 @@
 function main() {
-    'use strict';
-    return 'Hello, World!';
+  'use strict';
+  return 'Hello, World!';
 }
 
 main();
