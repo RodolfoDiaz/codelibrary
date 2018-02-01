@@ -9,8 +9,8 @@ cd backend
 sails lift
 # browse to http://localhost:1337
 # Press key CTRL-C to exit Sails process
-sails generate api user
-sails lift
+# sails generate api user
+# sails lift
 # browse to http://localhost:1337/user
 # --> now, let's create a new user:
 # browse to http://localhost:1337/user/create?name=Rodolfo
