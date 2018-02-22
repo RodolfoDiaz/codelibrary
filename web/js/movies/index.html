@@ -1,82 +1,50 @@
 <!DOCTYPE html>
 <html>
 
-<body>
-    <script src="app.js"></script>
-    <h1>Search</h1>
-    <p>
-        Title: <input type="text" id="titleText" value="Transformers"><br> Year: <input type="text" id="yearText" value="2007"><br>
-    </p>
-    <input type="button" id="searchButton" value="Search" onclick="getMovieData()">
-    <p>
-        <h3><span id="movieTitle"></span>&nbsp;<a id="movieLink" href="" target="_blank" title='Link to IMDB'></a></h3>
-        <textarea rows="4" cols="50" id="descriptionText"></textarea>
-    </p>
-    <p>
-        <img id="posterImg" src=""></img>
-    </p>
-    <p> <h3><span id="moviesFound"></span></h3>
-        <ul id='fullList'></ul>
-    </p>
-    <script>
-        function getMovieData() {
-            var url = getSearchURL(document.getElementById("titleText").value, document.getElementById("yearText").value);
-            clearFields();
-            setSearchButton(true);
-            getJSON(url,
-                function(err, data) {
-                    if (err !== null) {
-                        document.getElementById("descriptionText").value = err;
-                    }
-                    else {
-                        console.log('Found ' + data.length + ' movies matching the search criteria!')
-                        if (data[0]) {
-                            setFields(data[0]);
-                        }
-                        else {
-                            document.getElementById("descriptionText").value = 'Movie not found!';
-                        }
-                        createFullList(data);
-                        setSearchButton(false);
-                    }
-                });
-        }
-
-        function clearFields() {
-            document.getElementById('movieTitle').innerHTML = '';
-            document.getElementById('moviesFound').innerHTML = '';
-            document.getElementById("movieLink").innerHTML = '';
-            document.getElementById("descriptionText").value = '';
-            document.getElementById("posterImg").src = '';
-            var ul = document.getElementById("fullList");
-            while(ul.firstChild) ul.removeChild(ul.firstChild);
-        }
-
-        function setFields(movie) {
-            document.getElementById('movieTitle').innerHTML = movie.title + '(' + movie.year + ')';
-            document.getElementById('moviesFound').innerHTML = 'Movies found with this search criteria: ';
-            document.getElementById("movieLink").href = movie.url.url;
-            document.getElementById("movieLink").innerHTML = '*';
-            document.getElementById("descriptionText").value = movie.description;
-            document.getElementById("posterImg").src = movie.poster.thumb;
-        }
-
-        function setSearchButton(wait) {
-            document.getElementById("searchButton").disabled = wait;
-            document.getElementById("searchButton").value = wait ? 'Wait...' : 'Search';
-        }
-
-        function createFullList(movies) {
-            var ul = document.getElementById("fullList");
-
-            for (var i = 0, l = movies.length; i < l; ++i) {
-                var li = document.createElement("li");
-                var nodeText = movies[i].title + ' (' + movies[i].year + ') ';
-                nodeText = nodeText + ' - ' + movies[i].url.url;
-                li.appendChild(document.createTextNode(nodeText));
-                ul.appendChild(li);
-            }
-        }
+<body style="font-family:Arial">
+    <script src="ui.js"></script>
+    <script src="data.js"></script>
+    <h1>Movie Database</h1>
+    <h5>Search Movies By
+        <select id="searchTypeList" onchange="selectSearchType()"><option value="name">Name</option><option value="id">ID</option></select>
+    </h5>
+    <div id="searchByName" style="background-color:#99ccff;border: 3px solid powderblue;padding:10px;">
+        <p>
+            Title Search: <input type="text" id="titleText" value="Transformers">
+        </p>
+        <p>
+            Year: <input type="text" id="yearText" value="2007">
+        </p>
+        <input type="button" id="searchButton" value="Search" onclick="getMovie()">
+    </div>
+    <div id="searchById" style="background-color:#99ccff;border: 3px solid powderblue;padding:10px;">
+        <p>
+            <p>
+                Get Movie By ID: <input type="text" id="movieIdText" value="tt0058824">
+            </p>
+            <input type="button" id="searchIdButton" value="Search" onclick="getMovie()">
+        </p>
+    </div>
+    <div id="searchResults" style="background-color:white;border: 3px solid powderblue;padding:10px;">
+        <p>
+            <h3><span id="movieTitle"></span></h3>
+            <p>
+                IMDB ID: <a id="movieLink" href="" target="_blank" title='Link to IMDB'></a>
+            </p>
+            <textarea rows="4" cols="50" id="descriptionText"></textarea>
+        </p>
+        <p>
+            <img id="posterImg" src=""></img>
+        </p>
+        <p>
+            <h3><span id="moviesFound"></span></h3>
+            <ul id='fullList'></ul>
+        </p>
+    </div>
+    <script type="text/javascript">
+        document.getElementById("searchByName").style.display = 'block';
+        document.getElementById("searchById").style.display = 'none';
+        document.getElementById("searchResults").style.display = 'none';
     </script>
 
 </body>
