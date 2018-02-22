@@ -8,23 +8,24 @@
     <h5>Search Movies By
         <select id="searchTypeList" onchange="selectSearchType()"><option value="name">Name</option><option value="id">ID</option></select>
     </h5>
-    <div id="searchByName" style="background-color:#99ccff;border: 3px solid powderblue;padding:10px;">
+    <div id="searchByName" style="background-color:#99ccff;border: 3px solid powderblue;padding:10px;width:300px">
         <p>
             Title Search: <input type="text" id="titleText" value="Transformers">
         </p>
         <p>
             Year: <input type="text" id="yearText" value="2007">
         </p>
-        <input type="button" id="searchButton" value="Search" onclick="getMovie()">
+        <input type="button" id="searchButton" value="Search" onclick="getMovie()" style="padding: 10px 20px;border-radius: 8px;">
     </div>
-    <div id="searchById" style="background-color:#99ccff;border: 3px solid powderblue;padding:10px;">
+    <div id="searchById" style="background-color:#99ccff;border: 3px solid powderblue;padding:10px;width:300px">
         <p>
             <p>
                 Get Movie By ID: <input type="text" id="movieIdText" value="tt0058824">
             </p>
-            <input type="button" id="searchIdButton" value="Search" onclick="getMovie()">
+            <input type="button" id="searchIdButton" value="Search" onclick="getMovie()" style="padding: 10px 20px;border-radius: 8px;">
         </p>
     </div>
+    <br>
     <div id="searchResults" style="background-color:white;border: 3px solid powderblue;padding:10px;">
         <p>
             <h3><span id="movieTitle"></span></h3>
@@ -46,7 +47,6 @@
         document.getElementById("searchById").style.display = 'none';
         document.getElementById("searchResults").style.display = 'none';
     </script>
-
 </body>
 
 </html>

@@ -4,7 +4,7 @@ function getMovie() {
     if (searchType == 'name') {
         url = getMovieByNameURL(document.getElementById('titleText').value, document.getElementById('yearText').value);
     }
-    else {
+    else if (searchType == 'id') {
         url = getMovieByIdURL(document.getElementById('movieIdText').value);
     }
     search(url, searchType);
