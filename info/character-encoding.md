@@ -27,11 +27,11 @@ For reference about **iconv** command see:
 * [Linux](https://ss64.com/bash/iconv.html)
 * [macOS](https://ss64.com/osx/iconv.html)
 
-Then you can use grep to compare both file (original vs converted)
+Then you can use diff to compare both file (original vs converted)
 
-        grep -Fxvf original.srt converted.srt
+        diff --side-by-side --suppress-common-lines original.srt converted.srt
 
-For reference about **grep** command see:
+Also, grep is an alternative tool. For reference about **grep** command see:
 * [Linux](https://ss64.com/bash/grep.html)
 * [macOS](https://ss64.com/osx/grep.html)
 
