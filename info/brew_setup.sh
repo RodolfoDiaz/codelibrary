@@ -15,7 +15,6 @@ if [ "$1" == "u" ]; then
    brew uninstall git
    brew uninstall node
    brew uninstall python
-   brew uninstall python3
    brew uninstall unrar
    brew uninstall mongodb
    # uninstalling dependencies for node
@@ -23,10 +22,9 @@ if [ "$1" == "u" ]; then
    # uninstalling dependecies for python
    brew uninstall sqlite
    brew uninstall gdbm
-   brew uninstall openssl
    brew uninstall readline
-   # uninstalling dependencies for python3
    brew uninstall xz
+   brew uninstall openssl
 fi
 
 # Install Homebrew applications
@@ -34,7 +32,6 @@ if [ "$1" == "i" ]; then
    brew install git
    brew install node
    brew install python
-   brew install python3
    brew install unrar
    brew install mongodb
 fi
