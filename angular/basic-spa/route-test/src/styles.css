@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+
+h2 {
+    margin: 0px;
+}
+
+#main {
+    border: 1px solid grey;
+    width: 250px;
+    background-color: lightgray;
+    margin-top: 5px;
+    padding: 5px;
+}
+
+.menu-spa {
+    padding-right: 15px;
+}
