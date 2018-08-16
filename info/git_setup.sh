@@ -25,3 +25,9 @@ git config --global --add url.https://github.com.insteadof git://github.com
 # (Windows only) Ignore the 260 character path limit and allow longer file paths when doing a git clone.
 #git config --global --add core.longpaths true
 git config --list --global
+# Start using git, for example:
+#	 git init
+#    git add .
+#    git commit -m "Initial commit"
+#    git remote add origin https://github.com/[your-app-org]/[your-app-repo].git
+#    git push -u origin master
