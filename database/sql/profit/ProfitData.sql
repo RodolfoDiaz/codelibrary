@@ -37,7 +37,7 @@ Exec dbo.profit_sp_State_Insert @pStateID, 7, 'Ciudad de México'
 /* Company */
 DECLARE @pCompanyID int
 
-Exec dbo.profit_sp_Company_Insert @pCompanyID, 'Sidsa', NULL, 'Pavas', 1, 1, NULL, '374-8368', NULL, NULL, 'rodolfodc@hotmail.com', 0.13, 0, 1, 'es-CR', '¢', '$', 'Colones','Dólares'
+Exec dbo.profit_sp_Company_Insert @pCompanyID, 'Company Name', NULL, 'Company Address', 1, 1, NULL, '8880-0000', NULL, NULL, '', 0.13, 0, 1, 'es-CR', '¢', '$', 'Colones','Dólares'
 
 /* Department */
 DECLARE @pDepartmentID int
