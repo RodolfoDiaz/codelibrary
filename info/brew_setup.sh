@@ -4,7 +4,7 @@ xcode-select --install
 # https://brew.sh/
 if brew ls --versions > /dev/null; then
   echo "Homebrew is installed, updating..."
-  brew update && brew upgrade && brew cleanup; brew doctor
+  brew update && brew upgrade && brew cleanup
 else
   echo "Installing Homebrew..."
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -17,6 +17,8 @@ if [ "$1" == "u" ]; then
    brew uninstall python
    brew uninstall unrar
    brew uninstall mongodb
+   # uninstalling dependencies for mongodb
+   brew uninstall python@2
    # uninstalling dependencies for node
    brew uninstall icu4c
    # uninstalling dependecies for python
