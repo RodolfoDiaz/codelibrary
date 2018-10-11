@@ -69,16 +69,16 @@ var updateDocument = function (db, callback) {
   collection.updateOne({
     a: 2
   },
-    {
-      $set: {
-        b: 1
-      }
-    }, function (err, result) {
-      assert.equal(err, null);
-      assert.equal(1, result.result.n);
-      console.log('Updated the document with the field a equal to 2');
-      callback(result);
-    });
+  {
+    $set: {
+      b: 1
+    }
+  }, function (err, result) {
+    assert.equal(err, null);
+    assert.equal(1, result.result.n);
+    console.log('Updated the document with the field a equal to 2');
+    callback(result);
+  });
 };
 
 var removeDocument = function (db, callback) {
@@ -99,10 +99,10 @@ var indexCollection = function (db, callback) {
   db.collection('documents').createIndex({
     'a': 1
   },
-    null,
-    function (err, results) {
-      console.log(results);
-      callback();
-    }
+  null,
+  function (err, results) {
+    console.log(results);
+    callback();
+  }
   );
 };
