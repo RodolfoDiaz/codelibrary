@@ -27,6 +27,9 @@ if [ "$1" == "u" ]; then
    brew uninstall readline
    brew uninstall xz
    brew uninstall openssl
+   # uninstalling dependecies for git
+   brew uninstall gettext
+   brew uninstall pcre2
 fi
 
 # Install Homebrew applications
