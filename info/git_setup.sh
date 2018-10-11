@@ -18,12 +18,17 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
 fi
 # Configuration settings file is located at ~/.gitconfig
 git config --global user.email "rodolfodc@hotmail.com"
-git config --global user.name "Rodolfo Diaz"
+git config --global user.name "RodolfoDiaz"
 git config --global core.editor "nano"
-# Use ‘https’ instead of the git protocol since the git protocol is blocked by the some firewalls.
-git config --global --add url.https://github.com.insteadof git://github.com
+
+# Force git to use https:// instead of git:// protocol, because git protocol is blocked by the some firewalls.
+# git config --global --add url.https://github.com.insteadof git://github.com
+# git config --global url."https://github.com/".insteadOf git@github.com:
+# git config --global url."https://".insteadOf git://
+
 # (Windows only) Ignore the 260 character path limit and allow longer file paths when doing a git clone.
 #git config --global --add core.longpaths true
+
 git config --list --global
 # Start using git, for example:
 #	 git init
