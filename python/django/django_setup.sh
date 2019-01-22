@@ -3,7 +3,8 @@ if [ "$(uname)" == "Darwin" ]; then
     echo "Install Django package in macOS"
     # --- The Django 1.11.x series is the last to support Python 2.7. ---
     #pip2 install --upgrade setuptools
-    #pip2 install Django==1.11.9
+    #pip2 install Django==1.11.18
+    #pip2 install Django --upgrade
     # --- Django 2.0 supports Python 3.4, 3.5, and 3.6. ---
     pip3 install --upgrade setuptools
     pip3 install django

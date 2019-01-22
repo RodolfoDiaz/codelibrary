@@ -2,7 +2,7 @@
 """Python Program to convert temperature in celsius to fahrenheit."""
 
 # change this value for a different result
-celsius = float(raw_input('Enter a temperature in celsius: '))
+celsius = float(input('Enter a temperature in celsius: '))
 
 # calculate fahrenheit
 fahrenheit = (celsius * 1.8) + 32

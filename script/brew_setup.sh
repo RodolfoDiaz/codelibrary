@@ -36,6 +36,7 @@ fi
 if [ "$1" == "i" ]; then
    brew install git
    brew install node
+   brew install python@2
    brew install python
    brew install unrar
    brew install mongodb

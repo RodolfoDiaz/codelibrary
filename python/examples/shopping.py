@@ -5,7 +5,7 @@
 def get_order():
     """Public method (docstring)."""
     print("[command] [item] (command is a to add, d to delete, q to quit)")
-    line = raw_input()
+    line = input()
 
     command = line[:1]
     item = line[2:]

@@ -21,7 +21,7 @@ def show_word(word):
 def get_guess():
     """Public method (docstring)."""
     print("Enter a letter: ")
-    return raw_input()
+    return input()
 
 
 def process_letter(letter, secret_word, blanked_word):

@@ -3,7 +3,7 @@
 # year = 2000
 
 # To get year (integer input) from the user
-year = int(raw_input("Enter a year: "))
+year = int(input("Enter a year: "))
 
 if (year % 4) == 0:
     if (year % 100) == 0:
