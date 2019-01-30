@@ -8,7 +8,7 @@ if [ "$(uname)" == "Darwin" ]; then
     brew upgrade git
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
-    sudo apt-get install git -y
+    sudo apt install git -y
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
