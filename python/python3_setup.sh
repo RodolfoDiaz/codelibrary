@@ -1,7 +1,7 @@
 if [ "$(uname)" == "Darwin" ]; then
     if [ "$1" == "i" ]; then
         # Reference: https://docs.brew.sh/Homebrew-and-Python
-        echo "Install Python and pip in macOS using Homebrew"
+        echo "Install Python 3 and pip in macOS using Homebrew"
         brew install python
         # python 3 simlinks are here: ll /usr/local/bin/py*
         # pip / pip3 / pip3.7 simlinks are here: ll /usr/local/bin/pip*
@@ -13,16 +13,16 @@ if [ "$(uname)" == "Darwin" ]; then
         pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U
 
         # -- Global Packages --
-        # pip3 install pylint
-        # pip3 install autopep8
-        # pip3 install virtualenv
+        pip3 install pylint
+        pip3 install autopep8
+        pip3 install virtualenv
         # python3 -m virtualenv my_venv_py3
     fi
 
     if [ "$1" == "u" ]; then
-        brew uninstall python
         # remove all packages installed by pip
-        # pip freeze | xargs pip uninstall -y
+        pip3 freeze | xargs pip3 uninstall -y
+        brew uninstall python
         rm /usr/local/bin/pip
         rm -rf /usr/local/lib/python3.7
     fi
