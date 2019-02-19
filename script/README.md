@@ -1,1 +1,0 @@
-# Useful information, notes and step-by-step guides
