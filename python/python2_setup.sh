@@ -25,6 +25,11 @@ if [ "$(uname)" == "Darwin" ]; then
         brew uninstall python@2
         rm /usr/local/bin/pip
         rm -rf /usr/local/lib/python2.7
+        # uninstalling dependecies for python
+        brew uninstall sqlite
+        brew uninstall gdbm
+        brew uninstall readline
+        brew uninstall openssl
     fi
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     if [ "$1" == "i" ]; then
