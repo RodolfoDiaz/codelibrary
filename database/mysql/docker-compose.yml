@@ -1,0 +1,30 @@
+# https://docs.docker.com/compose/overview/
+version: '3.7'
+
+services:
+  db:
+    image: mysql
+    container_name: mysql_container1
+    hostname: mySql1
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'testUser'
+      MYSQL_PASSWORD: 'userPwd1'
+      MYSQL_ROOT_PASSWORD: 'rootPwd1'
+    ports:
+      # <Port Exposed> : <MySQL Port running inside the container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+# Names our volume
+volumes:
+  my-db:
+
+# If you want a fresh start for everything, run:
+# docker system prune -a 
+#   the command above removes any unused containers
+# and 
+# docker volume prune
+#   this command removes any unused volumes
