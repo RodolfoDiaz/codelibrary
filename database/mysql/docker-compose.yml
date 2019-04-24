@@ -3,7 +3,7 @@ version: '3.7'
 
 services:
   db:
-    image: mysql
+    image: mysql:latest
     container_name: mysql_container1
     hostname: mySql1
     restart: always
@@ -11,16 +11,18 @@ services:
       MYSQL_DATABASE: 'MyTestDB'
       MYSQL_USER: 'testUser'
       MYSQL_PASSWORD: 'userPwd1'
-      MYSQL_ROOT_PASSWORD: 'rootPwd1'
+      MYSQL_ROOT_PASSWORD: 'rootPwd1' # TODO: change this to a secure password
     ports:
       # <Port Exposed> : <MySQL Port running inside the container>
       - '3306:3306'
     expose:
       # Opens port 3306 on the container
       - '3306'
+    volumes:
+      - myTestData:/var/lib/mysql
 # Names our volume
 volumes:
-  my-db:
+  myTestData:
 
 # If you want a fresh start for everything, run:
 # docker system prune -a 

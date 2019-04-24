@@ -1,10 +1,10 @@
 # https://hub.docker.com/_/mysql
 if [ "$1" == "up" ]; then
-    docker pull mysql
+    docker pull mysql:latest
     docker image ls -a
     docker container ls -a
     # Create a new MySQL container
-    docker run -p 3306:3306 --name mysql_container1 -e MYSQL_DATABASE=MyTestDB -e MYSQL_ROOT_PASSWORD=rootPwd1 -e MYSQL_USER=testUser -e MYSQL_PASSWORD=userPwd1 -h mySql1 -d mysql
+    docker run -p 3306:3306 --name mysql_container1 -e MYSQL_DATABASE=MyTestDB -e MYSQL_ROOT_PASSWORD=rootPwd1 -e MYSQL_USER=testUser -e MYSQL_PASSWORD=userPwd1 -v mysql_myTestData:/var/lib/mysql -h mySql1 -d mysql
     echo 'Start the new container'
     docker start mysql_container1
 elif [ "$1" == "down" ];  then
