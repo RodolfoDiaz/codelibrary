@@ -1,0 +1,48 @@
+# https://hub.docker.com/_/mongo
+# https://hub.docker.com/_/mongo-express
+version: "3.7"
+
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    container_name: mongodb_container1
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminPwd1 # TODO: change this to a secure password
+    volumes:
+      # seeding scripts
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      # named volumes
+      - dbTestData:/data/db
+      - dbConfigData:/data/configdb
+    networks:
+      - dbTestNetwork
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    container_name: mongoexpress_container1
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb_container1
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=adminPwd1
+      - ME_CONFIG_MONGODB_PORT=27017
+    networks:
+      - dbTestNetwork
+    # links:
+    #   - "mongodb"
+
+volumes:
+  # default dir on Ubuntu: /var/lib/docker/volumes
+  dbTestData:
+  dbConfigData:
+
+networks:
+  dbTestNetwork:
+    driver: bridge
