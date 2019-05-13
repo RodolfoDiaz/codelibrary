@@ -1,8 +1,9 @@
 # https://docs.docker.com/compose/overview/
+# https://hub.docker.com/_/mysql
 version: '3.7'
 
 services:
-  db:
+  mysqldb:
     image: mysql:latest
     container_name: mysql_container1
     hostname: mySql1
@@ -14,10 +15,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'rootPwd1' # TODO: change this to a secure password
     ports:
       # <Port Exposed> : <MySQL Port running inside the container>
-      - '3306:3306'
-    expose:
-      # Opens port 3306 on the container
-      - '3306'
+      - 3306:3306
     volumes:
       - myTestData:/var/lib/mysql
 # Names our volume
