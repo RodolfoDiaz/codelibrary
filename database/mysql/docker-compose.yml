@@ -1,26 +1,60 @@
 # https://docs.docker.com/compose/overview/
 # https://hub.docker.com/_/mysql
+# https://hub.docker.com/r/phpmyadmin/phpmyadmin/
+# https://hub.docker.com/_/adminer/
 version: '3.7'
 
 services:
   mysqldb:
     image: mysql:latest
     container_name: mysql_container1
+    command: --default-authentication-plugin=mysql_native_password
     hostname: mySql1
     restart: always
     environment:
-      MYSQL_DATABASE: 'MyTestDB'
-      MYSQL_USER: 'testUser'
-      MYSQL_PASSWORD: 'userPwd1'
-      MYSQL_ROOT_PASSWORD: 'rootPwd1' # TODO: change this to a secure password
+      MYSQL_DATABASE: MyTestDB
+      MYSQL_USER: testUser
+      MYSQL_PASSWORD: userPwd1
+      MYSQL_ROOT_PASSWORD: rootPwd1 # TODO: change this to a secure password
     ports:
       # <Port Exposed> : <MySQL Port running inside the container>
       - 3306:3306
     volumes:
       - myTestData:/var/lib/mysql
+    networks:
+      - docknet
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: myAdmin_container1
+    hostname: myAdmin1
+    restart: always
+    environment:
+      PMA_HOST: mysqldb
+      PMA_ARBITRARY: 1
+    ports:
+      - 8080:80
+    networks:
+      - docknet
+  adminer:
+    image: adminer:latest
+    container_name: adminer_container1
+    hostname: adminer1
+    restart: always
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: mysql
+      ADMINER_DEFAULT_SERVER: mysqldb
+      ADMINER_DESIGN: mvt
+    ports:
+      - 8081:8080
+    networks:
+      - docknet
 # Names our volume
 volumes:
   myTestData:
+
+networks:
+  docknet:
+    driver: bridge
 
 # If you want a fresh start for everything, run:
 # docker system prune -a 
