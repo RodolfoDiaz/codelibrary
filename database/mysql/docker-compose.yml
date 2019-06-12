@@ -55,10 +55,3 @@ volumes:
 networks:
   docknet:
     driver: bridge
-
-# If you want a fresh start for everything, run:
-# docker system prune -a 
-#   the command above removes any unused containers
-# and 
-# docker volume prune
-#   this command removes any unused volumes
