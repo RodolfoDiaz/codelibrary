@@ -8,9 +8,9 @@ import os
 
 def current_weather():
     """Public method (docstring)."""
-    city = raw_input('Enter the city name: ')
-    country = raw_input('Enter the two letters country code'
-                        ' (use ISO 3166 country codes): ')
+    city = input('Enter the city name: ')
+    country = input('Enter the two letters country code'
+                    ' (use ISO 3166 country codes): ')
 
     url = "http://api.openweathermap.org/data/2.5/weather?"\
           "q={0},{1}&APPID=58d04cd0aea2985db211aa028ccb9f4e"\
