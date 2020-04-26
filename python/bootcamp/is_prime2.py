@@ -1,10 +1,10 @@
+"""A method to check whether is prime."""
+
 import math
 
 
 def is_prime2(num):
-    '''
-    Better method of checking for primes.
-    '''
+    """Better method of checking for primes."""
     if num % 2 == 0 and num > 2:
         return False
     for i in range(3, int(math.sqrt(num)) + 1, 2):

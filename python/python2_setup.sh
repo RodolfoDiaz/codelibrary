@@ -8,12 +8,13 @@ if [ "$(uname)" == "Darwin" ]; then
         # pip packages are located here: ll /usr/local/lib/python2.7
 
         # Installing Packages - https://packaging.python.org/tutorials/installing-packages/
-        pip2 install --upgrade pip setuptools wheel
+        pip2 install --upgrade pip setuptools wheel --user
         echo "Python 2 - Upgrade all outdated packages (to list them: pip2 list --outdated)"
         pip2 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip2 install -U
 
         # -- Global Packages --
         pip2 install pylint
+        pip2 install pylama
         pip2 install autopep8
         pip2 install virtualenv
         # python2 -m virtualenv my_venv_py2

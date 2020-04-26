@@ -1,7 +1,8 @@
+"""A method to check whether is prime."""
+
+
 def is_prime(num):
-    '''
-    Naive method of checking for primes.
-    '''
+    """Naive method of checking for primes."""
     for n in range(2, num):
         if num % n == 0:
             print(num, 'is not prime')

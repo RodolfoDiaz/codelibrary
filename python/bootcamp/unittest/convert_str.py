@@ -1,4 +1,8 @@
+"""Code sample."""
+
+
 def myfunc(s):
+    """Convert strings to mixed caps."""
     ret_val = ''
     index = 0
     for letter in s:
@@ -9,6 +13,3 @@ def myfunc(s):
         index = index+1
 
     return ret_val
-
-
-print(myfunc('hello world'))
