@@ -51,7 +51,7 @@ Enter the following commands:
     /opt/quest/bin/vastool user checkaccess <new_user>
     ```
 
-**Note:** For a AD Domain User to be able to login, make sure the Active Directory user account has "UNIX Attributes" settings configured.
+**Note:** For Domain Users to be able to login through SSH, make sure the Active Directory user account has "UNIX Attributes" settings configured.
 
 ## Add User to Sudoers in Debian
 
@@ -70,15 +70,36 @@ Edit the file and add a new entry, for example: username1 ALL=(root)NOPASSWD:ALL
 
 apt is a command-line utility for installing, updating, removing, and otherwise managing deb packages on Ubuntu, Debian, and related Linux distributions. It combines the most frequently used commands from the apt-get and apt-cache tools with different default values of some options.
 
+    sudo apt update
+    sudo apt upgrade
+
+To install Nano text editor on Debian or Ubuntu machines, execute the following command:
+
+    sudo apt install nano
+
 For reference read [here](https://linuxize.com/post/how-to-use-apt-command/).
 
 ## Set DNS Nameservers
 
 The /etc/resolv.conf is the main configuration file for the DNS name resolver library. The resolver is a set of functions in the C library that provide access to the Internet Domain Name System (DNS).  More reference [here](https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/).
 
-     sudo nano /etc/resolv.conf
+     $ sudo nano /etc/resolvconf/resolv.conf.d/head
 
-How to Set DNS Nameservers on Ubuntu 18.04? read [here](https://linuxize.com/post/how-to-set-dns-nameservers-on-ubuntu-18-04/).
+If your network connection is direct to the Internet you can use public DNS servers:
+
+    nameserver 8.8.4.4
+    nameserver 8.8.8.8
+
+Inside a corporate network you have to use the internal DNS servers (IP address), for example:
+
+    nameserver 10.248.2.1
+    nameserver 10.248.2.9
+
+Save the changes and restart the resolvconf.service or reboot the system.
+
+Now when you check the /etc/resolv.conf file, the name server entries should be stored there permanently. 
+
+    $ sudo nano /etc/resolv.conf
 
 ## Configure Proxy settings
 
@@ -92,12 +113,22 @@ In order to access external services, you would normally need to setup a proxy.
 
     $ sudo tee /etc/environment > /dev/null << EOT
 
-    HTTP_PROXY=http://proxy.server.com:911
-    http_proxy=http://proxy.server.com:911
-    HTTPS_PROXY=https://proxy.server.com:912
-    https_proxy=https://proxy.server.com:912
+    HTTP_PROXY="http://proxy.server.com:911"
+    http_proxy="http://proxy.server.com:911"
+    HTTPS_PROXY="https://proxy.server.com:912"
+    https_proxy="https://proxy.server.com:912"
+    FTP_PROXY="http://proxy.server.com:911"
+    ftp_proxy="http://proxy.server.com:911"
+    ALL_PROXY="http://proxy.server.com:911"
+    all_proxy="http://proxy.server.com:911"
+    NO_PROXY="localhost,127.0.0.1"
+    no_proxy="localhost,127.0.0.1"
+    NO_PROXY="mycompany.com"
+    no_proxy="mycompany.com"
     EOT
 
+    $ source /etc/environment
+    
     $ sudo git config --system http.proxy http://proxy.server.com:911
     $ sudo git config --system https.proxy https://proxy.server.com:912
 
