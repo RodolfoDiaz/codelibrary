@@ -55,3 +55,22 @@ sfdx force:source:push
 sfdx force:user:permset:assign -n DreamInvest 
 # Open your org
 sfdx force:org:open
+
+# Deploy the Converted App Using Metadata API
+# Register Your Testing Environment
+sfdx force:auth:web:login -a MyTP
+# Confirm that this org is available
+sfdx force:org:list
+
+# Convert Source to Metadata Format and Deploy
+# Create a folder to put the converted files called mdapioutput.
+mkdir mdapioutput
+sfdx force:source:convert -d mdapioutput/
+# Deploy it to your testing environment
+sfdx force:mdapi:deploy -d mdapioutput/ -u MyTP -w 100
+# Assign a permission set
+sfdx force:user:permset:assign -n DreamInvest -u MyTP
+# Run your tests and interact with the app
+sfdx force:org:open -u MyTP
+# You’ve just walked through a large chunk of the package development life cycle. 
+# You created an app, converted an existing app, and deployed the app to an org.

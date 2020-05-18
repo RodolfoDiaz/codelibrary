@@ -3,15 +3,15 @@ if [ "$(uname)" == "Darwin" ]; then
     echo "Install Git in macOS"
     # You need to change the '~/.bash_profile' file, add the following line:
     #   export PATH="/usr/local/bin:${PATH}"
-    # This little one liner allows us to update Git and use the Homebrew installation instead of our Native OS’. 
+    # This little one liner allows us to update Git and use the Homebrew installation instead of our Native OS’.
     brew install git
     brew upgrade git
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
     sudo apt install git -y
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+    elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
-elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+    elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     echo "Download Git for 64 bits Windows NT platform - https://git-scm.com/download/win"
     # Credential helper alleviates the need for you to continually enter your credentials when interacting with Github
     # https://github.com/Microsoft/Git-Credential-Manager-for-Windows
@@ -43,18 +43,25 @@ git config --list --global
 
 # Start using git, create a repository and add some code:
 if [ "$1" == "new" ]; then
-  # To create the repository using GitHub website, log in to your user account at https://github.com/ 
-  # under 'Repositories' click New button.
-  # Fill in the repository name and click the “Create repository” button.
-  # To create the repo from command line, you will need to have a GitHub Personal Access Token and execute this:
-  # curl -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repo_name'"}'
-  mkdir my_new_repo
-  cd my_new_repo
-  git init
-  git remote add origin https://github.com/[your-git-org]/[new-git-repo].git
-  git pull origin master
-  echo "My new repository test file" >> test.txt;
-  git add .
-  git commit -m "Initial commit"
-  git push -u origin master
+    # To create the repository using GitHub website, log in to your user account at https://github.com/
+    # under 'Repositories' click New button.
+    # Fill in the repository name and click the “Create repository” button.
+    # To create the repo from command line, you will need to have a GitHub Personal Access Token and execute this:
+    # curl -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repo_name'"}'
+    mkdir my_new_repo
+    cd my_new_repo
+    git init
+    git remote add origin https://github.com/[your-git-org]/[new-git-repo].git
+    git pull origin master
+    echo "My new repository test file" >> test.txt;
+    touch setup.sh
+    git add .
+    git commit -m "Initial commit"
+    git push -u origin master
+    # List the contents of a tree object - https://git-scm.com/docs/git-ls-tree
+    git ls-tree HEAD . -l
+    # Set the execute permissions on the updated files - https://git-scm.com/docs/git-update-index
+    git update-index --chmod=+x setup.sh
+    git add .
+    git commit -m "Changed file mode"
 fi
