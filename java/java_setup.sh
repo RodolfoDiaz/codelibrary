@@ -23,6 +23,16 @@ if [ "$(uname)" == "Darwin" ]; then
         brew uninstall openjdk@11
     fi
 
+    # Apple recommends to set the $JAVA_HOME variable to /usr/libexec/java_home, 
+    # just export $JAVA_HOME in file ~/.zshrc or ~/.bash_profile or ~/.profile.
+
+    # export JAVA_HOME=$(/usr/libexec/java_home)
+
+    # Check versions installed:
+    # /usr/libexec/java_home -V
+
+    echo "Your JAVA_HOME environment variable points to: $JAVA_HOME"
+
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Java in Ubuntu Linux"
     # First, update the package index.
