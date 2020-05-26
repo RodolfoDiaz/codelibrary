@@ -133,3 +133,29 @@ In order to access external services, you would normally need to setup a proxy.
     $ sudo git config --system https.proxy https://proxy.server.com:912
 
 In order for these settings to take effect, you might need to reboot (sudo reboot).
+
+## Configure a new volume
+
+Check what are the block storage devices that are attached:
+
+    lsblk --all
+
+for example, we see a disk named "xvdb".
+
+mke2fs is used to create an ext2, ext3, or ext4 filesystem, usually in a disk partition
+
+    sudo mke2fs /dev/xvdb
+
+Mount the new volume in the Linux machine.  The parameters are: first the mount point and the folder the we want to mount that volume.
+
+    sudo mount /dev/xvdb /mnt
+
+Change to the folder defined, or create files/folders on the new volume.
+
+    cd /mnt
+    ls -la
+
+To unmount the volume to the folder, do the following:
+
+    umount /mnt
+
