@@ -1,18 +1,20 @@
 {
-  "orgName": "Demo company",
+  "orgName": "SIDSA",
   "edition": "Developer",
+  "language": "en",
+  "country": "US",
   "features": [],
   "settings": {
     "lightningExperienceSettings": {
-        "enableS1DesktopEnabled": true
+      "enableS1DesktopEnabled": true
     },
     "securitySettings": {
-        "passwordPolicies": {
-            "enableSetPasswordInApi": true
-        }
+      "passwordPolicies": {
+        "enableSetPasswordInApi": true
+      }
     },
     "mobileSettings": {
-        "enableS1EncryptedStoragePref2": false
+      "enableS1EncryptedStoragePref2": false
     }
   }
 }

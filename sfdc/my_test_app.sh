@@ -27,7 +27,9 @@ sfdx force:source:push --targetusername TestScratchOrg
 sfdx force:source:pull --targetusername TestScratchOrg
 # Run Apex Tests
 sfdx force:apex:test:run --wait 10 --resultformat json --codecoverage --testlevel RunLocalTests --json
-# Logout from Dev Hub:
-sfdx force:auth:logout --targetusername TestDevHub --noprompt
 # Remove the scratch org:
 sfdx force:org:delete -u TestScratchOrg
+# Logout from Dev Hub:
+sfdx force:auth:logout --targetusername TestDevHub --noprompt
+# Logout all
+sfdx force:auth:logout --all --noprompt
