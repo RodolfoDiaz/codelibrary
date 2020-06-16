@@ -159,3 +159,32 @@ To unmount the volume to the folder, do the following:
 
     umount /mnt
 
+## Check Disk Space
+
+Linux has a strong built-in utility called ‘df‘. The ‘df‘ command stands for “disk filesystem“, it is used to get a full summary of available and used disk space usage of the file system on Linux system.
+
+Using ‘-h‘ parameter with (df -h) will show the file system disk space statistics in “human readable” format, means it gives the details in bytes, megabytes, and gigabyte.
+
+    df -h
+
+Display Information of all File System Disk Space Usage
+
+    df -a
+
+fdisk -l shows disk size along with disk partitioning information
+
+    fdisk -l
+
+## Check memory usage
+
+The free command is the most simple and easy to use command to check memory usage on linux. 
+Here is a quick example, showing output in human-readable format.
+
+    free -h
+
+The top command is generally used to check memory and cpu usage per process. However it also reports total memory usage and can be used to monitor the total RAM usage.
+
+    top
+
+
+
