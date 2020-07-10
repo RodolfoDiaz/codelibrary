@@ -13,6 +13,8 @@ sfdx force:org:list
 sfdx force:org:create --setalias TestScratchOrg --setdefaultusername --definitionfile config/project-scratch-def.json --targetdevhubusername TestDevHub
 # Check the configuration (defaultusername)
 sfdx force:config:list
+# Push source code to the scratch org
+sfdx force:source:push
 # Open the scratch org you just created.
 sfdx force:org:open -u TestScratchOrg
 # Create Class TemperatureConverter
