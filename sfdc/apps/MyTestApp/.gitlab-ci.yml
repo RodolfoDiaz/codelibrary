@@ -1,0 +1,152 @@
+#
+# GitLab CI/CD Pipeline
+#
+
+stages:
+  - install_dependencies
+  - test
+  - build
+  - check_package
+  - deploy_to_dev_sandbox
+  - deploy_to_devint_server
+  - deploy_to_qa_server
+  - deploy_to_bench_server
+  - deploy_to_prod
+
+code_testing:
+  stage: test
+  only:
+    - dev
+  script:
+    - echo 'Unit Testing...'
+    - ./cicd/code_testing.sh
+  artifacts:
+    paths:
+      - cicd_test_run.json
+
+build_package:
+  stage: build
+  only:
+    - dev
+  script:
+    - echo 'Create unlocked Salesforce package...'
+    - ./cicd/build.sh
+  artifacts:
+    paths:
+      - cicd_version_created.txt
+      - cicd_version_list.txt
+      - cicd_version_report.json
+      - ./mdapioutput
+
+deploy_to_scratch_org:
+  stage: check_package
+  only:
+    - dev
+  dependencies:
+    - build_package
+  script:
+    - echo 'Deploy package into a new Scratch Org...'
+    - ./cicd/deploy_to_scratch_org.sh
+
+deploy_to_dev_sandbox:
+  stage: deploy_to_dev_sandbox
+  environment:
+    name: development
+  only:
+    - dev
+  dependencies:
+    - build_package
+  script:
+    - echo 'Deploy package into Development Sandbox environment...'
+    - ./cicd/deploy_to_server.sh sandbox
+
+deploy_to_devint_server:
+  stage: deploy_to_devint_server
+  environment:
+    name: development
+  only:
+    - dev
+  dependencies:
+    - build_package
+    - deploy_to_dev_sandbox
+  script:
+    - echo 'Deploy package into DEVINT environment...'
+    - ./cicd/deploy_to_server.sh devint1
+  when: manual
+
+deploy_to_qa_server:
+  stage: deploy_to_qa_server
+  environment:
+    name: test
+  only:
+    - dev
+  dependencies:
+    - build_package
+    - deploy_to_devint_server
+  script:
+    - ./cicd/automerge.sh dev qa
+    - echo 'Deploy package into QA environment...'
+    - ./cicd/deploy_to_server.sh qa1
+  when: manual
+
+deploy_to_bench_server:
+  stage: deploy_to_bench_server
+  environment:
+    name: bench
+  only:
+    - dev
+  dependencies:
+    - build_package
+  script:
+    - ./cicd/automerge.sh qa bench
+    - echo 'Deploy package into Bench environment...'
+    - ./cicd/deploy_to_server.sh bench
+  when: manual
+
+deploy_to_prod:
+  stage: deploy_to_prod
+  environment:
+    name: production
+  only:
+    - dev
+  dependencies:
+    - build_package
+    - deploy_to_qa_server
+  script:
+    - ./cicd/automerge.sh bench master
+    - echo 'Deploy package into Production environment...'
+    - ./cicd/deploy_to_server.sh prod
+  artifacts:
+    paths:
+      - cicd_version_report_promote.json
+  when: manual
+
+install_dependencies:
+  stage: install_dependencies
+  only:
+    - dev
+  script:
+    # Install jq, a json parsing library
+    - sudo apt -y install jq
+    # Setup SFDX environment variables
+    # https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_cli_env_variables.htm
+    - export SALESFORCE_CLI_URL=https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+    - export SFDX_AUTOUPDATE_DISABLE=false
+    - export SFDX_USE_GENERIC_UNIX_KEYCHAIN=true
+    - export SFDX_DOMAIN_RETRY=600
+    - export SFDX_LOG_LEVEL=DEBUG
+    - export HTTP_PROXY=user:pass@my.proxy.server:8080
+    - export HTTPS_PROXY=user:pass@my.proxy.server:8081
+    # Install Salesforce CLI
+    - mkdir sfdx
+    - wget -qO- $SALESFORCE_CLI_URL | tar xJ -C sfdx --strip-components 1
+    - sudo './sfdx/install'
+    - export PATH=./sfdx/$(pwd):$PATH
+    - echo $PATH
+    # Prevent an error that occurs when GitLab-Runner runtime fails to update the .cache folder
+    - if [ -f /home/gitlab-runner/.cache/sfdx/module-types.json ]; then sudo chown gitlab-runner:gitlab-runner /home/gitlab-runner/.cache/sfdx/module-types.json; fi
+    # Output CLI version and plug-in information
+    - sfdx update
+    - sfdx --version
+    - sfdx plugins:install salesforcedx@49.7.0
+    - sfdx plugins --core
