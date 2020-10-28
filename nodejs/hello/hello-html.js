@@ -5,9 +5,11 @@ const port = process.env.PORT || 3000;
 
 var server = http.createServer((req, res) => {
   res.writeHead(200, {
-    'Content-Type': 'text/html'
+    'Content-Type': 'text/html',
   });
-  res.write('<html><body><h1 style="color:green;">Hello World!</h1></body></html>');
+  res.write(
+    '<html><body><h1 style="color:green;">Hello World!</h1></body></html>'
+  );
   res.end();
 });
 

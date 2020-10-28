@@ -22,16 +22,26 @@ function obtenerDatos(tipoIndicador, antiguedadEnDias) {
   fechaInicio.setDate(fechaInicio.getDate() - antiguedadEnDias);
   var fechaFinal = new Date();
 
-  var queryString = '?tcIndicador=' + tipoIndicador + '&tcFechaInicio=' + fechaInicio.toLocaleDateString('es-CR') + '&tcFechaFinal=' + fechaFinal.toLocaleDateString('es-CR') + '&tcNombre=Test&tnSubNiveles=N';
-  const url = 'https://gee.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx/ObtenerIndicadoresEconomicos' + queryString;
+  var queryString =
+    '?tcIndicador=' +
+    tipoIndicador +
+    '&tcFechaInicio=' +
+    fechaInicio.toLocaleDateString('es-CR') +
+    '&tcFechaFinal=' +
+    fechaFinal.toLocaleDateString('es-CR') +
+    '&tcNombre=Test&tnSubNiveles=N';
+  const url =
+    'https://gee.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx/ObtenerIndicadoresEconomicos' +
+    queryString;
 
-  return axios.get(url)
-    .then(response => {
+  return axios
+    .get(url)
+    .then((response) => {
       var convert = require('xml-js');
       var json = convert.xml2json(response.data, { compact: true, spaces: 4 });
       return json;
     })
-    .catch(error => {
+    .catch((error) => {
       console.log('Error', error);
     });
 }
