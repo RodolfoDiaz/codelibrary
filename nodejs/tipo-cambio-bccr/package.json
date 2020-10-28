@@ -9,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.18.0",
-    "xml-js": "^1.6.8"
+    "axios": "^0.18.1",
+    "xml-js": "^1.6.11"
   }
 }

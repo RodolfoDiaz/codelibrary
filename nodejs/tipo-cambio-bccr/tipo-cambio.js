@@ -9,29 +9,48 @@ const axios = require('axios');
 const IndicadorCompra = '317';
 const IndicadorVenta = '318';
 
-function compra(antiguedadEnDias = 30) {
-  return obtenerDatos(IndicadorCompra, antiguedadEnDias);
+function compra(correoElectronico, tokenDeSuscripcion, antiguedadEnDias = 30) {
+  return obtenerDatos(
+    IndicadorCompra,
+    antiguedadEnDias,
+    correoElectronico,
+    tokenDeSuscripcion
+  );
 }
 
-function venta(antiguedadEnDias = 30) {
-  return obtenerDatos(IndicadorVenta, antiguedadEnDias);
+function venta(correoElectronico, tokenDeSuscripcion, antiguedadEnDias = 30) {
+  return obtenerDatos(
+    IndicadorVenta,
+    antiguedadEnDias,
+    correoElectronico,
+    tokenDeSuscripcion
+  );
 }
 
-function obtenerDatos(tipoIndicador, antiguedadEnDias) {
+function obtenerDatos(
+  tipoIndicador,
+  antiguedadEnDias,
+  correoElectronico,
+  tokenDeSuscripcion
+) {
   var fechaInicio = new Date();
   fechaInicio.setDate(fechaInicio.getDate() - antiguedadEnDias);
   var fechaFinal = new Date();
 
   var queryString =
-    '?tcIndicador=' +
+    '?Indicador=' +
     tipoIndicador +
-    '&tcFechaInicio=' +
+    '&FechaInicio=' +
     fechaInicio.toLocaleDateString('es-CR') +
-    '&tcFechaFinal=' +
+    '&FechaFinal=' +
     fechaFinal.toLocaleDateString('es-CR') +
-    '&tcNombre=Test&tnSubNiveles=N';
+    '&Nombre=Test&SubNiveles=N' +
+    '&CorreoElectronico=' +
+    correoElectronico +
+    '&Token=' +
+    tokenDeSuscripcion;
   const url =
-    'https://gee.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx/ObtenerIndicadoresEconomicos' +
+    'https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx/ObtenerIndicadoresEconomicos' +
     queryString;
 
   return axios
