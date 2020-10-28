@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/RodolfoDiaz/codelibrary#readme",
   "dependencies": {
-    "mongodb": "^2.2.11"
+    "mongodb": ">=3.1.13"
   }
 }
