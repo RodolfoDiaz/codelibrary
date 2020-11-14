@@ -1,5 +1,5 @@
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
 az login
 
-# List all the subscriptions
-az account list --output json
+# Show the versions of Azure CLI modules and extensions.
+az version
