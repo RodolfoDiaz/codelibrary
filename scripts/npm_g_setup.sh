@@ -10,6 +10,9 @@ if [ "$1" == "i" ]; then
     npm install -g eslint@latest
 fi
 
-npm update -g
+# npm update -g
+# npm install npm@latest -g
+
 npm cache verify
+
 npm list -g --depth=0

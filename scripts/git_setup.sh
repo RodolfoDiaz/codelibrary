@@ -6,12 +6,12 @@ if [ "$(uname)" == "Darwin" ]; then
     # This little one liner allows us to update Git and use the Homebrew installation instead of our Native OS’.
     brew install git
     brew upgrade git
-    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
     sudo apt install git -y
-    elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
-    elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     echo "Download Git for 64 bits Windows NT platform - https://git-scm.com/download/win"
     # Credential helper alleviates the need for you to continually enter your credentials when interacting with Github
     # https://github.com/Microsoft/Git-Credential-Manager-for-Windows
