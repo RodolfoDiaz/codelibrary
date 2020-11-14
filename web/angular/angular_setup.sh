@@ -12,6 +12,6 @@ if [ "$1" == "i" ]; then
     npm install -g eslint-plugin-angular@latest
 fi
 
-npm update -g
+# npm update -g
 npm cache verify
 npm list -g --depth=0

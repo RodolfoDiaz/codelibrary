@@ -1,3 +1,7 @@
+if [ "$1" == "" ]; then
+    echo "No argurment found.  Use 'i' to install or 'u' to uninstall Python."
+fi
+
 if [ "$(uname)" == "Darwin" ]; then
     if [ "$1" == "i" ]; then
         # Reference: https://docs.brew.sh/Homebrew-and-Python

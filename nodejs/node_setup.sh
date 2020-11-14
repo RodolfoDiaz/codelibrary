@@ -15,5 +15,5 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Install Node.js and select the latest version as default
     source ~/.nvm/nvm.sh
     nvm install 14 && nvm alias default 14
-    npm update -g
+    # npm update -g
 fi

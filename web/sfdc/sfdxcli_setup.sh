@@ -2,7 +2,7 @@
 if [ "$(uname)" == "Darwin" ]; then
     echo "Install Salesforce CLI in macOS"
     # brew install sfdx
-    npm install sfdx-cli --global
+    npm install sfdx-cli@latest --global
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Salesforce CLI in Linux"
     # Follow the instructions from: 
@@ -15,5 +15,5 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     # To override this warning you need to 'Unblock' the setup executable from the file Properties screen.
     # https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_considerations.htm
     # sfdx-windows-amd64.exe
-    npm install sfdx-cli --global
+    npm install sfdx-cli@latest --global
 fi
