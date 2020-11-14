@@ -1,0 +1,1 @@
+Get-InstalledModule -Name Az -AllVersions | Select-Object -Property Name, Version
