@@ -24,17 +24,21 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     if [ "$1" == "i" ]; then
         echo "Installing PowerShell on Linux"
-        https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux
+        # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux
         # Update the list of packages
         sudo apt-get update
         # Install pre-requisite packages.
         sudo apt-get install -y wget apt-transport-https
         # Download the Microsoft repository GPG keys
-        wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+        # wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+        # wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
+        wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
         # Register the Microsoft repository GPG keys
         sudo dpkg -i packages-microsoft-prod.deb
-        # Update the list of packages after we added packages.microsoft.com
+        # Update the list of products
         sudo apt-get update
+        # Enable the "universe" repositories
+        sudo add-apt-repository universe
         # Install PowerShell
         sudo apt-get install -y powershell
         echo "Start PowerShell"
