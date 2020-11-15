@@ -1,3 +1,6 @@
+# To install PowerShell on Windows, download the latest install package from:
+# https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows
+#
 # Install Azure PowerShell modules.
 # https://docs.microsoft.com/en-us/powershell/azure/install-az-ps
 # Installing the module for all users on a system requires elevated privileges. 
