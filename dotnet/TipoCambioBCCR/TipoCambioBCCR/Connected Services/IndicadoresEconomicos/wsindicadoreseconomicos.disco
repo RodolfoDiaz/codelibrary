@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx?wsdl" docRef="https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx" xmlns:q1="http://ws.sdde.bccr.fi.cr" binding="q1:wsindicadoreseconomicosSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://gee.bccr.fi.cr/Indicadores/Suscripciones/WS/wsindicadoreseconomicos.asmx" xmlns:q2="http://ws.sdde.bccr.fi.cr" binding="q2:wsindicadoreseconomicosSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

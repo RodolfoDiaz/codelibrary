@@ -9,8 +9,6 @@ namespace TipoCambioBCCR
     /// Tipo cambio de compra y de venta del dólar de los Estados Unidos de América
     /// Referencia del Banco Central de Costa Rica
     /// En colones costarricenses
-    /// <see cref="http://indicadoreseconomicos.bccr.fi.cr/indicadoreseconomicos/Cuadros/frmVerCatCuadro.aspx?idioma=1&CodCuadro=%20400"/>
-    /// <see cref="https://gee.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx"/>
     /// </summary>
     public static class TipoCambio
     {
@@ -19,23 +17,23 @@ namespace TipoCambioBCCR
         private const string Subniveles = "N";
         private const string FormatoFecha = "dd/MM/yyyy";
 
-        public static DataSet Compra(int antiguedadEnDias = 30)
+        public static DataSet Compra(string correoElectronico, string tokenDeSuscripcion, int antiguedadEnDias = 30)
         {
-            return ObtenerDatos(IndicadorCompra, antiguedadEnDias);
+            return ObtenerDatos(correoElectronico, tokenDeSuscripcion, IndicadorCompra, antiguedadEnDias);
         }
-        public static DataSet Venta(int antiguedadEnDias = 30)
+        public static DataSet Venta(string correoElectronico, string tokenDeSuscripcion, int antiguedadEnDias = 30)
         {
-            return ObtenerDatos(IndicadorVenta, antiguedadEnDias);
+            return ObtenerDatos(correoElectronico, tokenDeSuscripcion, IndicadorVenta, antiguedadEnDias);
         }
 
-        private static DataSet ObtenerDatos(string tipoIndicador, int antiguedadEnDias)
+        private static DataSet ObtenerDatos(string correoElectronico, string tokenDeSuscripcion, string tipoIndicador, int antiguedadEnDias)
         {
             string fechaInicio = DateTime.Today.AddDays(antiguedadEnDias * -1).ToString(FormatoFecha, CultureInfo.InvariantCulture);
             string fechaFin = DateTime.Today.ToString(FormatoFecha, CultureInfo.InvariantCulture);
 
-            wsIndicadoresEconomicosSoapClient servicioWeb = new wsIndicadoresEconomicosSoapClient();
+            wsindicadoreseconomicosSoapClient servicioWeb = new wsindicadoreseconomicosSoapClient();
             var tipoCambio = new DataSet();
-            tipoCambio = servicioWeb.ObtenerIndicadoresEconomicos(tipoIndicador, fechaInicio, fechaFin, "Website", Subniveles);
+            tipoCambio = servicioWeb.ObtenerIndicadoresEconomicos(tipoIndicador, fechaInicio, fechaFin, "Website", Subniveles, correoElectronico,tokenDeSuscripcion);
 
             return tipoCambio;
         }
