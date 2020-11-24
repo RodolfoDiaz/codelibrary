@@ -6,7 +6,7 @@ namespace SecurityConsole
     class Program
     {
         private const string plainText = "Hello World!";
-        private const string password = "W3@kPa$sw0dAr3N0Tg*oD";
+        private const string password = "W3@kPa$sw0dSAr3N0Tg*oD";
         private static string salt = DateTime.UtcNow.ToString();
         private const string filePath = @"C:\Windows\win.ini";
 
