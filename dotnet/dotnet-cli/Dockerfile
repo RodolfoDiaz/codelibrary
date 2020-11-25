@@ -1,0 +1,21 @@
+# Official images for .NET and ASP.NET Core
+# https://hub.docker.com/_/microsoft-dotnet
+#
+# Example taken from https://docs.docker.com/engine/examples/dotnetcore/
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+WORKDIR /c/Users/Radiazca/source/repos/test/codelibrary/dotnet/dotnet-cli/myWebApp
+
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
+WORKDIR /c/Users/Radiazca/source/repos/test/codelibrary/dotnet/dotnet-cli/myWebApp
+COPY --from=build-env /c/Users/Radiazca/source/repos/test/codelibrary/dotnet/dotnet-cli/myWebApp/out .
+ENTRYPOINT ["dotnet", "myWebApp.dll"]
