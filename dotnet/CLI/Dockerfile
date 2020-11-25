@@ -4,7 +4,7 @@
 # Example taken from https://docs.docker.com/engine/examples/dotnetcore/
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
-WORKDIR /c/Users/Radiazca/source/repos/test/codelibrary/dotnet/dotnet-cli/myWebApp
+WORKDIR $PWD/myWebApp
 
 # Copy csproj and restore as distinct layers
 COPY *.csproj ./
@@ -16,6 +16,6 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
-WORKDIR /c/Users/Radiazca/source/repos/test/codelibrary/dotnet/dotnet-cli/myWebApp
-COPY --from=build-env /c/Users/Radiazca/source/repos/test/codelibrary/dotnet/dotnet-cli/myWebApp/out .
+WORKDIR $PWD/myWebApp
+COPY --from=build-env $PWD/myWebApp/out .
 ENTRYPOINT ["dotnet", "myWebApp.dll"]

@@ -2,18 +2,17 @@
 # https://docs.microsoft.com/en-us/dotnet/core/tools/
 
 New-Variable -Name "AppName" -Visibility Public -Value "myWebApp"
-echo "---> Remove app folder (if found)"
 if ( Test-Path -Path $AppName -PathType Container ) { Remove-Item -path $AppName -Recurse –force }
-echo "---> Create a new Web Application"
+Write-Host "---> Create a new Web Application" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new
 dotnet new webApp -o $AppName --no-https
-echo "---> Create .gitignore"
+Write-Host "---> Create .gitignore"  -ForegroundColor Green
 dotnet new gitignore --output $AppName
-echo "---> Build the Web Application"
+Write-Host "---> Build the Web Application" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-build
 dotnet build $AppName
 
-# echo "---> Run the Web Application (hit Ctrl-C to exit)"
+Write-Host "---> Building Web Application (hit Ctrl-C to exit)" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-run
 dotnet run --project .\$AppName\
 # Browse to: http://localhost:5000
