@@ -1,6 +1,11 @@
 # Azure Functions - https://azure.microsoft.com/en-us/services/functions/
+
+# Powershell generates a terminating error when the content of an expression 
+# or script-block violates basic best-practice coding rules.
 Set-StrictMode -Version latest
+# Exit immediately if a command exits with a non-zero status.
 $ErrorActionPreference = "Stop"
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
@@ -24,16 +29,18 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
   Register-AzResourceProvider -ProviderNamespace $_
 }
 
+
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$resourceGroupName = "mytest-func-demo"
-$location = "West US"
-$tag = @{Environment = "Test"; Department = "IT" }
-$resourceGroup = Get-AzResourceGroup -Name $resourceGroupName -ErrorAction SilentlyContinue
+$paramResourceGroup = "mytest-func-demo"
+$paramLocation = "westus"
+$paramTags = @{Environment = "Test"; Department = "IT" }
+
+$resourceGroup = Get-AzResourceGroup -Name $paramResourceGroup -ErrorAction SilentlyContinue
 if (-not $resourceGroup) {
   # Create new Resource Group - Get-Help New-AzResourceGroup -Online
-  $resourceGroup = New-AzResourceGroup -Name $resourceGroupName -Location $location -Tag $tag
+  $resourceGroup = New-AzResourceGroup -Name $paramResourceGroup -Location $paramLocation -Tag $paramTags
 }
 Write-Host "---> Resource Group details:" -ForegroundColor Green
 $resourceGroup
@@ -46,14 +53,14 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # to the storage account name. That should be suitable to make it globally unique.
 $rnd = (New-Guid).ToString().Split("-")[0]
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$storageAccountName = "mytest$rnd"
-$storageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
+$paramStorageAccount = "mytest$rnd"
+$paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $newStorageParams = @{
-  ResourceGroupName = $resourceGroupName
-  AccountName       = $storageAccountName
-  Location          = $location
-  SkuName           = $storageSku
-  Tag               = $tag
+  ResourceGroupName = $paramResourceGroup
+  AccountName       = $paramStorageAccount
+  Location          = $paramLocation
+  SkuName           = $paramStorageSku
+  Tag               = $paramTags
 }
 # Create new Storage Account - Get-Help New-AzStorageAccount -Online
 $storageAccount = New-AzStorageAccount @newStorageParams
@@ -63,24 +70,24 @@ $storageAccount
 
 # --------------- 4 --------------- 
 # Get storage account key and create connection string
-$accountKey = Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -AccountName $storageAccountName |
+$accountKey = Get-AzStorageAccountKey -ResourceGroupName $paramResourceGroup -AccountName $paramStorageAccount |
 Where-Object { $_.KeyName -eq "Key1" } | Select-Object -ExpandProperty Value
-$storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=$storageAccountName;AccountKey=$accountKey"
+$storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
 
 
 # --------------- 5 --------------- 
 Write-Host "---> Create a Function App" -ForegroundColor Green
 # Create the Function App
-$functionAppName = "mytest-func"
+$paramFunctionApp = "mytest-func"
 $newFunctionAppParams = @{
   ResourceType      = "Microsoft.Web/Sites"
-  ResourceName      = $functionAppName
+  ResourceName      = $paramFunctionApp
   Kind              = "functionapp"
-  Location          = $location
-  ResourceGroupName = $resourceGroupName
+  Location          = $paramLocation
+  ResourceGroupName = $paramResourceGroup
   Properties        = @{}
   Force             = $true
-  Tag               = $tag
+  Tag               = $paramTags
 }
 # Create new Function App - Get-Help New-AzResource -Online
 $functionApp = New-AzResource @newFunctionAppParams
@@ -92,18 +99,18 @@ $functionApp
 Write-Host "---> Configure Function App settings" -ForegroundColor Green
 # Set Function app settings
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings
-$functionAppSettings = @{
+$paramFunctionAppSettings = @{
   AzureWebJobDashboard                     = $storageConnectionString
   AzureWebJobsStorage                      = $storageConnectionString
   AzureWebJobsSecretStorageType            = "Files"
   FUNCTIONS_EXTENSION_VERSION              = "~3"
   WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = $storageConnectionString
-  WEBSITE_CONTENTSHARE                     = $storageAccountName
+  WEBSITE_CONTENTSHARE                     = $paramStorageAccount
 }
 $setWebAppParams = @{
-  Name              = $functionAppName
-  ResourceGroupName = $resourceGroupName
-  AppSettings       = $functionAppSettings
+  Name              = $paramFunctionApp
+  ResourceGroupName = $paramResourceGroup
+  AppSettings       = $paramFunctionAppSettings
 }
 # Set configuration settings - Get-Help Set-AzWebApp -Online
 $webApp = Set-AzWebApp @setWebAppParams
@@ -157,15 +164,14 @@ Invoke-RestMethod -Uri "$($functionSecrets.trigger_url)&name=World"
  
 Write-Host "--->  Using POST method" -ForegroundColor Green
 $body = @{ "name" = "World with POST" } | ConvertTo-Json
-Invoke-WebRequest -Uri $functionSecrets.trigger_url -Body $body -Method Post  -ContentType "application/json"
+Invoke-WebRequest -Uri $functionSecrets.trigger_url -Body $body -Method Post -ContentType "application/json"
 
 # Test with cURL
 # Caution: If you are on Windows, please run cURL from the command prompt. 
 # PowerShell has a curl command, but it's an alias for Invoke-WebRequest and is not the same as cURL.
-
 # curl --header "Content-Type: application/json" --header "x-functions-key: <your-function-key>" --request POST --data "{\"name\": \"Azure Function\"}" https://<your-url-here>/api/HelloWorld
 
 
 # Cleanup 
 # Remove Resource Group - Get-Help Remove-AzResourceGroup -Online
-# Get-AzResourceGroup -Name $resourceGroupName | Remove-AzResourceGroup -Force
+# Get-AzResourceGroup -Name $paramResourceGroup | Remove-AzResourceGroup -Force

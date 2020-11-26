@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Azure Functions - https://azure.microsoft.com/en-us/services/functions/
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create a storage account.
+# 4- Get the storage account connection string.
+# 5- Create a function app.
+# 6- Set the function app settings.
+# 7- Deploy the function.
+# 8- Test the function.
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# Azure Functions require the Microsoft.Web and Microsoft.Storage providers. 
+# Most likely, the providers are already registered, but this will make sure of that.
+az provider register --namespace "Microsoft.Web"
+az provider register --namespace "Microsoft.Storage"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="mytest-func-demo"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name $paramResourceGroup --location $paramLocation --tags $paramTags
+fi
+
+
+#az group delete --name $paramResourceGroup --yes
