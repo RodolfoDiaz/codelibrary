@@ -36,8 +36,53 @@ paramTags="Environment=Test Department=IT"
 
 rgExists="$(az group exists --name $paramResourceGroup)"
 if [ "$rgExists" == "false" ]; then
-  az group create --name $paramResourceGroup --location $paramLocation --tags $paramTags
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
 fi
 
+
+# --------------- 3 --------------- 
+echo "---> Creating a storage account"
+# https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_create
+# Azure Functions need a storage account for the deployed code to live in. Storage accounts 
+# also need a globally unique name, so we"ll take the first section of a GUID and append it 
+# to the storage account name. That should be suitable to make it globally unique.
+
+# Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+paramStorageAccount="mytest$RANDOM"
+paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
+az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --tags $paramTags
+
+
+# --------------- 4 --------------- 
+# Get storage account key and create connection string
+# https://docs.microsoft.com/en-us/cli/azure/storage/account/keys?view=azure-cli-latest#az_storage_account_keys_list
+accountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
+storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+
+
+# --------------- 5 --------------- 
+echo "---> Create a Function App"
+# https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az_functionapp_create
+# https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
+# Create the Function App
+paramFunctionApp="mytest-func"
+az functionapp create --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --storage-account "$paramStorageAccount" --functions-version "3" --consumption-plan-location "$paramLocation" --tags $paramTags
+
+
+# --------------- 6 --------------- 
+echo "---> Configure Function App settings"
+# Set Function app settings
+# https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings
+# https://docs.microsoft.com/en-us/cli/azure/functionapp/config/appsettings?view=azure-cli-latest#az_functionapp_config_appsettings_set
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobDashboard=$storageConnectionString"
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsStorage=$storageConnectionString"
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsSecretStorageType=Files"
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_EXTENSION_VERSION=~3"
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING=$storageConnectionString"
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTSHARE=$paramStorageAccount"
+
+
+# --------------- 7 --------------- 
+echo "---> Deploy the function"
 
 #az group delete --name $paramResourceGroup --yes
