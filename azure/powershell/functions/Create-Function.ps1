@@ -95,8 +95,8 @@ Write-Host "---> Configure Function App settings" -ForegroundColor Green
 $functionAppSettings = @{
   AzureWebJobDashboard                     = $storageConnectionString
   AzureWebJobsStorage                      = $storageConnectionString
-  #AzureWebJobsSecretStorageType            = "Files"
-  FUNCTIONS_EXTENSION_VERSION              = "~1"
+  AzureWebJobsSecretStorageType            = "Files"
+  FUNCTIONS_EXTENSION_VERSION              = "~3"
   WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = $storageConnectionString
   WEBSITE_CONTENTSHARE                     = $storageAccountName
 }
@@ -113,6 +113,7 @@ $webApp
 
 # --------------- 7 --------------- 
 Write-Host "---> Deploy the function" -ForegroundColor Green
+# https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-powershell?tabs=azure-powershell
 
 $sourceFile = "run.ps1"
 $functionName = "HelloWorld"
@@ -142,23 +143,21 @@ Write-Host "---> Test the function" -ForegroundColor Green
 # Test function
 $getSecretsParams = @{
   ResourceId = $function.ResourceId
-  Action     = 'listsecrets'
+  Action     = "listsecrets"
   Force      = $true
 }
 # Invoke an action - Get-Help Invoke-AzResourceAction -Online
 $functionSecrets = Invoke-AzResourceAction @getSecretsParams
 
-# For testing Only
+# For testing only, please comment out:
 # Write-Warning $functionSecrets.trigger_url
 
 Write-Host "--->  Using GET method" -ForegroundColor Green
 Invoke-RestMethod -Uri "$($functionSecrets.trigger_url)&name=World"
  
 Write-Host "--->  Using POST method" -ForegroundColor Green
-$body = @{
-  name = 'World'
-} | ConvertTo-Json
-Invoke-RestMethod -Uri $functionSecrets.trigger_url -Body $body -Method Post
+$body = @{ "name" = "World with POST" } | ConvertTo-Json
+Invoke-WebRequest -Uri $functionSecrets.trigger_url -Body $body -Method Post  -ContentType "application/json"
 
 # Test with cURL
 # Caution: If you are on Windows, please run cURL from the command prompt. 

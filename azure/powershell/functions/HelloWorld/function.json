@@ -4,14 +4,13 @@
       "authLevel": "function",
       "type": "httpTrigger",
       "direction": "in",
-      "name": "req",
+      "name": "Request",
       "methods": ["get", "post"]
     },
     {
       "type": "http",
       "direction": "out",
-      "name": "res"
+      "name": "Response"
     }
-  ],
-  "disabled": false
+  ]
 }
