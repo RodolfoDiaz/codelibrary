@@ -64,25 +64,59 @@ storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorag
 echo "---> Create a Function App"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az_functionapp_create
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
-# Create the Function App
 paramFunctionApp="mytest-func"
-az functionapp create --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --storage-account "$paramStorageAccount" --functions-version "3" --consumption-plan-location "$paramLocation" --tags $paramTags
+# Set the runtime language - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
+# Valid values are dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
+functionAppLanguage="powershell"
+#functionRuntimeVersion=7  # set the value for --runtime-version
+az functionapp create --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --storage-account "$paramStorageAccount" --functions-version "3" --consumption-plan-location "$paramLocation" --runtime "$functionAppLanguage" --tags $paramTags
 
 
 # --------------- 6 --------------- 
 echo "---> Configure Function App settings"
 # Set Function app settings
-# https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings
+# https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
 # https://docs.microsoft.com/en-us/cli/azure/functionapp/config/appsettings?view=azure-cli-latest#az_functionapp_config_appsettings_set
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobDashboard=$storageConnectionString"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsStorage=$storageConnectionString"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsSecretStorageType=Files"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_EXTENSION_VERSION=~3"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING=$storageConnectionString"
-az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTSHARE=$paramStorageAccount"
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTSHARE=$paramFunctionApp"
+az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_WORKER_RUNTIME=$functionAppLanguage"
 
 
 # --------------- 7 --------------- 
 echo "---> Deploy the function"
+# https://docs.microsoft.com/en-us/cli/azure/functionapp/deployment/source?view=azure-cli-latest#az_functionapp_deployment_source_config_zip
+functionName="HelloWorld"
+publishZip="$functionName.zip"
+az functionapp deployment source config-zip --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --src "$publishZip"
+echo "---> Function App Restart"
+az functionapp restart --name "$paramFunctionApp" --resource-group "$paramResourceGroup"
 
+
+# --------------- 8 --------------- 
+echo "---> Test the function"
+# Test function
+masterKey="$(az functionapp keys list --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --query "masterKey" -o tsv)"
+invokeUrl="$(az functionapp function show --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --function-name "$functionName" --query "invokeUrlTemplate" -o tsv)"
+functionUrl="$invokeUrl"
+functionUrl+="?code="
+functionUrl+="$masterKey"
+functionUrl+="&name=World"
+
+echo "--->  Using GET method"
+echo $functionUrl
+az rest --method get --url $functionUrl
+
+
+# Test with cURL
+# Caution: If you are on Windows, please run cURL from the command prompt. 
+# PowerShell has a curl command, but it's an alias for Invoke-WebRequest and is not the same as cURL.
+# curl --header "Content-Type: application/json" --header "x-functions-key: <your-function-key>" --request POST --data "{\"name\": \"Azure Function\"}" https://<your-url-here>/api/HelloWorld
+
+
+# Cleanup 
+# Remove Resource Group
 #az group delete --name $paramResourceGroup --yes

@@ -99,13 +99,14 @@ $functionApp
 Write-Host "---> Configure Function App settings" -ForegroundColor Green
 # Set Function app settings
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings
+# https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
 $paramFunctionAppSettings = @{
   AzureWebJobDashboard                     = $storageConnectionString
   AzureWebJobsStorage                      = $storageConnectionString
   AzureWebJobsSecretStorageType            = "Files"
   FUNCTIONS_EXTENSION_VERSION              = "~3"
   WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = $storageConnectionString
-  WEBSITE_CONTENTSHARE                     = $paramStorageAccount
+  WEBSITE_CONTENTSHARE                     = $paramFunctionApp
 }
 $setWebAppParams = @{
   Name              = $paramFunctionApp
