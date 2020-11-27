@@ -66,7 +66,7 @@ echo "---> Create a Function App"
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
 paramFunctionApp="mytest-func"
 # Set the runtime language - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
-# Valid values are dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
+# Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
 functionAppLanguage="powershell"
 #functionRuntimeVersion=7  # set the value for --runtime-version
 az functionapp create --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --storage-account "$paramStorageAccount" --functions-version "3" --consumption-plan-location "$paramLocation" --runtime "$functionAppLanguage" --tags $paramTags
@@ -80,20 +80,21 @@ echo "---> Configure Function App settings"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobDashboard=$storageConnectionString"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsStorage=$storageConnectionString"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsSecretStorageType=Files"
-az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_EXTENSION_VERSION=~3"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING=$storageConnectionString"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTSHARE=$paramFunctionApp"
-az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_WORKER_RUNTIME=$functionAppLanguage"
+#az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_EXTENSION_VERSION=~3"
+#az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_WORKER_RUNTIME=$functionAppLanguage"
 
 
 # --------------- 7 --------------- 
 echo "---> Deploy the function"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp/deployment/source?view=azure-cli-latest#az_functionapp_deployment_source_config_zip
-functionName="HelloWorld"
+functionName="HelloWorld-PS"
 publishZip="$functionName.zip"
+if [ -f $publishZip ]; then echo 'Remove old ZIP file...'; rm $publishZip; fi
+echo "Create new ZIP file..."
+zip -r $publishZip $functionName
 az functionapp deployment source config-zip --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --src "$publishZip"
-echo "---> Function App Restart"
-az functionapp restart --name "$paramFunctionApp" --resource-group "$paramResourceGroup"
 
 
 # --------------- 8 --------------- 
@@ -104,17 +105,20 @@ invokeUrl="$(az functionapp function show --name "$paramFunctionApp" --resource-
 functionUrl="$invokeUrl"
 functionUrl+="?code="
 functionUrl+="$masterKey"
-functionUrl+="&name=World"
 
 echo "--->  Using GET method"
-echo $functionUrl
-az rest --method get --url $functionUrl
+echo "$functionUrl&name=World"
+read -p "GET: Press [Enter] key to start..."
+az rest --method get --resource $functionUrl&name=World
 
+echo "--->  Using POST method"
+read -p "POST: Press [Enter] key to start..."
+az rest --method post --resource $functionUrl --body "{\"nane\": \"World-POST\"}"
 
 # Test with cURL
 # Caution: If you are on Windows, please run cURL from the command prompt. 
 # PowerShell has a curl command, but it's an alias for Invoke-WebRequest and is not the same as cURL.
-# curl --header "Content-Type: application/json" --header "x-functions-key: <your-function-key>" --request POST --data "{\"name\": \"Azure Function\"}" https://<your-url-here>/api/HelloWorld
+# curl --header "Content-Type: application/json" --header "x-functions-key: <your-function-key>" --request POST --data "{\"name\": \"Azure Function\"}" https://<your-url-here>/api/HelloWorld-PS
 
 
 # Cleanup 

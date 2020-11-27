@@ -99,12 +99,16 @@ $functionApp
 Write-Host "---> Configure Function App settings" -ForegroundColor Green
 # Set Function app settings
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings
-# https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
+# Set the runtime language - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
+# Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
+$functionAppLanguage = "powershell"
+
 $paramFunctionAppSettings = @{
   AzureWebJobDashboard                     = $storageConnectionString
   AzureWebJobsStorage                      = $storageConnectionString
   AzureWebJobsSecretStorageType            = "Files"
   FUNCTIONS_EXTENSION_VERSION              = "~3"
+  FUNCTIONS_WORKER_RUNTIME                 = $functionAppLanguage
   WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = $storageConnectionString
   WEBSITE_CONTENTSHARE                     = $paramFunctionApp
 }
