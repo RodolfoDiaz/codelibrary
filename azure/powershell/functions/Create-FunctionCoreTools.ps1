@@ -35,23 +35,24 @@ dotnet build
 Write-Host "--> Create new function" -ForegroundColor Green
 func new --language "C#" --template "HttpTrigger" --name $functionName
 
+Write-Host "--> Execute the FunctionApp locally" -ForegroundColor Green
 func start --verbose
 
-# Test the function, browse to:  https://<your-url-here>/api/HelloWorld?name=Functions
+# To test the function, just browse to: http://localhost:7071/api/HelloWorld?name=Functions
 
-# Create supporting Azure resources for your function
+# Create supporting Azure resources for your function:
 # https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-csharp?tabs=azure-powershell%2Cbrowser
-# 1- Sign in to Azure: 
+# 1- Sign in to Azure. 
 #    Connect-AzAccount
-# 2- Create a resource group named AzureFunctionsQuickstart-rg in the westeurope region:
+# 2- Create a resource group named AzureFunctionsQuickstart-rg in the westeurope region.
 #    New-AzResourceGroup -Name AzureFunctionsQuickstart-rg -Location westus
-# 3- Create a general-purpose storage account in your resource group and region:
+# 3- Create a general-purpose storage account in your resource group and region.
 #    New-AzStorageAccount -ResourceGroupName AzureFunctionsQuickstart-rg -Name <STORAGE_NAME> -SkuName Standard_LRS -Location westus
-# 4- Create the function app in Azure:
+# 4- Create the function app in Azure.
 #    New-AzFunctionApp -Name <APP_NAME> -ResourceGroupName AzureFunctionsQuickstart-rg -StorageAccount <STORAGE_NAME> -Runtime dotnet -FunctionsVersion 3 -Location 'West US'
-# 5- Deploy the function project to Azure:
+# 5- Deploy the function project to Azure.
 #    func azure functionapp publish <APP_NAME>
-# 6- Run the following command to view near real-time streaming logs:
+# 6- Run the following command to view near real-time streaming logs.
 #    func azure functionapp logstream <APP_NAME>
-# 7- Clean up resources:
+# 7- Clean up resources.
 #    Remove-AzResourceGroup -Name AzureFunctionsQuickstart-rg
