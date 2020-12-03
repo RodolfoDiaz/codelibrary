@@ -1,6 +1,6 @@
 # Azure Functions - https://azure.microsoft.com/en-us/services/functions/
 
-# Powershell generates a terminating error when the content of an expression 
+# PowerShell generates a terminating error when the content of an expression 
 # or script-block violates basic best-practice coding rules.
 Set-StrictMode -Version latest
 # Exit immediately if a command exits with a non-zero status.
