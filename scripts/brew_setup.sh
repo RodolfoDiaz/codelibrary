@@ -1,4 +1,6 @@
 # Install Xcode Command Line Tools
+# softwareupdate --all --install --force 
+# sudo rm -rf /Library/Developer/CommandLineTools
 xcode-select --install
 # Homebrew - The missing package manager for macOS
 # https://brew.sh/
