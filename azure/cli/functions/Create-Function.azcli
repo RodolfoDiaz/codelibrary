@@ -65,11 +65,16 @@ echo "---> Create a Function App"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az_functionapp_create
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
 paramFunctionApp="mytest-func$RANDOM"
+paramFunctionAppVersion="3"
+# Set the OS type for the app to be created. accepted values: Linux, Windows
+paramFunctionAppOS="Linux"
 # Set the runtime language - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
 # Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
-functionAppLanguage="node"
-#functionRuntimeVersion=7  # set the value for --runtime-version
-az functionapp create --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --storage-account "$paramStorageAccount" --functions-version "3" --consumption-plan-location "$paramLocation" --runtime "$functionAppLanguage" --tags $paramTags
+functionAppRuntimeStack="python"
+# The version of the functions runtime stack. 
+# Allowed values for each --runtime are: node -> [8, 10, 12, 14 (preview)], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
+functionRuntimeVersion="3.8"
+az functionapp create --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --storage-account "$paramStorageAccount" --functions-version "$paramFunctionAppVersion" --os-type "$paramFunctionAppOS" --consumption-plan-location "$paramLocation" --runtime "$functionAppRuntimeStack" --runtime-version "$functionRuntimeVersion" --tags $paramTags
 
 
 # --------------- 6 --------------- 
@@ -80,16 +85,17 @@ echo "---> Configure Function App settings"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobDashboard=$storageConnectionString"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsStorage=$storageConnectionString"
 az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "AzureWebJobsSecretStorageType=Files"
-az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING=$storageConnectionString"
-az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTSHARE=$paramFunctionApp"
-#az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_EXTENSION_VERSION=~3"
+#
+#az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING=$storageConnectionString"
+#az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "WEBSITE_CONTENTSHARE=$paramFunctionApp"
+#az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_EXTENSION_VERSION=$paramFunctionAppVersion"
 #az functionapp config appsettings set --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --settings "FUNCTIONS_WORKER_RUNTIME=$functionAppLanguage"
 
 
 # --------------- 7 --------------- 
 echo "---> Deploy the function"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp/deployment/source?view=azure-cli-latest#az_functionapp_deployment_source_config_zip
-functionName="HelloWorld-JS"
+functionName="HelloWorld-Python"
 publishZip="$functionName.zip"
 if [ -f $publishZip ]; then echo 'Remove old ZIP file...'; rm $publishZip; fi
 echo "Create new ZIP file..."
@@ -107,12 +113,12 @@ functionUrl+="?code="
 functionUrl+="$masterKey"
 
 echo "--->  Using GET method"
-functionUrlGet="$functionUrl&name=World"
+functionUrlGet="$functionUrl&name=World_GET"
 echo $functionUrlGet
 az rest --method get --url "$functionUrlGet"
 
 echo "--->  Using POST method"
-az rest --method post --url "$functionUrl" --body '{ "name":"World with POST" }'
+az rest --method post --url "$functionUrl" --body '{ "name":"World_POST" }'
 
 # Test with cURL
 # Caution: If you are on Windows, please run cURL from the command prompt. 
