@@ -7,10 +7,10 @@ Set-StrictMode -Version latest
 # Exit immediately if a command exits with a non-zero status.
 $ErrorActionPreference = "Stop"
 
-Write-Host "--> This example uses the following: " -ForegroundColor Green
-Write-Host "---> Azure Functions Core Tools version 3.x." -ForegroundColor Green
+Write-Host "---> This example uses the following components: " -ForegroundColor Green
+Write-Host "---> * Azure Functions Core Tools version 3.x." -ForegroundColor Green
 func --version
-Write-Host "---> .NET Core SDK 3.1 or above" -ForegroundColor Green
+Write-Host "---> * .NET Core SDK 3.1 or above" -ForegroundColor Green
 dotnet --version
 
 # VARIABLES 
@@ -29,13 +29,20 @@ func init --worker-runtime "dotnet"
 Write-Host "--> Restore NuGet package(s)" -ForegroundColor Green
 dotnet restore
 
+Write-Host "--> Check for outdated NuGet package(s)" -ForegroundColor Green
+dotnet list package --outdated
+
 Write-Host "--> Compile the solution" -ForegroundColor Green
 dotnet build
 
 Write-Host "--> Create new function" -ForegroundColor Green
 func new --language "C#" --template "HttpTrigger" --name $functionName
 
-Write-Host "--> Execute the FunctionApp locally" -ForegroundColor Green
+Write-Host "--> Publish the solution and prepare a ZIP archive for deployment" -ForegroundColor Green
+dotnet publish --configuration Release
+Compress-Archive -Path .\bin\Release\netcoreapp3.1\publish\* -DestinationPath .\$AppName.zip
+
+Write-Host "--> Execute and test the FunctionApp locally" -ForegroundColor Green
 func start --verbose
 
 # To test the function, just browse to: http://localhost:7071/api/HelloWorld?name=Functions
@@ -44,7 +51,7 @@ func start --verbose
 # https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-csharp?tabs=azure-powershell%2Cbrowser
 # 1- Sign in to Azure. 
 #    Connect-AzAccount
-# 2- Create a resource group named AzureFunctionsQuickstart-rg in the westeurope region.
+# 2- Create a resource group named AzureFunctionsQuickstart-rg in the westus region.
 #    New-AzResourceGroup -Name AzureFunctionsQuickstart-rg -Location westus
 # 3- Create a general-purpose storage account in your resource group and region.
 #    New-AzStorageAccount -ResourceGroupName AzureFunctionsQuickstart-rg -Name <STORAGE_NAME> -SkuName Standard_LRS -Location westus

@@ -1,7 +1,7 @@
 # Azure Functions - https://azure.microsoft.com/en-us/services/functions/
 
-# PowerShell generates a terminating error when the content of an expression 
-# or script-block violates basic best-practice coding rules.
+# In StrictMode PowerShell generates a terminating error when the content of 
+# an expression or script-block violates basic best-practice coding rules.
 Set-StrictMode -Version latest
 # Exit immediately if a command exits with a non-zero status.
 $ErrorActionPreference = "Stop"
@@ -15,6 +15,7 @@ $ErrorActionPreference = "Stop"
 # 6- Set the function app settings.
 # 7- Deploy the function.
 # 8- Test the function.
+
 
 # --------------- 1 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green
@@ -37,10 +38,10 @@ $paramResourceGroup = "mytest-func-demo"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
-$resourceGroup = Get-AzResourceGroup -Name $paramResourceGroup -ErrorAction SilentlyContinue
+$resourceGroup = Get-AzResourceGroup -Name "$paramResourceGroup" -ErrorAction SilentlyContinue
 if (-not $resourceGroup) {
   # Create new Resource Group - Get-Help New-AzResourceGroup -Online
-  $resourceGroup = New-AzResourceGroup -Name $paramResourceGroup -Location $paramLocation -Tag $paramTags
+  $resourceGroup = New-AzResourceGroup -Name "$paramResourceGroup" -Location "$paramLocation" -Tag $paramTags
 }
 Write-Host "---> Resource Group details:" -ForegroundColor Green
 $resourceGroup
@@ -51,9 +52,9 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # Azure Functions need a storage account for the deployed code to live in. Storage accounts 
 # also need a globally unique name, so we"ll take the first section of a GUID and append it 
 # to the storage account name. That should be suitable to make it globally unique.
-$rnd = (New-Guid).ToString().Split("-")[0]
+$rndAcct = (New-Guid).ToString().Split("-")[0]
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$paramStorageAccount = "mytest$rnd"
+$paramStorageAccount = "mytest$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $newStorageParams = @{
   ResourceGroupName = $paramResourceGroup
@@ -70,7 +71,7 @@ $storageAccount
 
 # --------------- 4 --------------- 
 # Get storage account key and create connection string
-$accountKey = Get-AzStorageAccountKey -ResourceGroupName $paramResourceGroup -AccountName $paramStorageAccount |
+$accountKey = Get-AzStorageAccountKey -ResourceGroupName "$paramResourceGroup" -AccountName "$paramStorageAccount" |
 Where-Object { $_.KeyName -eq "Key1" } | Select-Object -ExpandProperty Value
 $storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
 
@@ -78,98 +79,62 @@ $storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=$paramSto
 # --------------- 5 --------------- 
 Write-Host "---> Create a Function App" -ForegroundColor Green
 # Create the Function App
-$paramFunctionApp = "mytest-func"
-$newFunctionAppParams = @{
-  ResourceType      = "Microsoft.Web/Sites"
-  ResourceName      = $paramFunctionApp
-  Kind              = "functionapp"
-  Location          = $paramLocation
-  ResourceGroupName = $paramResourceGroup
-  Properties        = @{}
-  Force             = $true
-  Tag               = $paramTags
-}
-# Create new Function App - Get-Help New-AzResource -Online
-$functionApp = New-AzResource @newFunctionAppParams
+$rndFunc = (New-Guid).ToString().Split("-")[0]
+$paramFunctionApp = "mytestFunc-$rndFunc"
+$paramFunctionAppVersion = "3"
+# Set the OS type for the app to be created. accepted values: Linux, Windows
+$paramFunctionAppOS = "Linux"
+# Set the runtime language - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
+# Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
+$functionAppRuntimeStack = "python"
+# The version of the functions runtime stack. 
+# Allowed values for each --runtime are: node -> [8, 10, 12, 14 (preview)], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
+$functionRuntimeVersion = "3.8"
+$functionApp = New-AzFunctionApp -Location "$paramLocation" -Name "$paramFunctionApp" -ResourceGroupName "$paramResourceGroup" -StorageAccountName "$paramStorageAccount" -OSType "$paramFunctionAppOS" -FunctionsVersion "$paramFunctionAppVersion" -Runtime "$functionAppRuntimeStack" -RuntimeVersion "$functionRuntimeVersion" -Tag $paramTags
 Write-Host "---> Function App details:" -ForegroundColor Green
 $functionApp
+# Set the function name
+$functionName = "HelloWorld-Python"
 
 
 # --------------- 6 --------------- 
 Write-Host "---> Configure Function App settings" -ForegroundColor Green
-# Set Function app settings
-# https://docs.microsoft.com/en-us/azure/azure-functions/functions-how-to-use-azure-function-app-settings
-# Set the runtime language - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
-# Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
-$functionAppLanguage = "powershell"
-
-$paramFunctionAppSettings = @{
-  AzureWebJobDashboard                     = $storageConnectionString
-  AzureWebJobsStorage                      = $storageConnectionString
-  AzureWebJobsSecretStorageType            = "Files"
-  FUNCTIONS_EXTENSION_VERSION              = "~3"
-  FUNCTIONS_WORKER_RUNTIME                 = $functionAppLanguage
-  WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = $storageConnectionString
-  WEBSITE_CONTENTSHARE                     = $paramFunctionApp
-}
-$setWebAppParams = @{
-  Name              = $paramFunctionApp
-  ResourceGroupName = $paramResourceGroup
-  AppSettings       = $paramFunctionAppSettings
-}
-# Set configuration settings - Get-Help Set-AzWebApp -Online
-$webApp = Set-AzWebApp @setWebAppParams
-Write-Host "---> Web App settings details:" -ForegroundColor Green
-$webApp
+Update-AzFunctionAppSetting -Name $paramFunctionApp -ResourceGroupName "$paramResourceGroup" -AppSetting @{"AzureWebJobDashboard" = "$storageConnectionString" } -Force
+Update-AzFunctionAppSetting -Name $paramFunctionApp -ResourceGroupName "$paramResourceGroup" -AppSetting @{"AzureWebJobsStorage" = "$storageConnectionString" } -Force
+Update-AzFunctionAppSetting -Name $paramFunctionApp -ResourceGroupName "$paramResourceGroup" -AppSetting @{"AzureWebJobsSecretStorageType" = "Files" } -Force
 
 
 # --------------- 7 --------------- 
 Write-Host "---> Deploy the function" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-powershell?tabs=azure-powershell
-
-$sourceFile = "run.ps1"
-$functionName = "HelloWorld"
-$functionContent = Get-Content ./HelloWorld/$sourceFile -raw
-$functionSettings = Get-Content ./HelloWorld/function.json | ConvertFrom-Json
-$functionResourceId = "{0}/functions/{1}" -f $functionapp.resourceid, $functionName
-$functionProperties = @{
-  config = @{bindings = $functionSettings.bindings
-  }
-  files  = @{
-    "$sourceFile" = "$functionContent"
-  }
-}
-$newFunctionParams = @{
-  ResourceID = $functionResourceId
-  Properties = $functionProperties
-  # ApiVersion = "2020-06-01"  # Specifies the version of the resource provider API to use. If you do not specify a version, this cmdlet uses the latest available version.
-  Force      = $true
-}
-$function = New-AzResource @NewfunctionParams
-Write-Host "---> Function details:" -ForegroundColor Green
-$function
+# https://docs.microsoft.com/en-us/azure/azure-functions/deployment-zip-push
+$publishZip = "$functionName.zip"
+if ( Test-Path -Path $publishZip -PathType Leaf ) { Remove-Item -path $publishZip -Recurse –force }
+Compress-Archive -Path $functionName -DestinationPath .\$publishZip
+$publishItem = Publish-AzWebApp -ResourceGroupName "$paramResourceGroup" -Name "$paramFunctionApp" -ArchivePath  (Get-Item $publishZip).FullName -Force
+Write-Host "---> Function published:" -ForegroundColor Green
+$publishItem
 
 
 # --------------- 8 --------------- 
 Write-Host "---> Test the function" -ForegroundColor Green
 # Test function
-$getSecretsParams = @{
-  ResourceId = $function.ResourceId
-  Action     = "listsecrets"
-  Force      = $true
-}
-# Invoke an action - Get-Help Invoke-AzResourceAction -Online
-$functionSecrets = Invoke-AzResourceAction @getSecretsParams
+$functionAppId = $functionApp.Id
+$functionAppHostName = $functionApp.DefaultHostName
+$masterKey = (Invoke-AzResourceAction -ResourceId "$functionAppId/functions/$functionName" -Action listkeys -Force).default
+$invokeUrl = "https://" + $functionAppHostName + "/api/" + $functionName + "?code=" + $masterKey
 
-# For testing only, please comment out:
-# Write-Warning $functionSecrets.trigger_url
+Write-Warning $invokeUrl
 
 Write-Host "--->  Using GET method" -ForegroundColor Green
-Invoke-RestMethod -Uri "$($functionSecrets.trigger_url)&name=World"
+Invoke-RestMethod -Uri "$($invokeUrl)&name=World"
  
 Write-Host "--->  Using POST method" -ForegroundColor Green
 $body = @{ "name" = "World with POST" } | ConvertTo-Json
-Invoke-WebRequest -Uri $functionSecrets.trigger_url -Body $body -Method Post -ContentType "application/json"
+Invoke-WebRequest -Uri $invokeUrl -Body $body -Method Post -ContentType "application/json"
+
+# Open URL in default browser
+Start-Process "$($invokeUrl)&name=World"
 
 # Test with cURL
 # Caution: If you are on Windows, please run cURL from the command prompt. 
