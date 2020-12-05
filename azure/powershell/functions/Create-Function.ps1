@@ -78,23 +78,38 @@ $storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=$paramSto
 
 # --------------- 5 --------------- 
 Write-Host "---> Create a Function App" -ForegroundColor Green
+
+$appToDeploy = @{
+  functionAppOS  = "Linux"
+  runtimeStack   = "python"
+  runtimeVersion = "3.8"
+  functionName   = "HelloWorld-Python"
+}
+
+# $appToDeploy = @{
+#   functionAppOS   = "Windows"
+#   runtimeStack    = "node"
+#   runtimeVersion  = "12"
+#   functionName    = "HelloWorld-JS"
+# }
+
 # Create the Function App
 $rndFunc = (New-Guid).ToString().Split("-")[0]
 $paramFunctionApp = "mytestFunc-$rndFunc"
 $paramFunctionAppVersion = "3"
 # Set the OS type for the app to be created. accepted values: Linux, Windows
-$paramFunctionAppOS = "Linux"
+$paramFunctionAppOS = $appToDeploy.functionAppOS
 # Set the runtime language - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings
 # Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
-$functionAppRuntimeStack = "python"
+$functionAppRuntimeStack = $appToDeploy.runtimeStack
 # The version of the functions runtime stack. 
 # Allowed values for each --runtime are: node -> [8, 10, 12, 14 (preview)], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
-$functionRuntimeVersion = "3.8"
+$functionRuntimeVersion = $appToDeploy.runtimeVersion
 $functionApp = New-AzFunctionApp -Location "$paramLocation" -Name "$paramFunctionApp" -ResourceGroupName "$paramResourceGroup" -StorageAccountName "$paramStorageAccount" -OSType "$paramFunctionAppOS" -FunctionsVersion "$paramFunctionAppVersion" -Runtime "$functionAppRuntimeStack" -RuntimeVersion "$functionRuntimeVersion" -Tag $paramTags
 Write-Host "---> Function App details:" -ForegroundColor Green
 $functionApp
 # Set the function name
-$functionName = "HelloWorld-Python"
+$functionName = $appToDeploy.functionName
 
 
 # --------------- 6 --------------- 
