@@ -30,7 +30,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="mytest-func-demo"
+paramResourceGroup="mytest-rg-demo"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -48,7 +48,7 @@ echo "---> Creating a storage account"
 # to the storage account name. That should be suitable to make it globally unique.
 
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-paramStorageAccount="mytest$RANDOM"
+paramStorageAccount="myteststorage$RANDOM"
 paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --tags $paramTags
 
@@ -64,7 +64,7 @@ storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorag
 echo "---> Create a Function App"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az_functionapp_create
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
-paramFunctionApp="mytest-func$RANDOM"
+paramFunctionApp="mytest-func-$RANDOM"
 paramFunctionAppVersion="3"
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 paramFunctionAppOS="Linux"
@@ -100,12 +100,13 @@ az functionapp deployment source config-zip --name "$paramFunctionApp" --resourc
 
 # --------------- 8 --------------- 
 echo "---> Test the function"
-# Test function
-masterKey="$(az functionapp keys list --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --query "masterKey" -o tsv)"
+# The Authorization level was set as Function in the 'function.json'.  A function-specific API key is required. 
+# For admin auth level, the master key is required.  master key is scoped at the function app level, the master key also provides administrative access to the runtime REST APIs.
+functionKey="$(az functionapp keys list --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --query "functionKeys.default" -o tsv)"
 invokeUrl="$(az functionapp function show --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --function-name "$functionName" --query "invokeUrlTemplate" -o tsv)"
 functionUrl="$invokeUrl"
 functionUrl+="?code="
-functionUrl+="$masterKey"
+functionUrl+="$functionKey"
 
 echo "--->  Using GET method"
 functionUrlGet="$functionUrl&name=World_GET"
