@@ -34,7 +34,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$paramResourceGroup = "mytest-func-demo"
+$paramResourceGroup = "mytest-rg-demo"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -54,7 +54,7 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # to the storage account name. That should be suitable to make it globally unique.
 $rndAcct = (New-Guid).ToString().Split("-")[0]
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$paramStorageAccount = "mytest$rndAcct"
+$paramStorageAccount = "myteststorage$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $newStorageParams = @{
   ResourceGroupName = $paramResourceGroup
@@ -95,7 +95,7 @@ $appToDeploy = @{
 
 # Create the Function App
 $rndFunc = (New-Guid).ToString().Split("-")[0]
-$paramFunctionApp = "mytestFunc-$rndFunc"
+$paramFunctionApp = "mytest-func-$rndFunc"
 $paramFunctionAppVersion = "3"
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 $paramFunctionAppOS = $appToDeploy.functionAppOS
@@ -133,11 +133,12 @@ $publishItem
 
 # --------------- 8 --------------- 
 Write-Host "---> Test the function" -ForegroundColor Green
-# Test function
+# The Authorization level was set as Function in the 'function.json'.  A function-specific API key is required. 
+# For admin auth level, the master key is required.  master key is scoped at the function app level, the master key also provides administrative access to the runtime REST APIs.
 $functionAppId = $functionApp.Id
 $functionAppHostName = $functionApp.DefaultHostName
-$masterKey = (Invoke-AzResourceAction -ResourceId "$functionAppId/functions/$functionName" -Action listkeys -Force).default
-$invokeUrl = "https://" + $functionAppHostName + "/api/" + $functionName + "?code=" + $masterKey
+$functionKey = (Invoke-AzResourceAction -ResourceId "$functionAppId/functions/$functionName" -Action listkeys -Force).default
+$invokeUrl = "https://" + $functionAppHostName + "/api/" + $functionName + "?code=" + $functionKey
 
 Write-Warning $invokeUrl
 
