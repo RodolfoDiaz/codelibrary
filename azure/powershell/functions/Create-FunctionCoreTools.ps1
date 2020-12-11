@@ -17,6 +17,22 @@ dotnet --version
 $AppName = "mytest-func"  # New-Variable -Name "AppName" -Visibility Public -Value "mytest-func"
 $functionName = "HelloWorld"  # New-Variable -Name "functionName" -Visibility Public -Value "HelloWorld"
 
+$runtime = @{
+  python = "python"
+  dotnet = "dotnet"
+  node   = "node"
+}
+$language = @{
+  python = "python"
+  js     = "javascript"
+  ts     = "typescript"
+  CS     = "C#"
+}
+
+$functionRuntime = $runtime.dotnet
+$functionLanguage = $language.CS
+$functionTemplate = "HttpTrigger"
+
 # Cleanup
 if ( Test-Path -Path $AppName -PathType Container ) { Remove-Item -path $AppName -Recurse –force }
 
@@ -24,28 +40,42 @@ New-Item -ItemType directory -Path $AppName
 Set-Location -Path $AppName
 
 Write-Host "--> Create the FunctionApp" -ForegroundColor Green
-func init --worker-runtime "dotnet"
+func init --worker-runtime $functionRuntime
 
-Write-Host "--> Restore NuGet package(s)" -ForegroundColor Green
-dotnet restore
+if ($functionRuntime -eq "dotnet") {
+  Write-Host "--> Restore NuGet package(s)" -ForegroundColor Green
+  dotnet restore
 
-Write-Host "--> Check for outdated NuGet package(s)" -ForegroundColor Green
-dotnet list package --outdated
+  Write-Host "--> Check for outdated NuGet package(s)" -ForegroundColor Green
+  dotnet list package --outdated
 
-Write-Host "--> Compile the solution" -ForegroundColor Green
-dotnet build
+  Write-Host "--> Compile the solution" -ForegroundColor Green
+  dotnet build
+}
 
 Write-Host "--> Create new function" -ForegroundColor Green
-func new --language "C#" --template "HttpTrigger" --name $functionName
+func new --language $functionLanguage --template $functionTemplate --name $functionName
 
-Write-Host "--> Publish the solution and prepare a ZIP archive for deployment" -ForegroundColor Green
-dotnet publish --configuration Release
-Compress-Archive -Path .\bin\Release\netcoreapp3.1\publish\* -DestinationPath .\$AppName.zip
+if ($functionRuntime -eq "dotnet") {
+  Write-Host "--> Publish the solution and prepare a ZIP archive for deployment" -ForegroundColor Green
+  dotnet publish --configuration Release
+  Compress-Archive -Path .\bin\Release\netcoreapp3.1\publish\* -DestinationPath .\$AppName.zip
+}
 
 Write-Host "--> Execute and test the FunctionApp locally" -ForegroundColor Green
 func start --verbose
 
 # To test the function, just browse to: http://localhost:7071/api/HelloWorld?name=Functions
+
+# To execute the function locally, you may need to add the following Proxy settings to 'local.settings.json':
+#
+# "http_proxy": "http://mycorporateproxy.com:mycorporateport",
+# "https_proxy": "http://mycorporateproxy.com:mycorporateport",
+# "no_proxy": "localhost,127.0.0.1",
+# "HTTP_PROXY": "http://mycorporateproxy.com:mycorporateport",
+# "HTTPS_PROXY": "http://mycorporateproxy.com:mycorporateport",
+# "NO_PROXY": "localhost,127.0.0.1"
+#
 
 # Create supporting Azure resources for your function:
 # https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-csharp?tabs=azure-powershell%2Cbrowser
