@@ -65,6 +65,12 @@ if ($functionRuntime -eq "dotnet") {
 Write-Host "--> Execute and test the FunctionApp locally" -ForegroundColor Green
 func start --verbose
 
+# Run the following command to start the Functions host silently in the background.
+# func start &> ~/output.txt &
+# Stop the background functions host (either in bash or PowerShell):
+# - pkill func
+# - Stop-Process -Name "func"
+
 # To test the function, just browse to: http://localhost:7071/api/HelloWorld?name=Functions
 
 # To execute the function locally, you may need to add the following Proxy settings to 'local.settings.json':
