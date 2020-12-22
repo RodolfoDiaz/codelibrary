@@ -1,5 +1,7 @@
-# Using Azure Functions Core Tools
-# https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local
+# Azure Durable Functions
+# https://docs.microsoft.com/en-us/azure/azure-functions/durable/
+# https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-sequence?tabs=csharp
+# https://www.npmjs.com/package/durable-functions
 
 # In StrictMode PowerShell generates a terminating error when the content of 
 # an expression or script-block violates basic best-practice coding rules.
@@ -35,12 +37,12 @@ Set-Location -Path $AppName
 Write-Host "--> Create the FunctionApp" -ForegroundColor Green
 func init --worker-runtime $functionRuntime
 
+Write-Host "--> Durable Functions requires Microsoft.Azure.WebJobs.Extensions.DurableTask 1.8.3 or greater" -ForegroundColor Green
+func extensions install --package Microsoft.Azure.WebJobs.Extensions.DurableTask --version 2.4.0
+
 if ($functionRuntime -eq "dotnet") {
   Write-Host "---> * .NET Core SDK 3.1 or above" -ForegroundColor Green
   dotnet --version
-
-  # durable-functions requires Microsoft.Azure.WebJobs.Extensions.DurableTask 1.8.3 or greater
-  func extensions install -p Microsoft.Azure.WebJobs.Extensions.DurableTask
 
   Write-Host "--> Restore NuGet package(s)" -ForegroundColor Green
   dotnet restore
@@ -65,7 +67,7 @@ func settings add "no_proxy" "localhost,127.0.0.1"
 #func settings add "HTTPS_PROXY" "http://mycorporateproxy.com:mycorporateport"
 func settings add "NO_PROXY" "localhost,127.0.0.1"
 
-$functionTemplate = "Durable Functions orchestrator"
+$functionTemplate = "Durable Functions orchestrator" # "DurableFunctionsOrchestration"
 $functionName = "E1_HelloSequence"
 Write-Host "--> Create new function of type: $functionTemplate" -ForegroundColor Green
 func new --language "$functionLanguage" --template "$functionTemplate" --name "$functionName"
