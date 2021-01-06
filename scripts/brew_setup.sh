@@ -16,7 +16,7 @@ fi
 if [ "$1" == "u" ]; then
    brew uninstall git
    brew uninstall node
-   brew uninstall unrar
+   brew uninstall p7zip
    # uninstalling dependencies for node
    brew uninstall icu4c
    # uninstalling dependecies for git
@@ -28,5 +28,5 @@ fi
 if [ "$1" == "i" ]; then
    brew install git
    brew install node
-   brew install unrar
+   brew install p7zip
 fi
