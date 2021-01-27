@@ -51,11 +51,29 @@ az storage account create --name "$paramStorageAccount" --resource-group "$param
 
 
 # --------------- 4 --------------- 
-# Get storage account key and create connection string
+echo "---> Get storage account key and connection string"
 # https://docs.microsoft.com/en-us/cli/azure/storage/account/keys?view=azure-cli-latest#az_storage_account_keys_list
 accountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
-storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+export storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+echo $storageConnectionString
 
 
 # --------------- 5 --------------- 
 echo "---> Create the application"
+azureQueueClientLibrary="V11"
+appFolderName="QueueApp${azureQueueClientLibrary}"
+appProgramFile="Program${azureQueueClientLibrary}.cs"
+# https://docs.microsoft.com/en-us/azure/storage/queues/storage-quickstart-queues-dotnet-legacy
+if [ -d ./$appFolderName/ ]; then rm -rf $appFolderName; fi
+dotnet new console -n $appFolderName
+cd $appFolderName
+dotnet add package WindowsAzure.Storage
+cp ../$appProgramFile .
+mv $appProgramFile Program.cs
+
+# ---- Switch to C# 7.1 ----
+# In older versions (.Net Core 3.x), you may have to add 
+# <LangVersion>7.1</LangVersion> into the PropertyGroup section in the .csproj file.
+dotnet build
+dotnet run Send this message Hello!
+dotnet run
