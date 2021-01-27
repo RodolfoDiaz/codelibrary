@@ -1,10 +1,10 @@
-# Azure Functions - https://azure.microsoft.com/en-us/services/functions/
-
 # In StrictMode PowerShell generates a terminating error when the content of 
 # an expression or script-block violates basic best-practice coding rules.
 Set-StrictMode -Version latest
 # Exit immediately if a command exits with a non-zero status.
 $ErrorActionPreference = "Stop"
+
+# Azure Functions - https://azure.microsoft.com/en-us/services/functions/
 
 # The deployment process is:
 # 1- Log in to Azure.
@@ -24,7 +24,6 @@ Connect-AzAccount
 #$tenantId = (Get-AzContext).Tenant.Id
 
 Write-Host "---> Verify registration of the required Azure resource providers" -ForegroundColor Green
-# Azure Functions require the Microsoft.Web and Microsoft.Storage providers. 
 # Most likely, the providers are already registered, but this will make sure of that.
 @("Microsoft.Web", "Microsoft.Storage") | ForEach-Object {
   Register-AzResourceProvider -ProviderNamespace $_
@@ -50,19 +49,21 @@ $resourceGroup
 
 # --------------- 3 --------------- 
 Write-Host "---> Creating a storage account" -ForegroundColor Green
-# Azure Functions need a storage account for the deployed code to live in. Storage accounts 
-# also need a globally unique name, so we"ll take the first section of a GUID and append it 
+# We need a storage account for the deployed code to live in. Storage accounts also
+# need a globally unique name, so we"ll take the first section of a GUID and append it 
 # to the storage account name. That should be suitable to make it globally unique.
 $rndAcct = (New-Guid).ToString().Split("-")[0]
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
 $paramStorageAccount = "myteststorage$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
+$paramStorageKind = "StorageV2"     # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 $newStorageParams = @{
   ResourceGroupName = $paramResourceGroup
   AccountName       = $paramStorageAccount
   Location          = $paramLocation
   SkuName           = $paramStorageSku
   Tag               = $paramTags
+  Kind              = $paramStorageKind
 }
 # Create new Storage Account - Get-Help New-AzStorageAccount -Online
 $storageAccount = New-AzStorageAccount @newStorageParams

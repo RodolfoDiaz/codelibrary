@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Azure Functions - https://azure.microsoft.com/en-us/services/functions/
-
 # Exit immediately if a command exits with a non-zero status.
 set -e
+
+# Azure Functions - https://azure.microsoft.com/en-us/services/functions/
 
 # The deployment process is:
 # 1- Log in to Azure.
@@ -22,7 +22,6 @@ az login
 # az account list
 
 echo "---> Verify registration of the required Azure resource providers"
-# Azure Functions require the Microsoft.Web and Microsoft.Storage providers. 
 # Most likely, the providers are already registered, but this will make sure of that.
 az provider register --namespace "Microsoft.Web"
 az provider register --namespace "Microsoft.Storage"
@@ -43,14 +42,15 @@ fi
 # --------------- 3 --------------- 
 echo "---> Creating a storage account"
 # https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_create
-# Azure Functions need a storage account for the deployed code to live in. Storage accounts 
-# also need a globally unique name, so we"ll take the first section of a GUID and append it 
+# We need a storage account for the deployed code to live in. Storage accounts also
+# need a globally unique name, so we"ll take the first section of a GUID and append it 
 # to the storage account name. That should be suitable to make it globally unique.
 
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
 paramStorageAccount="myteststorage$RANDOM"
 paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
-az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --tags $paramTags
+paramStorageKind="StorageV2"    # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
+az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags
 
 
 # --------------- 4 --------------- 
