@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure Queue Storage - https://docs.microsoft.com/en-us/azure/storage/queues/
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create a storage account.
+# 4- Get the storage account connection string.
+# 5- Create the application
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# Most likely, the providers are already registered, but this will make sure of that.
+az provider register --namespace "Microsoft.Web"
+az provider register --namespace "Microsoft.Storage"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="mytestresourcegroup$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 3 --------------- 
+echo "---> Creating a storage account"
+# https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_create
+# We need a storage account for the deployed code to live in. Storage accounts also
+# need a globally unique name, so we"ll take the first section of a GUID and append it 
+# to the storage account name. That should be suitable to make it globally unique.
+
+# Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+paramStorageAccount="myteststorage$RANDOM"
+paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
+paramStorageKind="StorageV2"    # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
+az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags
+
+
+# --------------- 4 --------------- 
+# Get storage account key and create connection string
+# https://docs.microsoft.com/en-us/cli/azure/storage/account/keys?view=azure-cli-latest#az_storage_account_keys_list
+accountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
+storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+
+
+# --------------- 5 --------------- 
+echo "---> Create the application"
