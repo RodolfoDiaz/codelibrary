@@ -34,7 +34,8 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$paramResourceGroup = "mytest-rg-demo"
+$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$paramResourceGroup = "mytestresourcegroup$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -89,13 +90,13 @@ $appToDeploy = @{
 # $appToDeploy = @{
 #   functionAppOS   = "Windows"
 #   runtimeStack    = "node"
-#   runtimeVersion  = "12"
+#   runtimeVersion  = "14"
 #   functionName    = "HelloWorld-JS"
 # }
 
 # Create the Function App
 $rndFunc = (New-Guid).ToString().Split("-")[0]
-$paramFunctionApp = "mytest-func-$rndFunc"
+$paramFunctionApp = "mytestfunctionapp$rndFunc"
 $paramFunctionAppVersion = "3"
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 $paramFunctionAppOS = $appToDeploy.functionAppOS
@@ -103,7 +104,7 @@ $paramFunctionAppOS = $appToDeploy.functionAppOS
 # Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
 $functionAppRuntimeStack = $appToDeploy.runtimeStack
 # The version of the functions runtime stack. 
-# Allowed values for each --runtime are: node -> [8, 10, 12, 14 (preview)], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
+# Allowed values for each --runtime are: node -> [8, 10, 12, 14], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
 $functionRuntimeVersion = $appToDeploy.runtimeVersion
 $functionApp = New-AzFunctionApp -Location "$paramLocation" -Name "$paramFunctionApp" -ResourceGroupName "$paramResourceGroup" -StorageAccountName "$paramStorageAccount" -OSType "$paramFunctionAppOS" -FunctionsVersion "$paramFunctionAppVersion" -Runtime "$functionAppRuntimeStack" -RuntimeVersion "$functionRuntimeVersion" -Tag $paramTags
 Write-Host "---> Function App details:" -ForegroundColor Green

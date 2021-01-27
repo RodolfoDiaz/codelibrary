@@ -30,7 +30,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="mytest-rg-demo"
+paramResourceGroup="mytestresourcegroup$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -64,13 +64,18 @@ storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorag
 echo "---> Create a Function App"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az_functionapp_create
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
-paramFunctionApp="mytest-func-$RANDOM"
+paramFunctionApp="mytestfunctionapp$RANDOM"
 paramFunctionAppVersion="3"
 
-deployFunctionAppOS="Linux" # "Windows"
-deployRuntimeStack="python" # "node"
-deployRuntimeVersion="3.8" # "12"
-deployFunctionName="HelloWorld-Python" # "HelloWorld-JS"
+deployFunctionAppOS="Windows"
+deployRuntimeStack="node"
+deployRuntimeVersion="14"
+deployFunctionName="HelloWorld-JS"
+
+# deployFunctionAppOS="Linux"
+# deployRuntimeStack="python"
+# deployRuntimeVersion="3.8"
+# deployFunctionName="HelloWorld-Python"
 
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 paramFunctionAppOS=$deployFunctionAppOS
@@ -78,7 +83,7 @@ paramFunctionAppOS=$deployFunctionAppOS
 # Valid values are: dotnet (C#/F#), node (JavaScript/TypeScript), java (Java), powershell (PowerShell), and python (Python).
 functionAppRuntimeStack=$deployRuntimeStack
 # The version of the functions runtime stack. 
-# Allowed values for each --runtime are: node -> [8, 10, 12, 14 (preview)], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
+# Allowed values for each --runtime are: node -> [8, 10, 12, 14], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
 functionRuntimeVersion=$deployRuntimeVersion
 az functionapp create --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --storage-account "$paramStorageAccount" --functions-version "$paramFunctionAppVersion" --os-type "$paramFunctionAppOS" --consumption-plan-location "$paramLocation" --runtime "$functionAppRuntimeStack" --runtime-version "$functionRuntimeVersion" --tags $paramTags
 # Set the function name
