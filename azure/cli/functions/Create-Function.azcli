@@ -67,15 +67,15 @@ echo "---> Create a Function App"
 paramFunctionApp="mytestfunctionapp$RANDOM"
 paramFunctionAppVersion="3"
 
-deployFunctionAppOS="Windows"
-deployRuntimeStack="node"
-deployRuntimeVersion="14"
-deployFunctionName="HelloWorld-JS"
+# deployFunctionAppOS="Windows"
+# deployRuntimeStack="node"
+# deployRuntimeVersion="14"
+# deployFunctionName="HelloWorld-JS"
 
-# deployFunctionAppOS="Linux"
-# deployRuntimeStack="python"
-# deployRuntimeVersion="3.8"
-# deployFunctionName="HelloWorld-Python"
+deployFunctionAppOS="Linux"
+deployRuntimeStack="python"
+deployRuntimeVersion="3.8"
+deployFunctionName="HelloWorld-Python"
 
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 paramFunctionAppOS=$deployFunctionAppOS
@@ -103,10 +103,12 @@ az functionapp config appsettings set --name "$paramFunctionApp" --resource-grou
 echo "---> Deploy the function"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp/deployment/source?view=azure-cli-latest#az_functionapp_deployment_source_config_zip
 publishZip="$functionName.zip"
+cd example
 if [ -f $publishZip ]; then echo 'Remove old ZIP file...'; rm $publishZip; fi
 echo "Create new ZIP file..."
 zip -r $publishZip $functionName
 az functionapp deployment source config-zip --name "$paramFunctionApp" --resource-group "$paramResourceGroup" --src "$publishZip"
+cd ..
 
 
 # --------------- 8 --------------- 

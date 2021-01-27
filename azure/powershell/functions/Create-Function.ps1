@@ -125,12 +125,13 @@ Write-Host "---> Deploy the function" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-powershell?tabs=azure-powershell
 # https://docs.microsoft.com/en-us/azure/azure-functions/deployment-zip-push
 $publishZip = "$functionName.zip"
+Set-Location example
 if ( Test-Path -Path $publishZip -PathType Leaf ) { Remove-Item -path $publishZip -Recurse –force }
 Compress-Archive -Path $functionName -DestinationPath .\$publishZip
 $publishItem = Publish-AzWebApp -ResourceGroupName "$paramResourceGroup" -Name "$paramFunctionApp" -ArchivePath  (Get-Item $publishZip).FullName -Force
 Write-Host "---> Function published:" -ForegroundColor Green
 $publishItem
-
+Set-Location ..
 
 # --------------- 8 --------------- 
 Write-Host "---> Test the function" -ForegroundColor Green
