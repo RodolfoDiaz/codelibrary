@@ -80,10 +80,10 @@ mv $appProgramFile Program.cs
 # <LangVersion>7.1</LangVersion> into the PropertyGroup section in the .csproj file.
 
 dotnet build
+echo "---> Check your results"
 if [ "$azureQueueClientLibrary" == "V11" ];  then
   dotnet run This is the first message!
   dotnet run This is the second message!
-  echo "---> Check your results"
   az storage message peek --queue-name newsqueue --connection-string "$storageConnectionString"
   # There are several other commands available that you can try with the tools - check out both: 
   # "az storage queue --help" and "az storage message --help" to explore them.
