@@ -72,10 +72,11 @@ $storageAccount
 
 
 # --------------- 4 --------------- 
-# Get storage account key and create connection string
+Write-Host "---> Get storage account key and connection string" -ForegroundColor Green
 $accountKey = Get-AzStorageAccountKey -ResourceGroupName "$paramResourceGroup" -AccountName "$paramStorageAccount" |
 Where-Object { $_.KeyName -eq "Key1" } | Select-Object -ExpandProperty Value
 $storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+$storageConnectionString
 
 
 # --------------- 5 --------------- 

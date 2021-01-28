@@ -60,20 +60,37 @@ echo $storageConnectionString
 
 # --------------- 5 --------------- 
 echo "---> Create the application"
-azureQueueClientLibrary="V11"
+#azureQueueClientLibrary="V11" # https://docs.microsoft.com/en-us/azure/storage/queues/storage-quickstart-queues-dotnet-legacy
+azureQueueClientLibrary="V12" # https://docs.microsoft.com/en-us/azure/storage/queues/storage-quickstart-queues-dotnet
 appFolderName="QueueApp${azureQueueClientLibrary}"
 appProgramFile="Program${azureQueueClientLibrary}.cs"
-# https://docs.microsoft.com/en-us/azure/storage/queues/storage-quickstart-queues-dotnet-legacy
 if [ -d ./$appFolderName/ ]; then rm -rf $appFolderName; fi
 dotnet new console -n $appFolderName
 cd $appFolderName
-dotnet add package WindowsAzure.Storage
+if [ "$azureQueueClientLibrary" == "V11" ];  then
+    dotnet add package WindowsAzure.Storage
+elif [ "$azureQueueClientLibrary" == "V12" ];  then
+    dotnet add package Azure.Storage.Queues
+fi
 cp ../$appProgramFile .
 mv $appProgramFile Program.cs
 
-# ---- Switch to C# 7.1 ----
-# In older versions (.Net Core 3.x), you may have to add 
+# C#'s async and await keywords were not valid keywords in Main methods until C# 7.1. 
+# In older dotnet versions (.Net Core 3.x), you may have to add the following:
 # <LangVersion>7.1</LangVersion> into the PropertyGroup section in the .csproj file.
+
 dotnet build
-dotnet run Send this message Hello!
-dotnet run
+if [ "$azureQueueClientLibrary" == "V11" ];  then
+  dotnet run This is the first message!
+  dotnet run This is the second message!
+  echo "---> Check your results"
+  az storage message peek --queue-name newsqueue --connection-string "$storageConnectionString"
+  # There are several other commands available that you can try with the tools - check out both: 
+  # "az storage queue --help" and "az storage message --help" to explore them.
+  dotnet run
+  az storage message peek --queue-name newsqueue --connection-string "$storageConnectionString"
+  dotnet run
+  az storage message peek --queue-name newsqueue --connection-string "$storageConnectionString"
+elif [ "$azureQueueClientLibrary" == "V12" ];  then
+  dotnet run
+fi
