@@ -50,7 +50,7 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
-$paramServiceBusNamespace = "test_servicebusnamespace_$rndsbns"
+$paramServiceBusNamespace = "testservicebusnamespace$rndsbns"
 $serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation"
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
 $serviceBusNamespace

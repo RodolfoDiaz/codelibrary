@@ -54,7 +54,7 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # to the storage account name. That should be suitable to make it globally unique.
 $rndAcct = (New-Guid).ToString().Split("-")[0]
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$paramStorageAccount = "test_storage_$rndAcct"
+$paramStorageAccount = "teststorage$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $paramStorageKind = "StorageV2"     # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 $newStorageParams = @{

@@ -52,7 +52,7 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
-$paramServiceBusNamespace = "test_servicebusnamespace_$rndsbns"
+$paramServiceBusNamespace = "testservicebusnamespace$rndsbns"
 $serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation"
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
 $serviceBusNamespace
@@ -62,7 +62,7 @@ $serviceBusNamespace
 Write-Host "---> Creating a topic in the namespace" -ForegroundColor Green
 $rndtopic = (New-Guid).ToString().Split("-")[0]
 $paramServiceBusTopic = "test_servicebustopic_$rndtopic"
-$serviceBusTopic = New-AzServiceBusTopic -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$paramServiceBusTopic"
+$serviceBusTopic = New-AzServiceBusTopic -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$paramServiceBusTopic" -EnablePartitioning $True
 Write-Host "---> Service Bus Topic details:" -ForegroundColor Green
 $serviceBusTopic
 
