@@ -12,6 +12,7 @@ $ErrorActionPreference = "Stop"
 # 3- Create a Service Bus messaging namespace.
 # 4- Create a queue in the namespace you created.
 # 5- Get the primary connection string for the namespace.
+# 6- Create the application.
 
 
 # --------------- 1 --------------- 
@@ -56,14 +57,35 @@ $serviceBusNamespace
 # --------------- 4 --------------- 
 Write-Host "---> Creating a queue in the namespace you created" -ForegroundColor Green
 $rndqueue = (New-Guid).ToString().Split("-")[0]
-$paramQueue = "mytestservicebusqueue$rndqueue"
-$queue1 = New-AzServiceBusQueue -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$paramQueue"
+$env:queueName = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
+$env:queueName = "mytestservicebusqueue$rndqueue"
+$serviceBusQueue = New-AzServiceBusQueue -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$env:queueName"
 Write-Host "---> Service Bus Queue details:" -ForegroundColor Green
-$queue1
+$serviceBusQueue
 
 
 # --------------- 5 --------------- 
 Write-Host "---> Get the primary connection string for the namespace" -ForegroundColor Green
 $serviceBusKey = Get-AzServiceBusKey -ResourceGroupName "$paramResourceGroup" -Namespace "$paramServiceBusNamespace" -Name RootManageSharedAccessKey 
 $serviceBusKey
+$env:primaryConnectionString = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
+$env:primaryConnectionString = $serviceBusKey.PrimaryConnectionString
+Write-Host "---> Primary Connection String" -ForegroundColor Green
+$env:primaryConnectionString
 
+
+# --------------- 6 --------------- 
+Write-Host "---> Create the application" -ForegroundColor Green
+# https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues
+$appFolderName = "ServiceBusApp"
+$appProgramFile = "ProgramSB.cs"
+if ( Test-Path -Path $appFolderName -PathType Container ) { Remove-Item -path $appFolderName -Recurse –force }
+dotnet new console -n $appFolderName
+Set-Location $appFolderName
+dotnet add package Azure.Messaging.ServiceBus
+Copy-Item ../$appProgramFile .
+Move-Item $appProgramFile Program.cs -Force
+Write-Host "---> Check your results" -ForegroundColor Green
+dotnet build
+dotnet run
+Set-Location ..
