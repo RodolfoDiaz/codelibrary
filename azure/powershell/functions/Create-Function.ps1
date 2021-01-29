@@ -34,7 +34,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = (New-Guid).ToString().Split("-")[0]
-$paramResourceGroup = "mytestresourcegroup$rndResourceGroup"
+$paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -54,7 +54,7 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # to the storage account name. That should be suitable to make it globally unique.
 $rndAcct = (New-Guid).ToString().Split("-")[0]
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$paramStorageAccount = "myteststorage$rndAcct"
+$paramStorageAccount = "test_storage_$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $paramStorageKind = "StorageV2"     # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 $newStorageParams = @{
@@ -98,7 +98,7 @@ $appToDeploy = @{
 
 # Create the Function App
 $rndFunc = (New-Guid).ToString().Split("-")[0]
-$paramFunctionApp = "mytestfunctionapp$rndFunc"
+$paramFunctionApp = "test_functionapp_$rndFunc"
 $paramFunctionAppVersion = "3"
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 $paramFunctionAppOS = $appToDeploy.functionAppOS

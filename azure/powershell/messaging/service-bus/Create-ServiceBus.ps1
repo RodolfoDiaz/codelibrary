@@ -32,7 +32,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = (New-Guid).ToString().Split("-")[0]
-$paramResourceGroup = "mytestresourcegroup$rndResourceGroup"
+$paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -48,7 +48,7 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
-$paramServiceBusNamespace = "mytestservicebusnamespace$rndsbns"
+$paramServiceBusNamespace = "test_servicebusnamespace_$rndsbns"
 $serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation"
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
 $serviceBusNamespace
@@ -58,7 +58,7 @@ $serviceBusNamespace
 Write-Host "---> Creating a queue in the namespace you created" -ForegroundColor Green
 $rndqueue = (New-Guid).ToString().Split("-")[0]
 $env:queueName = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
-$env:queueName = "mytestservicebusqueue$rndqueue"
+$env:queueName = "test_servicebusqueue_$rndqueue"
 $serviceBusQueue = New-AzServiceBusQueue -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$env:queueName"
 Write-Host "---> Service Bus Queue details:" -ForegroundColor Green
 $serviceBusQueue

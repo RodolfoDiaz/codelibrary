@@ -14,7 +14,7 @@ Write-Host "---> * Azure Functions Core Tools version 3.x." -ForegroundColor Gre
 func --version
 
 # VARIABLES 
-$AppName = "function-chaining"  # New-Variable -Name "AppName" -Visibility Public -Value "mytest-func"
+$AppName = "function_chaining"  # New-Variable -Name "AppName" -Visibility Public -Value "function_chaining"
 
 $runtime = @{
   dotnet = "dotnet"
