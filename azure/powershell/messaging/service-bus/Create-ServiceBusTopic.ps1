@@ -4,16 +4,20 @@ Set-StrictMode -Version latest
 # Exit immediately if a command exits with a non-zero status.
 $ErrorActionPreference = "Stop"
 
-# Azure Service Bus - https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview
+# Azure Service Bus Topics - https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-topics-subscriptions-portal
 
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
 # 3- Create a Service Bus messaging namespace.
-# 4- Create a queue in the namespace you created.
-# 5- Get the primary connection string for the namespace.
-# 6- Create the application.
+# 4- Create a topic in the namespace.
+# 5- Create a few subscriptions to the topic.
+# 6- Create a filter to the subscriptions.
+# 7- Get the primary connection string for the namespace.
+# 8- Create the application.
 
+# The following commands are available in PowerShell:
+# Get-Command -Module Az.ServiceBus
 
 # --------------- 1 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green
@@ -55,16 +59,36 @@ $serviceBusNamespace
 
 
 # --------------- 4 --------------- 
-Write-Host "---> Creating a queue in the namespace you created" -ForegroundColor Green
-$rndqueue = (New-Guid).ToString().Split("-")[0]
-$env:queueName = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
-$env:queueName = "test_servicebusqueue_$rndqueue"
-$serviceBusQueue = New-AzServiceBusQueue -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$env:queueName"
-Write-Host "---> Service Bus Queue details:" -ForegroundColor Green
-$serviceBusQueue
+Write-Host "---> Creating a topic in the namespace" -ForegroundColor Green
+$rndtopic = (New-Guid).ToString().Split("-")[0]
+$paramServiceBusTopic = "test_servicebustopic_$rndtopic"
+$serviceBusTopic = New-AzServiceBusTopic -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$paramServiceBusTopic"
+Write-Host "---> Service Bus Topic details:" -ForegroundColor Green
+$serviceBusTopic
 
 
 # --------------- 5 --------------- 
+Write-Host "---> Creating a few subscriptions to the topic." -ForegroundColor Green
+$serviceBusSubscription1 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Name "S1"
+$serviceBusSubscription1
+$serviceBusSubscription2 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Name "S2"
+$serviceBusSubscription2
+$serviceBusSubscription3 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Name "S3"
+$serviceBusSubscription3
+
+
+# --------------- 6 --------------- 
+Write-Host "---> Create a filter to the subscriptions." -ForegroundColor Green
+# Create a filter on the first subscription with a filter using custom properties (StoreId is one of Store1, Store2, and Store3).
+$serviceBusRule1 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Subscription "S1" -Name "MyFilter1" -SqlExpression "StoreId IN ('Store1','Store2','Store3')"
+$serviceBusRule1
+$serviceBusRule2 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Subscription "S2" -Name "MyFilter2" -SqlExpression "StoreId = 'Store4'"
+$serviceBusRule2
+$serviceBusRule3 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Subscription "S3" -Name "MyFilter3" -SqlExpression "StoreId NOT IN ('Store1','Store2','Store3', 'Store4')"
+$serviceBusRule3
+
+
+# --------------- 7 --------------- 
 Write-Host "---> Get the primary connection string for the namespace" -ForegroundColor Green
 $serviceBusKey = Get-AzServiceBusKey -ResourceGroupName "$paramResourceGroup" -Namespace "$paramServiceBusNamespace" -Name RootManageSharedAccessKey 
 $serviceBusKey
@@ -73,19 +97,3 @@ $env:primaryConnectionString = $serviceBusKey.PrimaryConnectionString
 Write-Host "---> Primary Connection String" -ForegroundColor Green
 $env:primaryConnectionString
 
-
-# --------------- 6 --------------- 
-Write-Host "---> Create the application" -ForegroundColor Green
-# https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues
-$appFolderName = "ServiceBusApp"
-$appProgramFile = "ProgramSB.cs"
-if ( Test-Path -Path $appFolderName -PathType Container ) { Remove-Item -path $appFolderName -Recurse –force }
-dotnet new console -n $appFolderName
-Set-Location $appFolderName
-dotnet add package Azure.Messaging.ServiceBus
-Copy-Item ../$appProgramFile .
-Move-Item $appProgramFile Program.cs -Force
-Write-Host "---> Check your results" -ForegroundColor Green
-dotnet build
-dotnet run
-Set-Location ..
