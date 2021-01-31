@@ -52,6 +52,7 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
+# Namespace naming rules: length 6-50, Alphanumerics and hyphens.
 $paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
 $paramNamespaceSku = "Standard"  # Service Bus comes in Basic, standard, and premium tiers. For Topics you need "Standard".
 $serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -SkuName "$paramNamespaceSku" -Location "$paramLocation"  -Tag $paramTags

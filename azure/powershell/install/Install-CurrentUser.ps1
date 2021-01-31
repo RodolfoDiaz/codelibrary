@@ -11,3 +11,5 @@ if ($PSVersionTable.PSEdition -eq 'Desktop' -and (Get-Module -Name AzureRM -List
 } else {
     Install-Module -Name Az -AllowClobber -Scope CurrentUser
 }
+Write-Host "---> Your PowerShell Modules path is: " -ForegroundColor Green
+$env:PSModulePath

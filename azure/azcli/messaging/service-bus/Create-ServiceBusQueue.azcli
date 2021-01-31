@@ -49,6 +49,7 @@ az servicebus namespace create --resource-group "$paramResourceGroup" --name "$p
 
 # --------------- 4 --------------- 
 echo "---> Creating a queue in the namespace you created"
+# Namespace naming rules: length 6-50, Alphanumerics and hyphens.
 export queueName="test_servicebusqueue_$RANDOM"
 az servicebus queue create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --name "$queueName"
 

@@ -65,7 +65,8 @@ echo $storageConnectionString
 echo "---> Create a Function App"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az_functionapp_create
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
-paramFunctionApp="test_functionapp_$RANDOM"
+# Function App naming rules: length 2-59,	Alphanumerics and hyphens.
+paramFunctionApp="test-functionapp-$RANDOM"
 paramFunctionAppVersion="3"
 
 # deployFunctionAppOS="Windows"

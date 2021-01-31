@@ -44,6 +44,7 @@ fi
 
 # --------------- 3 --------------- 
 echo "---> Creating a Service Bus messaging namespace"
+# Namespace naming rules: length 6-50, Alphanumerics and hyphens.
 paramServiceBusNamespace="test-servicebusnamespace-$RANDOM"
 paramNamespaceSku="Standard"  # Service Bus comes in Basic, standard, and premium tiers. For Topics you need "Standard".
 az servicebus namespace create --resource-group "$paramResourceGroup" --name "$paramServiceBusNamespace" --sku "$paramNamespaceSku" --location "$paramLocation" --tags $paramTags

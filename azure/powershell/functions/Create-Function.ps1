@@ -98,7 +98,8 @@ $appToDeploy = @{
 
 # Create the Function App
 $rndFunc = (New-Guid).ToString().Split("-")[0]
-$paramFunctionApp = "test_functionapp_$rndFunc"
+# Function App naming rules: length 2-59,	Alphanumerics and hyphens.
+$paramFunctionApp = "test-functionapp-$rndFunc"
 $paramFunctionAppVersion = "3"
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 $paramFunctionAppOS = $appToDeploy.functionAppOS
