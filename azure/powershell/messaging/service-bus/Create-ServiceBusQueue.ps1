@@ -50,8 +50,8 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
-$paramServiceBusNamespace = "testservicebusnamespace$rndsbns"
-$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation"
+$paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
+$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation" -Tag $paramTags
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
 $serviceBusNamespace
 
@@ -79,8 +79,8 @@ $env:primaryConnectionString
 # --------------- 6 --------------- 
 Write-Host "---> Create the application" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues
-$appFolderName = "ServiceBusApp"
-$appProgramFile = "ProgramSB.cs"
+$appFolderName = "ServiceBusQueueApp"
+$appProgramFile = "ProgramSBQ.cs"
 if ( Test-Path -Path $appFolderName -PathType Container ) { Remove-Item -path $appFolderName -Recurse –force }
 dotnet new console -n $appFolderName
 Set-Location $appFolderName

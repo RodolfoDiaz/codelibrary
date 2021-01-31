@@ -52,8 +52,8 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
-$paramServiceBusNamespace = "testservicebusnamespace$rndsbns"
-$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation"
+$paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
+$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation"  -Tag $paramTags
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
 $serviceBusNamespace
 
@@ -61,30 +61,35 @@ $serviceBusNamespace
 # --------------- 4 --------------- 
 Write-Host "---> Creating a topic in the namespace" -ForegroundColor Green
 $rndtopic = (New-Guid).ToString().Split("-")[0]
-$paramServiceBusTopic = "test_servicebustopic_$rndtopic"
-$serviceBusTopic = New-AzServiceBusTopic -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$paramServiceBusTopic" -EnablePartitioning $True
+$env:paramServiceBusTopic = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
+$env:paramServiceBusTopic = "test_servicebustopic_$rndtopic"
+$serviceBusTopic = New-AzServiceBusTopic -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$env:paramServiceBusTopic" -EnablePartitioning $True
 Write-Host "---> Service Bus Topic details:" -ForegroundColor Green
 $serviceBusTopic
 
 
 # --------------- 5 --------------- 
-Write-Host "---> Creating a few subscriptions to the topic." -ForegroundColor Green
-$serviceBusSubscription1 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Name "S1"
+Write-Host "---> Creating a few subscriptions to the topic" -ForegroundColor Green
+$env:paramServiceBusSubscription = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
+$env:paramServiceBusSubscription = "mysub"
+$serviceBusSubscription = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Name "$env:paramServiceBusSubscription"
+$serviceBusSubscription
+$serviceBusSubscription1 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Name "S1"
 $serviceBusSubscription1
-$serviceBusSubscription2 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Name "S2"
+$serviceBusSubscription2 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Name "S2"
 $serviceBusSubscription2
-$serviceBusSubscription3 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Name "S3"
+$serviceBusSubscription3 = New-AzServiceBusSubscription -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Name "S3"
 $serviceBusSubscription3
 
 
 # --------------- 6 --------------- 
-Write-Host "---> Create a filter to the subscriptions." -ForegroundColor Green
+Write-Host "---> Create a filter to the subscriptions" -ForegroundColor Green
 # Create a filter on the first subscription with a filter using custom properties (StoreId is one of Store1, Store2, and Store3).
-$serviceBusRule1 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Subscription "S1" -Name "MyFilter1" -SqlExpression "StoreId IN ('Store1','Store2','Store3')"
+$serviceBusRule1 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Subscription "S1" -Name "MyFilter1" -SqlExpression "StoreId IN ('Store1','Store2','Store3')"
 $serviceBusRule1
-$serviceBusRule2 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Subscription "S2" -Name "MyFilter2" -SqlExpression "StoreId = 'Store4'"
+$serviceBusRule2 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Subscription "S2" -Name "MyFilter2" -SqlExpression "StoreId = 'Store4'"
 $serviceBusRule2
-$serviceBusRule3 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$paramServiceBusTopic" -Subscription "S3" -Name "MyFilter3" -SqlExpression "StoreId NOT IN ('Store1','Store2','Store3', 'Store4')"
+$serviceBusRule3 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Subscription "S3" -Name "MyFilter3" -SqlExpression "StoreId NOT IN ('Store1','Store2','Store3', 'Store4')"
 $serviceBusRule3
 
 
@@ -97,3 +102,21 @@ $env:primaryConnectionString = $serviceBusKey.PrimaryConnectionString
 Write-Host "---> Primary Connection String" -ForegroundColor Green
 $env:primaryConnectionString
 
+
+# --------------- 8 --------------- 
+Write-Host "---> Create the application" -ForegroundColor Green
+# https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-how-to-use-topics-subscriptions
+$appFolderName = "ServiceBusTopicApp"
+$appProgramFile = "ProgramSBT.cs"
+if ( Test-Path -Path $appFolderName -PathType Container ) { Remove-Item -path $appFolderName -Recurse –force }
+dotnet new console -n $appFolderName
+Set-Location $appFolderName
+dotnet add package Azure.Messaging.ServiceBus
+Copy-Item ../$appProgramFile .
+Move-Item $appProgramFile Program.cs -Force
+Write-Host "---> Check your results" -ForegroundColor Green
+dotnet build
+# NOTE: If you receive a Timeout Exception, your environment is probably blocking the TCP ports
+# used for AMQP by default. You need to have ports 5671 and 5672 opened for AMQP connections.
+dotnet run
+Set-Location ..

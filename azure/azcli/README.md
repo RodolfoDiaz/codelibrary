@@ -6,6 +6,8 @@ The Azure command-line interface (Azure CLI) is a set of commands used to create
 
 ### Product documentation
 
+* [Naming rules and restrictions for Azure resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules)
+
 * [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/)
 
 * [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)

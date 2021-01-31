@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using Azure.Messaging.ServiceBus;
 
-namespace ServiceBusApp
+namespace ServiceBusQueueApp
 {
   class Program
   {
