@@ -53,7 +53,8 @@ $resourceGroup
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
 $paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
-$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation"  -Tag $paramTags
+$paramNamespaceSku = "Standard"  # Service Bus comes in Basic, standard, and premium tiers. For Topics you need "Standard".
+$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -SkuName "$paramNamespaceSku" -Location "$paramLocation"  -Tag $paramTags
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
 $serviceBusNamespace
 
@@ -87,8 +88,10 @@ Write-Host "---> Create a filter to the subscriptions" -ForegroundColor Green
 # Create a filter on the first subscription with a filter using custom properties (StoreId is one of Store1, Store2, and Store3).
 $serviceBusRule1 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Subscription "S1" -Name "MyFilter1" -SqlExpression "StoreId IN ('Store1','Store2','Store3')"
 $serviceBusRule1
+# Create a filter on the second subscription with a filter using customer properties (StoreId = Store4)
 $serviceBusRule2 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Subscription "S2" -Name "MyFilter2" -SqlExpression "StoreId = 'Store4'"
 $serviceBusRule2
+# Create a filter on the third subscription with a filter using customer properties (StoreId not in Store1, Store2, Store3, or Store4).
 $serviceBusRule3 = New-AzServiceBusRule -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Topic "$env:paramServiceBusTopic" -Subscription "S3" -Name "MyFilter3" -SqlExpression "StoreId NOT IN ('Store1','Store2','Store3', 'Store4')"
 $serviceBusRule3
 

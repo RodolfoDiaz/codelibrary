@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure Service Bus Topics - https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-tutorial-topics-subscriptions-cli
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create a Service Bus messaging namespace.
+# 4- Create a topic in the namespace.
+# 5- Create a few subscriptions to the topic.
+# 6- Create a filter to the subscriptions.
+# 7- Get the primary connection string for the namespace.
+# 8- Create the application.
+
+# The following commands are available in PowerShell:
+# Get-Command -Module Az.ServiceBus
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# Most likely, the providers are already registered, but this will make sure of that.
+az provider register --namespace "Microsoft.Web"
+az provider register --namespace "Microsoft.Storage"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="test_resourcegroup_$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 3 --------------- 
+echo "---> Creating a Service Bus messaging namespace"
+paramServiceBusNamespace="test-servicebusnamespace-$RANDOM"
+paramNamespaceSku="Standard"  # Service Bus comes in Basic, standard, and premium tiers. For Topics you need "Standard".
+az servicebus namespace create --resource-group "$paramResourceGroup" --name "$paramServiceBusNamespace" --sku "$paramNamespaceSku" --location "$paramLocation" --tags $paramTags
+
+
+# --------------- 4 --------------- 
+echo "---> Creating a topic in the namespace"
+export paramServiceBusTopic="test_servicebustopic_$RANDOM"
+az servicebus topic create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --name "$paramServiceBusTopic"
+
+
+# --------------- 5 --------------- 
+echo "---> Creating a few subscriptions to the topic"
+export paramServiceBusSubscription="mysub"
+az servicebus topic subscription create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --topic-name "$paramServiceBusTopic" --name "$paramServiceBusSubscription"
+az servicebus topic subscription create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --topic-name "$paramServiceBusTopic" --name "S1"
+az servicebus topic subscription create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --topic-name "$paramServiceBusTopic" --name "S2"
+az servicebus topic subscription create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --topic-name "$paramServiceBusTopic" --name "S3"
+
+
+# --------------- 6 --------------- 
+echo "---> Create a filter to the subscriptions"
+# Create a filter on the first subscription with a filter using custom properties (StoreId is one of Store1, Store2, and Store3).
+az servicebus topic subscription rule create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --topic-name "$paramServiceBusTopic" --subscription-name "S1" --name "MyFilter1" --filter-sql-expression "StoreId IN ('Store1','Store2','Store3')"
+# Create a filter on the second subscription with a filter using customer properties (StoreId = Store4)
+az servicebus topic subscription rule create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --topic-name "$paramServiceBusTopic" --subscription-name "S2" --name "MyFilter2" --filter-sql-expression "StoreId = 'Store4'"
+# Create a filter on the third subscription with a filter using customer properties (StoreId not in Store1, Store2, Store3, or Store4).
+az servicebus topic subscription rule create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --topic-name "$paramServiceBusTopic" --subscription-name "S3" --name "MyFilter3" --filter-sql-expression "StoreId NOT IN ('Store1','Store2','Store3', 'Store4')"
+
+
+# --------------- 7 --------------- 
+echo "---> Get the primary connection string for the namespace"
+export primaryConnectionString="$(az servicebus namespace authorization-rule keys list --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)"
+echo $primaryConnectionString
+
+
+# --------------- 8 --------------- 
+echo "---> Create the application"
+# https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-get-started-with-queues
+appFolderName="ServiceBusTopicApp"
+appProgramFile="ProgramSBT.cs"
+if [ -d ./$appFolderName/ ]; then rm -rf $appFolderName; fi
+dotnet new console -n $appFolderName
+cd $appFolderName
+dotnet add package Azure.Messaging.ServiceBus
+cp ../$appProgramFile .
+mv $appProgramFile Program.cs
+echo "---> Check your results"
+dotnet build
+# NOTE: If you receive a Timeout Exception, your environment is probably blocking the TCP ports
+# used for AMQP by default. You need to have ports 5671 and 5672 opened for AMQP connections.
+dotnet run
+cd ..

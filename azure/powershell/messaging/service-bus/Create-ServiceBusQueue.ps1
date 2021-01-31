@@ -51,7 +51,8 @@ $resourceGroup
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = (New-Guid).ToString().Split("-")[0]
 $paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
-$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -Location "$paramLocation" -Tag $paramTags
+$paramNamespaceSku = "Basic"  # Service Bus comes in Basic, standard, and premium tiers. For Queues you need "Basic".
+$serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -SkuName "$paramNamespaceSku" -Location "$paramLocation" -Tag $paramTags
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
 $serviceBusNamespace
 
