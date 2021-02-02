@@ -23,7 +23,7 @@ az login
 # az account list
 
 echo "---> Verify registration of the required Azure resource providers"
-# Most likely, the providers are already registered, but this will make sure of that.
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
 az provider register --namespace "Microsoft.Web"
 az provider register --namespace "Microsoft.Storage"
 

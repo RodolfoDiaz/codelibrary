@@ -24,7 +24,7 @@ Connect-AzAccount
 #$tenantId = (Get-AzContext).Tenant.Id
 
 Write-Host "---> Verify registration of the required Azure resource providers" -ForegroundColor Green
-# Most likely, the providers are already registered, but this will make sure of that.
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
 @("Microsoft.Web", "Microsoft.Storage", "Microsoft.EventGrid") | ForEach-Object {
   Register-AzResourceProvider -ProviderNamespace $_
 }
