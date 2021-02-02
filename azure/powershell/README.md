@@ -15,3 +15,5 @@ Azure PowerShell is a set of cmdlets for managing Azure resources directly from 
 * [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/)
 
 * [Azure Service Bus Messaging](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
+
+* [Azure Storage services](https://docs.microsoft.com/en-us/azure/storage/common/storage-introduction)

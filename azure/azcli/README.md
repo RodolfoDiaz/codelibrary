@@ -15,3 +15,5 @@ The Azure command-line interface (Azure CLI) is a set of commands used to create
 * [Azure Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/)
 
 * [Azure Service Bus Messaging](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
+
+* [Azure Storage services](https://docs.microsoft.com/en-us/azure/storage/common/storage-introduction)
