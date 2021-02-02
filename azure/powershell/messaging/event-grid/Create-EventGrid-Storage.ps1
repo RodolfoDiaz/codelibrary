@@ -5,7 +5,9 @@ Set-StrictMode -Version latest
 $ErrorActionPreference = "Stop"
 
 # Azure Event Grid - https://docs.microsoft.com/en-us/azure/event-grid/
-# https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-event-quickstart-powershell?toc=/azure/event-grid
+
+# Route storage events to web endpoint with PowerShell
+# https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-event-quickstart-powershell
 
 # The deployment process is:
 # 1- Log in to Azure.
