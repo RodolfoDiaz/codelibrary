@@ -23,8 +23,11 @@ namespace EventHubsAppReceive
             // Create a blob container client that the event processor will use 
             BlobContainerClient storageClient = new BlobContainerClient(blobStorageConnectionString, blobContainerName);
 
+            var options = new EventProcessorClientOptions();
+            options.ConnectionOptions.TransportType = EventHubsTransportType.AmqpWebSockets;
+
             // Create an event processor client to process events in the event hub
-            EventProcessorClient processor = new EventProcessorClient(storageClient, consumerGroup, ehubNamespaceConnectionString, eventHubName);
+            EventProcessorClient processor = new EventProcessorClient(storageClient, consumerGroup, ehubNamespaceConnectionString, eventHubName, options);
 
             // Register handlers for processing events and handling errors
             processor.ProcessEventAsync += ProcessEventHandler;

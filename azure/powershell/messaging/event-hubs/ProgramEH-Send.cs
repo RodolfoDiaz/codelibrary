@@ -13,8 +13,11 @@ namespace EventHubsAppSend
 
         static async Task Main()
         {
+            var options = new EventHubProducerClientOptions();
+            options.ConnectionOptions.TransportType = EventHubsTransportType.AmqpWebSockets;
+
             // Create a producer client that you can use to send events to an event hub
-            await using (var producerClient = new EventHubProducerClient(connectionString, eventHubName))
+            await using (var producerClient = new EventHubProducerClient(connectionString, eventHubName, options))
             {
                 // Create a batch of events 
                 using EventDataBatch eventBatch = await producerClient.CreateBatchAsync();
