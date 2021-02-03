@@ -1,0 +1,103 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure Event Hubs - https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-quickstart-cli
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create an Event Hubs namespace namespace.
+# 4- Create an event hub in the namespace you created.
+# 5- Get the primary connection string for the namespace.
+# 6- Create an application to Send events.
+# 7- Create a storage account.
+# 8- Get the storage account connection string.
+# 9- Create a blob container.
+# 10- Create an application to Receive events.
+
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
+az provider register --namespace "Microsoft.Web"
+az provider register --namespace "Microsoft.Storage"
+az provider register --namespace "Microsoft.EventHub"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="test_resourcegroup_$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 3 --------------- 
+echo "---> Creating an Event Hubs namespace"
+# Namespace naming rules: length 6-50, Alphanumerics and hyphens.
+paramEventHubNamespace="test-eventhubsnamespace-$RANDOM"
+paramNamespaceSku="Basic"  # Event Hubs comes in Basic, Standard, and Dedicated tiers. https://azure.microsoft.com/en-us/pricing/details/event-hubs/
+az eventhubs namespace create --name "$paramEventHubNamespace" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramNamespaceSku" --tags $paramTags
+
+
+# --------------- 4 --------------- 
+echo "---> Creating an event hub in the namespace you created"
+export eventhubName="test_eventhub_$RANDOM"
+retentionInDays=1  # Message Retention customization is not available in a Basic Tier Namespace. Change variable $paramNamespaceSku to "Standard" to increase message retention. 
+az eventhubs eventhub create --name "$eventhubName" --resource-group "$paramResourceGroup" --namespace-name "$paramEventHubNamespace" --message-retention "$retentionInDays"
+
+
+# --------------- 5 --------------- 
+echo "---> Get the primary connection string for the namespace"
+export ehubNamespaceConnectionString="$(az eventhubs namespace authorization-rule keys list --name "RootManageSharedAccessKey" --resource-group "$paramResourceGroup" --namespace-name "$paramEventHubNamespace" --query primaryConnectionString --output tsv)"
+echo $ehubNamespaceConnectionString
+
+
+# --------------- 6 --------------- 
+echo "---> Create an application to Send events"
+pip3 install azure-eventhub
+pip3 install azure-eventhub-checkpointstoreblob-aio
+python3 send.py
+
+
+# --------------- 7 --------------- 
+echo "---> Creating a storage account"
+# https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_create
+# We need a storage account for the deployed code to live in. Storage accounts also
+# need a globally unique name, so we"ll take the first section of a GUID and append it 
+# to the storage account name. That should be suitable to make it globally unique.
+
+# Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+paramStorageAccount="teststorage$RANDOM"
+paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
+paramStorageKind="StorageV2"    # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
+az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags
+
+
+# --------------- 8 --------------- 
+echo "---> Get storage account key and connection string"
+# https://docs.microsoft.com/en-us/cli/azure/storage/account/keys?view=azure-cli-latest#az_storage_account_keys_list
+accountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
+export storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+echo $storageConnectionString
+
+# --------------- 9 --------------- 
+echo "---> Create a blob container"
+export storageContainerName="messages"
+az storage container create --name "$storageContainerName" --connection-string "$storageConnectionString" --resource-group "$paramResourceGroup" --public-access "blob"
+
+
+# --------------- 10 --------------- 
+echo "---> Create an application to Receive events"
+python3 recv.py
