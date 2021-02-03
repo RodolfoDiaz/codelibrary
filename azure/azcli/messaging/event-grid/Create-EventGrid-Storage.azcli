@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure Event Grid - https://docs.microsoft.com/en-us/azure/event-grid/
+
+# Route storage events to web endpoint with Azure CLI
+# https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-event-quickstart
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create a storage account.
+# 4- Get the storage account connection string.
+# 5- Create a message endpoint.
+# 6- Subscribe to your storage account.
+# 7- Trigger an event from Blob storage.
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
+az provider register --namespace "Microsoft.Web"
+az provider register --namespace "Microsoft.Storage"
+az provider register --namespace "Microsoft.EventGrid"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="test_resourcegroup_$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 3 --------------- 
