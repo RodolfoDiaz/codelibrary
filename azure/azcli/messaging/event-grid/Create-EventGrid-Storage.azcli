@@ -43,3 +43,63 @@ fi
 
 
 # --------------- 3 --------------- 
+echo "---> Creating a storage account"
+# https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_create
+# We need a storage account for the deployed code to live in. Storage accounts also
+# need a globally unique name, so we"ll take the first section of a GUID and append it 
+# to the storage account name. That should be suitable to make it globally unique.
+
+# Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+paramStorageAccount="teststorage$RANDOM"
+paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
+paramStorageKind="StorageV2"    # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
+az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags
+
+
+# --------------- 4 --------------- 
+echo "---> Get storage account key and connection string"
+# https://docs.microsoft.com/en-us/cli/azure/storage/account/keys?view=azure-cli-latest#az_storage_account_keys_list
+accountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
+storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+echo $storageConnectionString
+
+
+# --------------- 5 --------------- 
+echo "---> Create a message endpoint"
+sitename="test-website-$RANDOM"
+az deployment group create \
+  --resource-group "$paramResourceGroup" \
+  --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/master/azuredeploy.json" \
+  --parameters siteName="$sitename" hostingPlanName="viewerhost"
+
+echo "Open URL in default browser - https://$sitename.azurewebsites.net"
+python -m webbrowser "https://$sitename.azurewebsites.net"
+
+
+# --------------- 6 --------------- 
+echo "---> Subscribe to your storage account"
+storageid=$(az storage account show --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query id --output tsv)
+endpoint="https://$sitename.azurewebsites.net/api/updates"
+eventSubscriptionName="gridBlobTest"
+
+az eventgrid event-subscription create \
+  --source-resource-id "$storageid" \
+  --name "$eventSubscriptionName" \
+  --endpoint "$endpoint"
+
+
+# --------------- 6 --------------- 
+echo "---> Trigger an event from Blob storage."
+containerName="gridcontainer-$RANDOM"
+storageAccountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query "[0].value" --output tsv)"
+az storage container create --name "$containerName" --account-name "$paramStorageAccount" --account-key "$storageAccountKey" --connection-string "$storageConnectionString"
+
+echo "This is a test file" >> gridTestFile.txt
+az storage blob upload --file "gridTestFile.txt" \
+    --container-name "$containerName" --name "gridTestFile.txt" \
+    --account-name "$paramStorageAccount" --account-key "$storageAccountKey" \
+    --connection-string "$storageConnectionString"
+
+# Cleanup 
+# Remove Resource Group
+#az group delete --name $paramResourceGroup --yes

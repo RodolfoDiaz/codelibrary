@@ -73,8 +73,8 @@ az eventgrid event-subscription create \
 
 # --------------- 6 --------------- 
 echo "---> Send an event to your custom topic"
-endpoint=$(az eventgrid topic show --name $topicname -g gridResourceGroup --query "endpoint" --output tsv)
-key=$(az eventgrid topic key list --name $topicname -g gridResourceGroup --query "key1" --output tsv)
+endpoint=$(az eventgrid topic show --name $topicname --resource-group "$paramResourceGroup" --query "endpoint" --output tsv)
+key=$(az eventgrid topic key list --name $topicname --resource-group "$paramResourceGroup" --query "key1" --output tsv)
 
 event='[ {"id": "'"$RANDOM"'", "eventType": "recordInserted", "subject": "myapp/vehicles/motorcycles", "eventTime": "'`date +%Y-%m-%dT%H:%M:%S%z`'", "data":{ "make": "Ducati", "model": "Monster"},"dataVersion": "1.0"} ]'
 curl -X POST -H "aeg-sas-key: $key" -d "$event" $endpoint
