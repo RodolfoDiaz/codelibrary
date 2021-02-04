@@ -1,5 +1,8 @@
 # Azure Durable Functions
 # https://docs.microsoft.com/en-us/azure/azure-functions/durable/
+
+# Function chaining refers to the pattern of executing a sequence of functions in a particular order. 
+# Often the output of one function needs to be applied to the input of another function.
 # https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-sequence?tabs=csharp
 # https://www.npmjs.com/package/durable-functions
 
