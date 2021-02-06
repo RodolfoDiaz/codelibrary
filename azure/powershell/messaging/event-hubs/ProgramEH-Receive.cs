@@ -10,10 +10,10 @@ namespace EventHubsAppReceive
 {
     class Program
     {
-        static string ehubNamespaceConnectionString = Environment.GetEnvironmentVariable("ehubNamespaceConnectionString");
-        static string eventHubName = Environment.GetEnvironmentVariable("eventhubName");
-        static string blobStorageConnectionString = Environment.GetEnvironmentVariable("storageConnectionString");
-        static string blobContainerName = Environment.GetEnvironmentVariable("containerName");
+        static string ehubNamespaceConnectionString = Environment.GetEnvironmentVariable("varEventHubNamespaceConnection");
+        static string eventHubName = Environment.GetEnvironmentVariable("varEventHubName");
+        static string blobStorageConnectionString = Environment.GetEnvironmentVariable("varStorageConnectionString");
+        static string blobContainerName = Environment.GetEnvironmentVariable("varContainerName");
 
         static async Task Main()
         {

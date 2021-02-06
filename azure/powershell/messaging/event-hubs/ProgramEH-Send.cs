@@ -8,8 +8,8 @@ namespace EventHubsAppSend
 {
     class Program
     {
-        static string connectionString = Environment.GetEnvironmentVariable("ehubNamespaceConnectionString");
-        static string eventHubName = Environment.GetEnvironmentVariable("eventhubName");
+        static string connectionString = Environment.GetEnvironmentVariable("varEventHubNamespaceConnection");
+        static string eventHubName = Environment.GetEnvironmentVariable("varEventHubName");
 
         static async Task Main()
         {
