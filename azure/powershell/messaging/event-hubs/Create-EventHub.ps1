@@ -106,6 +106,10 @@ if ($runtimeStack -eq "C#") {
   Set-Location ..
 } 
 elseif ($runtimeStack -eq "JS") {
+  # https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-node-get-started-send
+  if ( Test-Path -Path "node_modules" -PathType Container ) { Remove-Item -path "node_modules" -Recurse –force }
+  Remove-Item 'package*.json'
+  npm install @azure/event-hubs
   npm install @azure/storage-blob
   npm install @azure/eventhubs-checkpointstore-blob
   node send.js
