@@ -146,6 +146,7 @@ Write-Host "---> Get storage account key and connection string" -ForegroundColor
 $accountKey = Get-AzStorageAccountKey -ResourceGroupName "$paramResourceGroup" -AccountName "$paramStorageAccount" |
 Where-Object { $_.KeyName -eq "Key1" } | Select-Object -ExpandProperty Value
 $env:varStorageConnectionString = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
+# Get endpoint suffix using Get-AzEnvironment: Get-AzEnvironment | select Name, StorageEndpointSuffix
 $env:varStorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey;EndpointSuffix=core.windows.net"
 $env:varStorageConnectionString
 

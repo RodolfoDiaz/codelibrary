@@ -60,7 +60,7 @@ az storage account create --name "$paramStorageAccount" --resource-group "$param
 echo "---> Get storage account key and connection string"
 # https://docs.microsoft.com/en-us/cli/azure/storage/account/keys?view=azure-cli-latest#az_storage_account_keys_list
 accountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
-storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey"
+storageConnectionString="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey;EndpointSuffix=core.windows.net"
 echo $storageConnectionString
 
 
