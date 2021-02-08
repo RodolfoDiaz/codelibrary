@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Azure Queue Storage - https://docs.microsoft.com/en-us/azure/storage/queues/
+# Azure Blob Storage - https://docs.microsoft.com/en-us/azure/storage/blobs/
 
 # The deployment process is:
 # 1- Log in to Azure.
@@ -60,7 +60,8 @@ echo $AZURE_STORAGE_CONNECTION_STRING
 
 # --------------- 5 --------------- 
 echo "---> Create the application"
-appFolderName=PhotoSharingApp
+# https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-nodejs
+appFolderName=blobTestApp
 if [ -d ./$appFolderName ]; then echo 'Remove old folder...'; rm -rf $appFolderName; fi
 mkdir $appFolderName
 cp index.js $appFolderName
