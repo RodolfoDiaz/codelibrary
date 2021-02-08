@@ -51,12 +51,12 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # to the storage account name. That should be suitable to make it globally unique.
 $rndAcct = (New-Guid).ToString().Split("-")[0]
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$paramStorageAccount = "teststorage$rndAcct"
+$AZURE_STORAGE_ACCOUNT = "teststorage$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $paramStorageKind = "StorageV2"     # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 $newStorageParams = @{
   ResourceGroupName = $paramResourceGroup
-  AccountName       = $paramStorageAccount
+  AccountName       = $AZURE_STORAGE_ACCOUNT
   Location          = $paramLocation
   SkuName           = $paramStorageSku
   Tag               = $paramTags
@@ -70,26 +70,50 @@ $storageAccount
 
 # --------------- 4 --------------- 
 Write-Host "---> Get storage account key and connection string" -ForegroundColor Green
-$accountKey = Get-AzStorageAccountKey -ResourceGroupName "$paramResourceGroup" -AccountName "$paramStorageAccount" |
+$AZURE_STORAGE_KEY = Get-AzStorageAccountKey -ResourceGroupName "$paramResourceGroup" -AccountName "$AZURE_STORAGE_ACCOUNT" |
 Where-Object { $_.KeyName -eq "Key1" } | Select-Object -ExpandProperty Value
 $env:AZURE_STORAGE_CONNECTION_STRING = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
 # Get endpoint suffix using Get-AzEnvironment: Get-AzEnvironment | select Name, StorageEndpointSuffix
-$env:AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey;EndpointSuffix=core.windows.net"
+$env:AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=$AZURE_STORAGE_ACCOUNT;AccountKey=$AZURE_STORAGE_KEY;EndpointSuffix=core.windows.net"
 $env:AZURE_STORAGE_CONNECTION_STRING
 
+
 # --------------- 5 --------------- 
+Write-Host "---> Create a blob container and upload file" -ForegroundColor Green
+# https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-powershell
+$paramContainerName = "test-image-container"
+$paramFileName = "Azure-Logos.png"
+$paramPublicAccess = "blob" # By default, container data is private ("off") to the account owner. Use "blob" to allow public read access for blobs. Use "container" to allow public read and list access to the entire container.
+$ctx = $storageAccount.Context
+$storageContainer = New-AzStorageContainer -Name "$paramContainerName" -Context $ctx -Permission "$paramPublicAccess"
+$storageContainer
+$paramStandardBlobTier = "Cool"  # Block Blob Tier, valid values are Hot/Cool/Archive. https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-storage-tiers
+Set-AzStorageBlobContent -File "$paramFileName" `
+  -Container "$paramContainerName" `
+  -Blob "$paramFileName" `
+  -Context $ctx `
+  -StandardBlobTier "$paramStandardBlobTier"
+Write-Host "---> File inside the blob is available (public read access)" -ForegroundColor Green
+$blobUrl = "https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramFileName"
+Write-Host "$blobUrl"
+Start-Process "$blobUrl"
+Write-Host "---> List items inside the container" -ForegroundColor Green
+Get-AzStorageBlob -Container "$paramContainerName" -Context $ctx | Select-Object Name
+
+
+# --------------- 6 --------------- 
 Write-Host "---> Create the application" -ForegroundColor Green
-# $azureBlobStorageClientLibrary = "V11" # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet-legacy
-$azureBlobStorageClientLibrary = "V12" # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet
-$appFolderName = "BlobApp$azureBlobStorageClientLibrary"
-$appProgramFile = "Program$azureBlobStorageClientLibrary.cs"
+# $blobStorageClientLibrary = "V11" # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet-legacy
+$blobStorageClientLibrary = "V12" # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-dotnet
+$appFolderName = "BlobApp$blobStorageClientLibrary"
+$appProgramFile = "Program$blobStorageClientLibrary.cs"
 if ( Test-Path -Path $appFolderName -PathType Container ) { Remove-Item -path $appFolderName -Recurse –force }
 dotnet new console -n $appFolderName
 Set-Location $appFolderName
-if ($azureBlobStorageClientLibrary -eq "V11") {
+if ($blobStorageClientLibrary -eq "V11") {
   dotnet add package Microsoft.Azure.Storage.Blob
 }
-if ($azureBlobStorageClientLibrary -eq "V12") {
+if ($blobStorageClientLibrary -eq "V12") {
   dotnet add package Azure.Storage.Blobs
 }
 Copy-Item ../$appProgramFile .

@@ -10,7 +10,7 @@ const blobServiceClient = BlobServiceClient.fromConnectionString(
 
 async function main() {
   // Create a container (folder) if it does not exist
-  const containerName = 'testcontainer';
+  const containerName = 'test-text-container';
   const containerClient = blobServiceClient.getContainerClient(containerName);
   const createContainerResponse = await containerClient.createIfNotExists();
   console.log(
@@ -18,8 +18,8 @@ async function main() {
     createContainerResponse.succeeded
   );
 
-  // Upload image file
-  const filename = 'docs-and-friends-selfie-stick.png';
+  // Upload file
+  const filename = 'blobTestFile.txt';
   const blockBlobClient1 = containerClient.getBlockBlobClient(filename);
   const uploadBlobResponse1 = await blockBlobClient1.uploadFile(filename);
   console.log(
@@ -28,7 +28,7 @@ async function main() {
   );
 
   // Create a unique name for the blob
-  const blobName = 'testFile.txt';
+  const blobName = 'helloWorldFile.txt';
 
   // Get a block blob client
   const blockBlobClient2 = containerClient.getBlockBlobClient(blobName);

@@ -10,7 +10,8 @@ set -e
 # 2- Create a resource group.
 # 3- Create a storage account.
 # 4- Get the storage account connection string.
-# 5- Create the application
+# 5- Create a blob container and upload file.
+# 6- Create the application
 
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
@@ -44,29 +45,49 @@ echo "---> Creating a storage account"
 # to the storage account name. That should be suitable to make it globally unique.
 
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-paramStorageAccount="teststorage$RANDOM"
+AZURE_STORAGE_ACCOUNT="teststorage$RANDOM"
 paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 paramStorageKind="StorageV2"    # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
-az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags
+az storage account create --name "$AZURE_STORAGE_ACCOUNT" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags
 
 
 # --------------- 4 --------------- 
 echo "---> Get storage account key and connection string"
 # https://docs.microsoft.com/en-us/cli/azure/storage/account/keys?view=azure-cli-latest#az_storage_account_keys_list
-accountKey="$(az storage account keys list --account-name "$paramStorageAccount" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
-export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=$paramStorageAccount;AccountKey=$accountKey;EndpointSuffix=core.windows.net"
+AZURE_STORAGE_KEY="$(az storage account keys list --account-name "$AZURE_STORAGE_ACCOUNT" --resource-group "$paramResourceGroup" --query [0].value -o tsv)"
+export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=$AZURE_STORAGE_ACCOUNT;AccountKey=$AZURE_STORAGE_KEY;EndpointSuffix=core.windows.net"
 echo $AZURE_STORAGE_CONNECTION_STRING
 
 
 # --------------- 5 --------------- 
+echo "---> Create a blob container and upload file"
+# https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-cli
+# https://docs.microsoft.com/en-us/cli/azure/storage/container
+paramContainerName="test-image-container"
+paramFileName="Azure-Logos.png"
+paramPublicAccess="blob" # By default, container data is private ("off") to the account owner. Use "blob" to allow public read access for blobs. Use "container" to allow public read and list access to the entire container.
+az storage container create --name "$paramContainerName" --account-name "$AZURE_STORAGE_ACCOUNT" \
+  --account-key "$AZURE_STORAGE_KEY" --connection-string "$AZURE_STORAGE_CONNECTION_STRING" \
+  --resource-group "$paramResourceGroup" --public-access "$paramPublicAccess"
+az storage blob upload --container-name "$paramContainerName" --file "$paramFileName" --name "$paramFileName" \
+  --account-name "$AZURE_STORAGE_ACCOUNT" --account-key "$AZURE_STORAGE_KEY" --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+echo "---> File inside the blob is available (public read access)"
+blobUrl="https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramFileName"
+echo "$blobUrl"
+python -m webbrowser "$blobUrl"
+echo "---> List items inside the container"
+az storage blob list --container-name "$paramContainerName"
+
+
+# --------------- 6 --------------- 
 echo "---> Create the application"
 # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-nodejs
 appFolderName=blobTestApp
 if [ -d ./$appFolderName ]; then echo 'Remove old folder...'; rm -rf $appFolderName; fi
 mkdir $appFolderName
 cp index.js $appFolderName
-cp docs-and-friends-selfie-stick.png $appFolderName
 cd $appFolderName
+echo "This is a test file" >> blobTestFile.txt
 npm init -y
 npm install @azure/storage-blob --save
 node index.js

@@ -32,10 +32,10 @@ namespace blob_quickstart
               // Blob storage endpoint for the storage account.
               CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
 
-              // Create a container called 'quickstartblobs' and 
+              // Create a container called 'test-text-container' and 
               // append a GUID value to it to make the name unique.
               CloudBlobContainer cloudBlobContainer = 
-                  cloudBlobClient.GetContainerReference("quickstartblobs" + 
+                  cloudBlobClient.GetContainerReference("test-text-container" + 
                       Guid.NewGuid().ToString());
               await cloudBlobContainer.CreateAsync();
 

@@ -15,7 +15,7 @@ namespace BlobQuickstartV12
           BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
 
           //Create a unique name for the container
-          string containerName = "quickstartblobs" + Guid.NewGuid().ToString();
+          string containerName = "test-text-container" + Guid.NewGuid().ToString();
 
           // Create the container and return a container client object
           BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
