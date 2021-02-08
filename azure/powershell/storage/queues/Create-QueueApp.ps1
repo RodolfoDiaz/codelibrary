@@ -11,7 +11,8 @@ $ErrorActionPreference = "Stop"
 # 2- Create a resource group.
 # 3- Create a storage account.
 # 4- Get the storage account connection string.
-# 5- Create the application
+# 5- Create a queue and show items
+# 6- Create the application
 
 
 # --------------- 1 --------------- 
@@ -79,7 +80,7 @@ $env:storageConnectionString
 
 
 # --------------- 5 --------------- 
-Write-Host "---> Create a queue and show properties" -ForegroundColor Green
+Write-Host "---> Create a queue and show items" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/storage/queues/storage-powershell-how-to-use-queues
 $ctx = $storageAccount.Context
 $queueName = "howtoqueue"
@@ -91,8 +92,7 @@ $queue
 # Retrieve all queues and show their names
 Get-AzStorageQueue -Context $ctx | Select-Object Name
 # Delete the queue
-Remove-AzStorageQueue –Name $queueName –Context $ctx -Force
-Get-AzStorageQueue -Context $ctx | Select-Object Name
+# Remove-AzStorageQueue –Name $queueName –Context $ctx -Force
 
 
 # --------------- 6 --------------- 

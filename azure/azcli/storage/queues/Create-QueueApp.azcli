@@ -10,7 +10,8 @@ set -e
 # 2- Create a resource group.
 # 3- Create a storage account.
 # 4- Get the storage account connection string.
-# 5- Create the application
+# 5- Create a queue, add messages and show items
+# 6- Create the application
 
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
@@ -59,6 +60,20 @@ echo $storageConnectionString
 
 
 # --------------- 5 --------------- 
+echo "---> Create a queue, add messages and show items"
+# https://docs.microsoft.com/en-us/cli/azure/storage/queue?view=azure-cli-latest
+queueName="howtoqueue"
+az storage queue create --name "$queueName" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+az storage queue list --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+echo "---> Create messages"
+az storage message put --queue-name "$queueName" --content "This is the first message!" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+az storage message put --queue-name "$queueName" --content "This is the second message!" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+echo "---> Get messages"
+az storage message get --queue-name "$queueName" --num-messages "32" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+#az storage queue delete --name "$queueName" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+
+
+# --------------- 6 --------------- 
 echo "---> Create the application"
 #azureQueueClientLibrary="V11" # https://docs.microsoft.com/en-us/azure/storage/queues/storage-quickstart-queues-dotnet-legacy
 azureQueueClientLibrary="V12" # https://docs.microsoft.com/en-us/azure/storage/queues/storage-quickstart-queues-dotnet
