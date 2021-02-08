@@ -83,7 +83,7 @@ Write-Host "---> Create a blob container and upload file" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-powershell
 $paramContainerName = "test-image-container"
 $paramFileName = "Azure-Logos.png"
-$paramPublicAccess = "blob" # By default, container data is private ("off") to the account owner. Use "blob" to allow public read access for blobs. Use "container" to allow public read and list access to the entire container.
+$paramPublicAccess = "off" # By default, container data is private ("off") to the account owner. Use "blob" to allow public read access for blobs. Use "container" to allow public read and list access to the entire container.
 $ctx = $storageAccount.Context
 $storageContainer = New-AzStorageContainer -Name "$paramContainerName" -Context $ctx -Permission "$paramPublicAccess"
 $storageContainer
@@ -93,10 +93,13 @@ Set-AzStorageBlobContent -File "$paramFileName" `
   -Blob "$paramFileName" `
   -Context $ctx `
   -StandardBlobTier "$paramStandardBlobTier"
-Write-Host "---> File inside the blob is available (public read access)" -ForegroundColor Green
-$blobUrl = "https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramFileName"
-Write-Host "$blobUrl"
-Start-Process "$blobUrl"
+Write-Host "---> File uploaded to the blob container $paramContainerName is available online with a SAS token." -ForegroundColor Green
+#$blobUrl = "https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramFileName"
+$startTime = Get-Date
+$endTime = $startTime.AddHours(2.0)
+$blobUrlToken = New-AzStorageBlobSASToken -Container "$paramContainerName" -Blob "$paramFileName" -Permission r -StartTime "$startTime" -ExpiryTime "$endTime" -Protocol "HttpsOnly" -FullUri
+Write-Host "$blobUrlToken"
+Start-Process "$blobUrlToken"
 Write-Host "---> List items inside the container" -ForegroundColor Green
 Get-AzStorageBlob -Container "$paramContainerName" -Context $ctx | Select-Object Name
 
