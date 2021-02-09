@@ -4,15 +4,22 @@ Set-StrictMode -Version latest
 # Exit immediately if a command exits with a non-zero status.
 $ErrorActionPreference = "Stop"
 
-# Azure Queue Storage - https://docs.microsoft.com/en-us/azure/storage/queues/
+# Azure Blob Storage - https://docs.microsoft.com/en-us/azure/storage/blobs/
+
+# A binary large object (blob) is concentrated binary data that's compressed into an individual 
+# file inside a database. The large size of the file means they need special storage treatment. 
+# Blobs are binary, which means they are usually images, audio or other media.
+
+# Blob service REST API
+# https://docs.microsoft.com/en-us/rest/api/storageservices/blob-service-rest-api
 
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
 # 3- Create a storage account.
 # 4- Get the storage account connection string.
-# 5- Create the application
-
+# 5- Create a blob container and upload file.
+# 6- Create the application
 
 # --------------- 1 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green
