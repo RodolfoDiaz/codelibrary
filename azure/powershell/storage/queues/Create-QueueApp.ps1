@@ -6,6 +6,14 @@ $ErrorActionPreference = "Stop"
 
 # Azure Queue Storage - https://docs.microsoft.com/en-us/azure/storage/queues/
 
+# Azure Queue Storage is a service for storing large numbers of messages. You access messages from anywhere 
+# in the world via authenticated calls using HTTP or HTTPS. A queue message can be up to 64 KB in size.
+# Azure supports two types of queue mechanisms: Storage queues and Service Bus queues. 
+# Storage queues are part of the Azure Storage infrastructure.
+
+# Queue service REST API
+# https://docs.microsoft.com/en-us/rest/api/storageservices/queue-service-rest-api
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.

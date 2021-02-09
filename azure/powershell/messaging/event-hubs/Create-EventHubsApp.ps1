@@ -6,6 +6,9 @@ $ErrorActionPreference = "Stop"
 
 # Azure Event Hubs - https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-quickstart-powershell
 
+# Azure Event Hubs REST API
+# https://docs.microsoft.com/en-us/rest/api/eventhub/
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
