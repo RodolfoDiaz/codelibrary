@@ -118,7 +118,8 @@
 							"variable": [
 								{
 									"key": "resourceGroupName",
-									"value": "{{resourceGroupName}}"
+									"value": "{{resourceGroupName}}",
+									"type": "string"
 								}
 							]
 						},
@@ -164,7 +165,8 @@
 							"variable": [
 								{
 									"key": "resourceGroupName",
-									"value": "{{resourceGroupName}}"
+									"value": "{{resourceGroupName}}",
+									"type": "string"
 								}
 							]
 						},
@@ -180,14 +182,18 @@
 				{
 					"name": "Resources - Delete By Id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{bearerToken}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "https://management.azure.com/:resourceId?api-version=2020-06-01",
 							"protocol": "https",
@@ -213,7 +219,8 @@
 							"variable": [
 								{
 									"key": "resourceId",
-									"value": "/subscriptions/7765bdef-6bad-4133-b11d-681288dfaac9/resourceGroups/rodolfo-test-020921",
+									"value": "",
+									"type": "string",
 									"description": "Resource Group ID"
 								}
 							]

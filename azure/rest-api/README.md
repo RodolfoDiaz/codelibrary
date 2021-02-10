@@ -9,5 +9,12 @@
 
 ### Services
 
-* [Resource Management - Resource Groups](https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups)
-* [Storage Resource Provider - Storage Accounts](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts)
+* [Resource Management](https://docs.microsoft.com/en-us/rest/api/resources/)
+    * [Providers](https://docs.microsoft.com/en-us/rest/api/resources/providers)
+    * [Resources](https://docs.microsoft.com/en-us/rest/api/resources/resources)
+    * [Resource Groups](https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups)
+
+
+* [Storage Resource Provider](https://docs.microsoft.com/en-us/rest/api/storagerp/)
+    * [Queue](https://docs.microsoft.com/en-us/rest/api/storagerp/queue)
+    * [Storage Accounts](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts)
