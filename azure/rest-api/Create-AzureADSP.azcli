@@ -1,7 +1,9 @@
 # Create an Azure Active Directory Service Principal
+
+# Application and service principal objects in Azure Active Directory
 # https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals
 
-# Login
+# Log in to Azure
 az login
 # The output will return and "id" attribute.  This value will be used below.
 
@@ -16,3 +18,5 @@ az ad sp list --display-name "my-azure-subscription"
 
 # Service Principal Password Reset
 az ad sp reset-credentials --name "my-azure-subscription"
+
+# Continue with Postman Setup as indicated here: https://aka.ms/azurerest
