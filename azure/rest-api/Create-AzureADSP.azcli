@@ -1,0 +1,18 @@
+# Create an Azure Active Directory Service Principal
+# https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals
+
+# Login
+az login
+# The output will return and "id" attribute.  This value will be used below.
+
+# Set Active Subscription
+az account set --subscription "subscription-id"
+
+# Create Service Principal
+az ad sp create-for-rbac -n "my-azure-subscription"
+
+# List service principal info
+az ad sp list --display-name "my-azure-subscription"
+
+# Service Principal Password Reset
+az ad sp reset-credentials --name "my-azure-subscription"
