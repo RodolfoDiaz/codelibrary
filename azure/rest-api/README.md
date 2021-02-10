@@ -9,5 +9,5 @@
 
 ### Services
 
-* [Resource Management - Resource Groups](https://docs.microsoft.com/en-us/rest/api/resources/resources)
+* [Resource Management - Resource Groups](https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups)
 * [Storage Resource Provider - Storage Accounts](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts)
