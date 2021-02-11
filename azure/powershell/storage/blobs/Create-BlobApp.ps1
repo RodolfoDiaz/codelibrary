@@ -95,20 +95,26 @@ $ctx = $storageAccount.Context
 $storageContainer = New-AzStorageContainer -Name "$paramContainerName" -Context $ctx -Permission "$paramPublicAccess"
 $storageContainer
 $paramStandardBlobTier = "Cool"  # Block Blob Tier, valid values are Hot/Cool/Archive. https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-storage-tiers
+$paramBlobName = "FolderA/FolderB/FolderC/$paramFileName" # Blob name prefixes (virtual directories)
 Set-AzStorageBlobContent -File "$paramFileName" `
   -Container "$paramContainerName" `
-  -Blob "$paramFileName" `
+  -Blob "$paramBlobName" `
   -Context $ctx `
   -StandardBlobTier "$paramStandardBlobTier"
 Write-Host "---> File uploaded to the blob container $paramContainerName is available online with a SAS token." -ForegroundColor Green
-#$blobUrl = "https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramFileName"
+#$blobUrl = "https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramBlobName"
 $startTime = Get-Date
+# Availability of the URL: Get current date/time and add 2 hours
 $endTime = $startTime.AddHours(2.0)
-$blobUrlToken = New-AzStorageBlobSASToken -Container "$paramContainerName" -Blob "$paramFileName" -Permission r -StartTime "$startTime" -ExpiryTime "$endTime" -Protocol "HttpsOnly" -FullUri
+$blobUrlToken = New-AzStorageBlobSASToken -Container "$paramContainerName" -Blob "$paramBlobName" -Permission r -StartTime "$startTime" -ExpiryTime "$endTime" -Protocol "HttpsOnly" -FullUri
 Write-Host "$blobUrlToken"
 Start-Process "$blobUrlToken"
-Write-Host "---> List items inside the container" -ForegroundColor Green
-Get-AzStorageBlob -Container "$paramContainerName" -Context $ctx | Select-Object Name
+Write-Host "---> List items inside the container using a hierarchical listing" -ForegroundColor Green
+# Technically, containers are "flat" and do not support any kind of nesting or hierarchy. 
+# But if you give your blobs hierarchical names that look like file paths, 
+# the API's listing operation can filter results to specific prefixes.
+# https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageblob
+Get-AzStorageBlob -Container "$paramContainerName" -Context $ctx -Prefix "FolderA/FolderB/" | Select-Object Name
 
 
 # --------------- 6 --------------- 

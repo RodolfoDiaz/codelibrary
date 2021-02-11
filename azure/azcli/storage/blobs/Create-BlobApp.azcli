@@ -76,21 +76,30 @@ paramPublicAccess="off" # By default, container data is private ("off") to the a
 az storage container create --name "$paramContainerName" --account-name "$AZURE_STORAGE_ACCOUNT" \
   --account-key "$AZURE_STORAGE_KEY" --connection-string "$AZURE_STORAGE_CONNECTION_STRING" \
   --resource-group "$paramResourceGroup" --public-access "$paramPublicAccess"
-az storage blob upload --container-name "$paramContainerName" --file "$paramFileName" --name "$paramFileName" \
+paramBlobName="FolderA/FolderB/FolderC/$paramFileName" # Blob name prefixes (virtual directories)
+az storage blob upload --container-name "$paramContainerName" --file "$paramFileName" --name "$paramBlobName" \
   --account-name "$AZURE_STORAGE_ACCOUNT" --account-key "$AZURE_STORAGE_KEY" --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
 echo "---> File uploaded to the blob container $paramContainerName is available online with a SAS token."
-blobUrl="https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramFileName?"
+blobUrl="https://$AZURE_STORAGE_ACCOUNT.blob.core.windows.net/$paramContainerName/$paramBlobName?"
 echo "URL: $blobUrl"
-# Get current date/time in UTC and add 2 hours
-endDateTime=`date -u -d "2 hours" '+%Y-%m-%dT%H:%MZ'`
+# Availability of the URL: Get current date/time in UTC and add 1 day
+if [ "$(uname)" == "Darwin" ]; then
+  endDateTime=`date -u -j -v +1d '+%Y-%m-%dT%H:%MZ'`
+else
+  endDateTime=`date -u -d "1 day" '+%Y-%m-%dT%H:%MZ'`
+fi
 # https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az_storage_blob_generate_sas
-sasToken="$(az storage blob generate-sas --container-name "$paramContainerName" --name "$paramFileName" --permissions r --expiry "$endDateTime" --https-only)"
+sasToken="$(az storage blob generate-sas --container-name "$paramContainerName" --name "$paramBlobName" --permissions r --expiry "$endDateTime" --https-only)"
 echo "---> Token: $sasToken"
 #blobUrlToken="$(az storage blob url --connection-string "$AZURE_STORAGE_CONNECTION_STRING" --container-name "$paramContainerName" --name "$paramFileName" --sas-token "$sasToken" --full-uri)"
 #echo "$blobUrlToken"
 python -m webbrowser "${blobUrl}${sasToken}"
 echo "---> List items inside the container"
-az storage blob list --container-name "$paramContainerName"
+# Technically, containers are "flat" and do not support any kind of nesting or hierarchy. 
+# But if you give your blobs hierarchical names that look like file paths, 
+# the API's listing operation can filter results to specific prefixes.
+# https://docs.microsoft.com/en-us/cli/azure/storage/blob?view=azure-cli-latest#az_storage_blob_list
+az storage blob list --container-name "$paramContainerName" --prefix "FolderA/FolderB/"
 
 
 # --------------- 6 --------------- 
