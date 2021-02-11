@@ -5,7 +5,7 @@
 
 # Log in to Azure
 az login
-# The output will return and "id" attribute.  This value will be used below.
+# The output will return an "id" attribute that you will use in the next command.
 
 # Set a subscription to be the current active subscription.
 az account set --subscription "subscription-id"
@@ -31,7 +31,7 @@ az ad sp list --display-name "my-azure-subscription"
 # Reset a service principal credential. Use upon expiration of the service principal's credentials, or in the event that login credentials are lost.
 az ad sp credential reset --name "my-azure-subscription"
 
-# In Postman, open the "Environments" tab, select "Azure REST" environment and enter all your settings from the Service Principal and Azure account info:
+# In Postman, open the "Environments" tab, select "Azure REST" environment and enter the settings from the Service Principal and Azure account info:
 # tenant = tenantId (az account show)
 # appId = clientId (az ad sp list)
 # password = clientSecret (az ad sp create-for-rbac, or reset password)
