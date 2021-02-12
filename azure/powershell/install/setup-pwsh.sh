@@ -8,7 +8,7 @@ if [ "$(uname)" == "Darwin" ]; then
     if [ "$1" == "i" ]; then
         echo "Installing PowerShell on macOS"
         # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-macos
-        brew cask install powershell
+        brew install --cask powershell
         # When new versions of PowerShell are released, update Homebrew's formulae and upgrade PowerShell:
         brew update
         brew upgrade powershell --cask
@@ -18,7 +18,7 @@ if [ "$(uname)" == "Darwin" ]; then
 
     if [ "$1" == "u" ]; then
         echo "Uninstalling PowerShell on macOS"
-        brew cask uninstall powershell
+        brew uninstall --cask powershell
     fi
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
