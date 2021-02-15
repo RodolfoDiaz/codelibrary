@@ -21,3 +21,5 @@ Azure PowerShell is a set of cmdlets for managing Azure resources directly from 
 * [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/)
 
 * [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)
+
+* [Virtual machines](https://docs.microsoft.com/en-us/azure/virtual-machines/)
