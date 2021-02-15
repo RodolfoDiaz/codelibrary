@@ -1,7 +1,7 @@
-# Create an Azure Active Directory Service Principal
-
-# Application and service principal objects in Azure Active Directory
-# https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals
+# The Azure REST APIs (https://docs.microsoft.com/en-us/rest/api/?view=Azure)
+# require a Bearer Token Authorization header. 
+# We’ll first create an Azure Active Directory Service Principal and use it in
+# Postman to generate a Bearer Token and then call the Azure REST APIs.
 
 # Log in to Azure
 az login
@@ -11,15 +11,16 @@ az login
 az account set --subscription "subscription-id"
 
 # Create a service principal and configure its access to Azure resources. 
-# https://docs.microsoft.com/en-us/cli/azure/ad/sp
+# https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals
 az ad sp create-for-rbac --name "my-azure-subscription" --role Contributor
 
+# service principal name, or object id
 spId="00000000-0000-0000-0000-000000000000"
 
 # List a service principal's credentials.
 az ad sp credential list --id $spId
 
-# Delete a service principal and its role assignments.
+# If no longer needed, delete a service principal and its role assignments.
 az ad sp delete --id $spId
 
 # Continue with Postman Setup as indicated here: https://aka.ms/azurerest
