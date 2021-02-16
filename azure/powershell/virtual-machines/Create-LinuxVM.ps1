@@ -68,7 +68,7 @@ Write-Host "---> Create virtual network resources" -ForegroundColor Green
 
 # Create a subnet configuration
 # Segregate your network: you might assign 10.1.0.0 to VMs, 10.2.0.0 to back-end services, and 10.3.0.0 to SQL Server VMs.
-$paramNetworkSubnetConfig = "mySubnet"
+$paramNetworkSubnetConfig = "frontendSubnet"
 $subnetConfig = New-AzVirtualNetworkSubnetConfig `
   -Name "$paramNetworkSubnetConfig" `
   -AddressPrefix 192.168.1.0/24
@@ -85,7 +85,7 @@ $vnet = New-AzVirtualNetwork `
   -Tag $paramTags
 
 # Create a public IP address and specify a DNS name
-$paramPublicIpAddress = "myPublicIP-$(Get-Random)"
+$paramPublicIpAddress = "vmPublicIP-$(Get-Random)"
 $pip = New-AzPublicIpAddress `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -95,7 +95,7 @@ $pip = New-AzPublicIpAddress `
   -Tag $paramTags
 
 # Create an inbound network security group rule for port 22 (SSH)
-$paramNSGRule1 = "testNetworkSecurityGroupRuleSSH"
+$paramNSGRule1 = "testNSGRuleSSH"
 $nsgRuleSSH = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule1"  `
   -Protocol "Tcp" `
@@ -108,7 +108,7 @@ $nsgRuleSSH = New-AzNetworkSecurityRuleConfig `
   -Access "Allow"
 
 # Create an inbound network security group rule for port 80 (Web)
-$paramNSGRule2 = "testNetworkSecurityGroupRuleWWW"
+$paramNSGRule2 = "testNSGRuleWWW"
 $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule2"  `
   -Protocol "Tcp" `
@@ -121,7 +121,7 @@ $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Access "Allow"
 
 # Create a network security group
-$paramNetworkSecurityGroup = "myNetworkSecurityGroup"
+$paramNetworkSecurityGroup = "testNetworkSecurityGroup"
 $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -130,7 +130,8 @@ $nsg = New-AzNetworkSecurityGroup `
   -Tag $paramTags
 
 # Create a virtual network card and associate with public IP address and NSG
-$paramNetworkInterface = "testNic"
+$rndNic = (New-Guid).ToString().Split("-")[0]
+$paramNetworkInterface = "testNetworkInterface-$rndNic"
 $nic = New-AzNetworkInterface `
   -Name "$paramNetworkInterface" `
   -ResourceGroupName "$paramResourceGroup" `
@@ -145,7 +146,7 @@ $nic
 
 
 # --------------- 5 --------------- 
-Write-Host "---> Create a virtual machine" -ForegroundColor Green
+Write-Host "---> Create virtual machine configuration" -ForegroundColor Green
 
 $paramVMusername = "azureuser"
 $paramVMPassword = "ChangeThisPassword@123"
@@ -188,19 +189,21 @@ Add-AzVMSshPublicKey `
   -KeyData $sshPublicKey `
   -Path "/home/$paramVMusername/.ssh/authorized_keys"
 
+Write-Host "---> Creating virtual machine '$paramVirtualMachine'..." -ForegroundColor Green
 # Combine the previous configuration definitions to create the virtual machine
 $myVM = New-AzVM `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
   -VM $vmConfig `
   -Tag $paramTags
-Write-Host "---> Virtual Machine $paramVirtualMachine status:" -ForegroundColor Green
+Write-Host "---> Virtual Machine status:" -ForegroundColor Green
 $myVM
 
 
 # --------------- 6 --------------- 
-Write-Host "---> Connect to the VM" -ForegroundColor Green
+Write-Host "---> Connect to Virtual Machine '$paramVirtualMachine'" -ForegroundColor Green
 Write-Host "---> Username is: $paramVMusername"
-Write-Host "---> Public IP address is: "
-Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress"
-Write-Host "---> Enter the following command: ssh $paramVMusername@IpAddress"
+$VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
+Write-Host "---> Public IP address is: $VMIpAddress"
+Write-Host "---> Enter the following command: ssh $paramVMusername@$VMIpAddress"
+ssh ${paramVMusername}@${VMIpAddress}
