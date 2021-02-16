@@ -160,7 +160,7 @@ $rndVM = (New-Guid).ToString().Split("-")[0]
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
 # A good convention is to include the following information in the name: Environment (dev, prod, QA), 
 # Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
-$paramVMName = "devweb-$rndVM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
+$paramVMName = "devweb-$rndVM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
 $paramVMSize = "Standard_D2S_V3" # Check available sizes: Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
 
@@ -194,6 +194,31 @@ $virtualMachine
 
 
 # --------------- 6 --------------- 
+Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
+# Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
+# and compliance commitments. It uses the Bitlocker feature of Windows to provide volume encryption 
+# for the OS and data disks of Azure virtual machines (VMs).
+# https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-windows
+# https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-powershell-quickstart
+$rndKV = (New-Guid).ToString().Split("-")[0]
+$paramKeyVault = "test-KV-$rndKV" # unique keyvault name
+# Create a Key Vault configured for encryption keys
+New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption
+# Encrypt the virtual machine
+$KeyVault = Get-AzKeyVault -VaultName "$paramKeyVault" -ResourceGroupName "$paramResourceGroup"
+$paramVolumeType = "All" # Windows: The VolumeType parameter may be omitted, in which case the operation defaults to All; if the VolumeType parameter is present for a Windows virtual machine, it must be set to either All or OS.
+Set-AzVMDiskEncryptionExtension -ResourceGroupName "$paramResourceGroup" -VMName "$paramVMName" `
+  -DiskEncryptionKeyVaultUrl $KeyVault.VaultUri `
+  -DiskEncryptionKeyVaultId $KeyVault.ResourceId `
+  -SkipVmBackup -Force -VolumeType $paramVolumeType
+# Verify the encryption process
+Get-AzVmDiskEncryptionStatus -ResourceGroupName "$paramResourceGroup" -VMName "$paramVMName"
+# Azure Disk Encryption system requirements and troubleshooting:  https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-overview
+Write-Host "---> Wait until the encryption process is done and 'Provisioning succeeded' before you try to connect to the VM through RDP." -ForegroundColor Magenta
+Write-Host "---> CHECK STATUS: Get-AzVmDiskEncryptionStatus -ResourceGroupName $paramResourceGroup -VMName $paramVMName"
+
+
+# --------------- 7 --------------- 
 Write-Host "---> Connect to Virtual Machine '$paramVMName'" -ForegroundColor Green
 Write-Host "---> Username is: $paramVMusername"
 Write-Host "---> Public IP address is: "

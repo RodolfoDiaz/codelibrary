@@ -229,6 +229,7 @@ Set-AzVMDiskEncryptionExtension -ResourceGroupName "$paramResourceGroup" -VMName
   -SkipVmBackup -Force -VolumeType $paramVolumeType
 # Verify the encryption process
 Get-AzVmDiskEncryptionStatus -ResourceGroupName "$paramResourceGroup" -VMName "$paramVMName"
+# Azure Disk Encryption system requirements and troubleshooting: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-overview
 Write-Host "---> Wait until the encryption process is done and 'Provisioning succeeded' before you try to connect to the VM through SSH." -ForegroundColor Magenta
 Write-Host "---> CHECK STATUS: Get-AzVmDiskEncryptionStatus -ResourceGroupName $paramResourceGroup -VMName $paramVMName"
 
