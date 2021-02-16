@@ -5,7 +5,7 @@ Set-StrictMode -Version latest
 $ErrorActionPreference = "Stop"
 
 # Azure Virtual Machines - https://docs.microsoft.com/en-us/azure/virtual-machines/
-# https://docs.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-powershell
+# https://docs.microsoft.com/en-us/azure/virtual-machines/windows/quick-create-powershell
 
 # The deployment process is:
 # 1- Use ssh-keygen to create an SSH key pair.
@@ -94,17 +94,18 @@ $pip = New-AzPublicIpAddress `
   -Name "$paramPublicIpAddress" `
   -Tag $paramTags
 
-# Create an inbound network security group rule for port 22 (SSH)
-$paramNSGRule1 = "testNSGRuleSSH"
-$nsgRuleSSH = New-AzNetworkSecurityRuleConfig `
+# Create an inbound network security group rule for port 3389 (RDP)
+$paramNSGRule1 = "testNSGRuleRDP"
+$ngsRuleRDP = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule1"  `
+  -Description "Allow RDP" `
   -Protocol "Tcp" `
   -Direction "Inbound" `
   -Priority 1000 `
   -SourceAddressPrefix * `
   -SourcePortRange * `
   -DestinationAddressPrefix * `
-  -DestinationPortRange 22 `
+  -DestinationPortRange 3389 `
   -Access "Allow"
 
 # Create an inbound network security group rule for port 80 (Web)
@@ -126,7 +127,7 @@ $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
   -Name "$paramNetworkSecurityGroup" `
-  -SecurityRules $nsgRuleSSH, $nsgRuleWeb `
+  -SecurityRules $ngsRuleRDP, $nsgRuleWeb `
   -Tag $paramTags
 
 # Create a virtual network card and associate with public IP address and NSG
@@ -151,7 +152,7 @@ Write-Host "---> Create virtual machine configuration" -ForegroundColor Green
 $paramVMusername = "azureuser"
 $paramVMPassword = "ChangeThisPassword@123"
 $rndVM = (New-Guid).ToString().Split("-")[0]
-$paramVirtualMachine = "testVM-$rndVM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
+$paramVirtualMachine = "testVM-$rndVM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
 # https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs
 $paramVMSize = "Standard_DS1_v2" # Available sizes:  Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
 
@@ -160,34 +161,18 @@ $securePassword = ConvertTo-SecureString "$paramVMPassword" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential ("$paramVMusername", $securePassword)
 
 # Create a virtual machine configuration
-# Available source images: Get-AzVMImageSku -Location "westus" -PublisherName "Canonical" -Offer "UbuntuServer"
-$paramPublisher = "Canonical"
-$paramOffer = "UbuntuServer"
-$paramSkus = "18.04-LTS"
+# Available source images: Get-AzVMImageSku -Location "westus" -PublisherName "MicrosoftWindowsServer" -Offer "WindowsServer"
+$paramPublisher = "MicrosoftWindowsServer"
+$paramOffer = "WindowsServer"
+$paramSkus = "2019-datacenter-smalldisk-g2"
 $paramVersion = "latest"
 
-$vmConfig = New-AzVMConfig `
-  -VMName "$paramVirtualMachine" `
-  -VMSize $paramVMSize | `
-  Set-AzVMOperatingSystem `
-  -Linux `
-  -ComputerName "$paramVirtualMachine" `
-  -Credential $cred `
-  -DisablePasswordAuthentication | `
-  Set-AzVMSourceImage `
-  -PublisherName "$paramPublisher" `
-  -Offer "$paramOffer" `
-  -Skus "$paramSkus" `
-  -Version "$paramVersion" | `
-  Add-AzVMNetworkInterface `
-  -Id $nic.Id
-
-# Configure the SSH key
-$sshPublicKey = Get-Content ~/.ssh/id_rsa.pub
-Add-AzVMSshPublicKey `
-  -VM $vmconfig `
-  -KeyData $sshPublicKey `
-  -Path "/home/$paramVMusername/.ssh/authorized_keys"
+$vmConfig = New-AzVMConfig -VMName "$paramVirtualMachine" -VMSize "$paramVMSize"
+$ComputerName = "$paramVirtualMachine"
+$TimeZone = "Pacific Standard Time"
+Set-AzVMOperatingSystem -VM $vmConfig -Windows -ComputerName $ComputerName -Credential $cred -EnableAutoUpdate -TimeZone $TimeZone
+Add-AzVMNetworkInterface -VM $vmConfig -Id $nic.Id
+Set-AzVMSourceImage -VM $vmConfig -PublisherName "$paramPublisher" -Offer "$paramOffer" -Skus "$paramSkus" -Version "$paramVersion"
 
 Write-Host "---> Creating virtual machine '$paramVirtualMachine'..." -ForegroundColor Green
 # Combine the previous configuration definitions to create the virtual machine
@@ -205,5 +190,5 @@ Write-Host "---> Connect to Virtual Machine '$paramVirtualMachine'" -ForegroundC
 Write-Host "---> Username is: $paramVMusername"
 $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
 Write-Host "---> Public IP address is: $VMIpAddress"
-Write-Host "---> Enter the following command: ssh $paramVMusername@$VMIpAddress"
-ssh ${paramVMusername}@${VMIpAddress}
+Write-Host "---> Enter the following command: mstsc /v:$VMIpAddress"
+mstsc /v:$VMIpAddress
