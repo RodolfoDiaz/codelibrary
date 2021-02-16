@@ -75,7 +75,8 @@ $subnetConfig = New-AzVirtualNetworkSubnetConfig `
   -AddressPrefix 192.168.1.0/24
 
 # Create a virtual network
-$paramVirtualNetwork = "myVNET"
+$rndVNET = (New-Guid).ToString().Split("-")[0]
+$paramVirtualNetwork = "test-VirtualNetwork-$rndVNET"
 $paramAddressPrefix = "192.168.0.0/16"
 $vnet = New-AzVirtualNetwork `
   -ResourceGroupName "$paramResourceGroup" `
@@ -86,7 +87,8 @@ $vnet = New-AzVirtualNetwork `
   -Tag $paramTags
 
 # Create a public IP address and specify a DNS name
-$paramPublicIpAddress = "vmPublicIP-$(Get-Random)"
+$rndIPAddress = (New-Guid).ToString().Split("-")[0]
+$paramPublicIpAddress = "test-PublicIP-$rndIPAddress"
 $pip = New-AzPublicIpAddress `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -96,7 +98,7 @@ $pip = New-AzPublicIpAddress `
   -Tag $paramTags
 
 # Create an inbound network security group rule for port 3389 (RDP)
-$paramNSGRule1 = "testNSGRuleRDP"
+$paramNSGRule1 = "test-NSGRule-RDP"
 $nsgRuleRDP = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule1"  `
   -Description "Allow RDP" `
@@ -110,7 +112,7 @@ $nsgRuleRDP = New-AzNetworkSecurityRuleConfig `
   -Access "Allow"
 
 # Create an inbound network security group rule for port 80 (Web)
-$paramNSGRule2 = "testNSGRuleWWW"
+$paramNSGRule2 = "test-NSGRule-WWW"
 $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule2"  `
   -Description "Allow Web server port 80" `
@@ -125,7 +127,7 @@ $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
 
 # Create a network security group
 $rndNSG = (New-Guid).ToString().Split("-")[0]
-$paramNetworkSecurityGroup = "testNSG-$rndNSG"
+$paramNetworkSecurityGroup = "test-NSG-$rndNSG"
 $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -135,7 +137,7 @@ $nsg = New-AzNetworkSecurityGroup `
 
 # Create a virtual network card and associate with public IP address and NSG
 $rndNIC = (New-Guid).ToString().Split("-")[0]
-$paramNetworkInterface = "testNetworkInterface-$rndNIC"
+$paramNetworkInterface = "test-NetworkInterface-$rndNIC"
 $nic = New-AzNetworkInterface `
   -Name "$paramNetworkInterface" `
   -ResourceGroupName "$paramResourceGroup" `
@@ -158,7 +160,7 @@ $rndVM = (New-Guid).ToString().Split("-")[0]
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
 # A good convention is to include the following information in the name: Environment (dev, prod, QA), 
 # Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
-$paramVMName = "testVM-$rndVM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
+$paramVMName = "devweb-$rndVM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
 $paramVMSize = "Standard_D2S_V3" # Check available sizes: Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
 
@@ -194,7 +196,9 @@ $virtualMachine
 # --------------- 6 --------------- 
 Write-Host "---> Connect to Virtual Machine '$paramVMName'" -ForegroundColor Green
 Write-Host "---> Username is: $paramVMusername"
-$VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
-Write-Host "---> Public IP address is: $VMIpAddress"
-Write-Host "---> Enter the following command: mstsc /v:$VMIpAddress"
+Write-Host "---> Public IP address is: "
+Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress"
+Write-Host "---> CHECK STATUS: Get-AzPublicIpAddress -Name $paramPublicIpAddress | Select-Object IpAddress"
+# $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
+Write-Host "---> Enter the following command: mstsc /v:IpAddress"
 # mstsc /v:$VMIpAddress
