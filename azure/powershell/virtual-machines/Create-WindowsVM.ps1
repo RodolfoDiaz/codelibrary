@@ -12,8 +12,9 @@ $ErrorActionPreference = "Stop"
 # 2- Log in to Azure.
 # 3- Create a resource group.
 # 4- Create virtual network resources.
-# 5- Create a virtual machine.
-# 6- Connect to the VM.
+# 5- Create the virtual machine.
+# 6- Enable Azure Disk Encryption.
+# 7- Connect to the VM.
 
 
 # --------------- 1 --------------- 
@@ -96,7 +97,7 @@ $pip = New-AzPublicIpAddress `
 
 # Create an inbound network security group rule for port 3389 (RDP)
 $paramNSGRule1 = "testNSGRuleRDP"
-$ngsRuleRDP = New-AzNetworkSecurityRuleConfig `
+$nsgRuleRDP = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule1"  `
   -Description "Allow RDP" `
   -Protocol "Tcp" `
@@ -112,6 +113,7 @@ $ngsRuleRDP = New-AzNetworkSecurityRuleConfig `
 $paramNSGRule2 = "testNSGRuleWWW"
 $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule2"  `
+  -Description "Allow Web server port 80" `
   -Protocol "Tcp" `
   -Direction "Inbound" `
   -Priority 1001 `
@@ -122,17 +124,18 @@ $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Access "Allow"
 
 # Create a network security group
-$paramNetworkSecurityGroup = "testNetworkSecurityGroup"
+$rndNSG = (New-Guid).ToString().Split("-")[0]
+$paramNetworkSecurityGroup = "testNSG-$rndNSG"
 $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
   -Name "$paramNetworkSecurityGroup" `
-  -SecurityRules $ngsRuleRDP, $nsgRuleWeb `
+  -SecurityRules $nsgRuleRDP, $nsgRuleWeb `
   -Tag $paramTags
 
 # Create a virtual network card and associate with public IP address and NSG
-$rndNic = (New-Guid).ToString().Split("-")[0]
-$paramNetworkInterface = "testNetworkInterface-$rndNic"
+$rndNIC = (New-Guid).ToString().Split("-")[0]
+$paramNetworkInterface = "testNetworkInterface-$rndNIC"
 $nic = New-AzNetworkInterface `
   -Name "$paramNetworkInterface" `
   -ResourceGroupName "$paramResourceGroup" `
@@ -152,9 +155,12 @@ Write-Host "---> Create virtual machine configuration" -ForegroundColor Green
 $paramVMusername = "azureuser"
 $paramVMPassword = "ChangeThisPassword@123"
 $rndVM = (New-Guid).ToString().Split("-")[0]
-$paramVirtualMachine = "testVM-$rndVM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
-# https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs
-$paramVMSize = "Standard_DS1_v2" # Available sizes:  Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
+# You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
+# A good convention is to include the following information in the name: Environment (dev, prod, QA), 
+# Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
+$paramVMName = "testVM-$rndVM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
+# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
+$paramVMSize = "Standard_D2S_V3" # Check available sizes: Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
 
 # Define a credential object
 $securePassword = ConvertTo-SecureString "$paramVMPassword" -AsPlainText -Force
@@ -167,28 +173,28 @@ $paramOffer = "WindowsServer"
 $paramSkus = "2019-datacenter-smalldisk-g2"
 $paramVersion = "latest"
 
-$vmConfig = New-AzVMConfig -VMName "$paramVirtualMachine" -VMSize "$paramVMSize"
-$ComputerName = "$paramVirtualMachine"
+$vmConfig = New-AzVMConfig -VMName "$paramVMName" -VMSize "$paramVMSize"
+$ComputerName = "$paramVMName"
 $TimeZone = "Pacific Standard Time"
 Set-AzVMOperatingSystem -VM $vmConfig -Windows -ComputerName $ComputerName -Credential $cred -EnableAutoUpdate -TimeZone $TimeZone
-Add-AzVMNetworkInterface -VM $vmConfig -Id $nic.Id
 Set-AzVMSourceImage -VM $vmConfig -PublisherName "$paramPublisher" -Offer "$paramOffer" -Skus "$paramSkus" -Version "$paramVersion"
+Add-AzVMNetworkInterface -VM $vmConfig -Id $nic.Id
 
-Write-Host "---> Creating virtual machine '$paramVirtualMachine'..." -ForegroundColor Green
+Write-Host "---> Creating virtual machine '$paramVMName'..." -ForegroundColor Green
 # Combine the previous configuration definitions to create the virtual machine
-$myVM = New-AzVM `
+$virtualMachine = New-AzVM `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
   -VM $vmConfig `
   -Tag $paramTags
 Write-Host "---> Virtual Machine status:" -ForegroundColor Green
-$myVM
+$virtualMachine
 
 
 # --------------- 6 --------------- 
-Write-Host "---> Connect to Virtual Machine '$paramVirtualMachine'" -ForegroundColor Green
+Write-Host "---> Connect to Virtual Machine '$paramVMName'" -ForegroundColor Green
 Write-Host "---> Username is: $paramVMusername"
 $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
 Write-Host "---> Public IP address is: $VMIpAddress"
 Write-Host "---> Enter the following command: mstsc /v:$VMIpAddress"
-mstsc /v:$VMIpAddress
+# mstsc /v:$VMIpAddress

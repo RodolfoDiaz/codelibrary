@@ -12,8 +12,9 @@ $ErrorActionPreference = "Stop"
 # 2- Log in to Azure.
 # 3- Create a resource group.
 # 4- Create virtual network resources.
-# 5- Create a virtual machine.
-# 6- Connect to the VM.
+# 5- Create the virtual machine.
+# 6- Enable Azure Disk Encryption.
+# 7- Connect to the VM.
 
 
 # --------------- 1 --------------- 
@@ -98,6 +99,7 @@ $pip = New-AzPublicIpAddress `
 $paramNSGRule1 = "testNSGRuleSSH"
 $nsgRuleSSH = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule1"  `
+  -Description "Allow SSH" `
   -Protocol "Tcp" `
   -Direction "Inbound" `
   -Priority 1000 `
@@ -111,6 +113,7 @@ $nsgRuleSSH = New-AzNetworkSecurityRuleConfig `
 $paramNSGRule2 = "testNSGRuleWWW"
 $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule2"  `
+  -Description "Allow Web server port 80" `
   -Protocol "Tcp" `
   -Direction "Inbound" `
   -Priority 1001 `
@@ -121,7 +124,8 @@ $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Access "Allow"
 
 # Create a network security group
-$paramNetworkSecurityGroup = "testNetworkSecurityGroup"
+$rndNSG = (New-Guid).ToString().Split("-")[0]
+$paramNetworkSecurityGroup = "testNSG-$rndNSG"
 $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -130,8 +134,8 @@ $nsg = New-AzNetworkSecurityGroup `
   -Tag $paramTags
 
 # Create a virtual network card and associate with public IP address and NSG
-$rndNic = (New-Guid).ToString().Split("-")[0]
-$paramNetworkInterface = "testNetworkInterface-$rndNic"
+$rndNIC = (New-Guid).ToString().Split("-")[0]
+$paramNetworkInterface = "testNetworkInterface-$rndNIC"
 $nic = New-AzNetworkInterface `
   -Name "$paramNetworkInterface" `
   -ResourceGroupName "$paramResourceGroup" `
@@ -151,9 +155,12 @@ Write-Host "---> Create virtual machine configuration" -ForegroundColor Green
 $paramVMusername = "azureuser"
 $paramVMPassword = "ChangeThisPassword@123"
 $rndVM = (New-Guid).ToString().Split("-")[0]
-$paramVirtualMachine = "testVM-$rndVM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
-# https://docs.microsoft.com/en-us/azure/cloud-services/cloud-services-sizes-specs
-$paramVMSize = "Standard_DS1_v2" # Available sizes:  Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
+# You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
+# A good convention is to include the following information in the name: Environment (dev, prod, QA), 
+# Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
+$paramVMName = "testVM-$rndVM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
+# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
+$paramVMSize = "Standard_D2S_V3" # Check available sizes: Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
 
 # Define a credential object
 $securePassword = ConvertTo-SecureString "$paramVMPassword" -AsPlainText -Force
@@ -167,11 +174,11 @@ $paramSkus = "18.04-LTS"
 $paramVersion = "latest"
 
 $vmConfig = New-AzVMConfig `
-  -VMName "$paramVirtualMachine" `
+  -VMName "$paramVMName" `
   -VMSize $paramVMSize | `
   Set-AzVMOperatingSystem `
   -Linux `
-  -ComputerName "$paramVirtualMachine" `
+  -ComputerName "$paramVMName" `
   -Credential $cred `
   -DisablePasswordAuthentication | `
   Set-AzVMSourceImage `
@@ -189,21 +196,45 @@ Add-AzVMSshPublicKey `
   -KeyData $sshPublicKey `
   -Path "/home/$paramVMusername/.ssh/authorized_keys"
 
-Write-Host "---> Creating virtual machine '$paramVirtualMachine'..." -ForegroundColor Green
+Write-Host "---> Creating virtual machine '$paramVMName'..." -ForegroundColor Green
 # Combine the previous configuration definitions to create the virtual machine
-$myVM = New-AzVM `
+$virtualMachine = New-AzVM `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
   -VM $vmConfig `
   -Tag $paramTags
 Write-Host "---> Virtual Machine status:" -ForegroundColor Green
-$myVM
+$virtualMachine
 
 
 # --------------- 6 --------------- 
-Write-Host "---> Connect to Virtual Machine '$paramVirtualMachine'" -ForegroundColor Green
+Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
+# Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
+# and compliance commitments. It uses the DM-Crypt feature of Linux to provide volume encryption 
+# for the OS and data disks of Azure virtual machines (VMs).
+# https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-linux
+# https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-powershell-quickstart
+$rndKV = (New-Guid).ToString().Split("-")[0]
+$paramKeyVault = "testKV-$rndKV" # unique keyvault name
+# Create a Key Vault configured for encryption keys
+New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption
+# Encrypt the virtual machine
+$KeyVault = Get-AzKeyVault -VaultName "$paramKeyVault" -ResourceGroupName "$paramResourceGroup"
+$paramVolumeType = "All" # VolumeType parameter is required when encrypting Linux virtual machines, and must be set to a value ("Os", "Data", or "All")
+Set-AzVMDiskEncryptionExtension -ResourceGroupName "$paramResourceGroup" -VMName "$paramVMName" `
+  -DiskEncryptionKeyVaultUrl $KeyVault.VaultUri `
+  -DiskEncryptionKeyVaultId $KeyVault.ResourceId `
+  -SkipVmBackup -Force -VolumeType $paramVolumeType
+# Verify the encryption process
+Get-AzVmDiskEncryptionStatus -ResourceGroupName "$paramResourceGroup" -VMName "$paramVMName"
+Write-Host "---> Wait until the encryption process is done and 'Provisioning succeeded' before you try to connect to the VM through SSH." -ForegroundColor Magenta
+Write-Host "Get-AzVmDiskEncryptionStatus -ResourceGroupName $paramResourceGroup -VMName $paramVMName"
+
+
+# --------------- 7 --------------- 
+Write-Host "---> Connect to Virtual Machine '$paramVMName'" -ForegroundColor Green
 Write-Host "---> Username is: $paramVMusername"
 $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
 Write-Host "---> Public IP address is: $VMIpAddress"
 Write-Host "---> Enter the following command: ssh $paramVMusername@$VMIpAddress"
-ssh ${paramVMusername}@${VMIpAddress}
+# ssh ${paramVMusername}@${VMIpAddress}
