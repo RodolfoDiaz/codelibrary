@@ -39,7 +39,7 @@ Connect-AzAccount -UseDeviceAuthentication
 
 Write-Host "---> Verify registration of the required Azure resource providers" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
-@("Microsoft.Compute", "Microsoft.Storage", "Microsoft.Network") | ForEach-Object {
+@("Microsoft.Compute", "Microsoft.Storage", "Microsoft.Network", "Microsoft.KeyVault") | ForEach-Object {
   Register-AzResourceProvider -ProviderNamespace $_
 }
 
@@ -235,9 +235,9 @@ Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-linux
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-powershell-quickstart
 $rndKV = (New-Guid).ToString().Split("-")[0]
-$paramKeyVault = "test-KV-$rndKV" # unique keyvault name
+$paramKeyVault = "test-KeyVault-$rndKV" # unique keyvault name
 # Create a Key Vault configured for encryption keys
-New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption
+New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption -Tag $paramTags
 # Encrypt the virtual machine
 $KeyVault = Get-AzKeyVault -VaultName "$paramKeyVault" -ResourceGroupName "$paramResourceGroup"
 $paramVolumeType = "All" # VolumeType parameter is required when encrypting Linux virtual machines, and must be set to a value ("Os", "Data", or "All")

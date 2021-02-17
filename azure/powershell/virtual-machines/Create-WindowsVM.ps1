@@ -39,7 +39,7 @@ Connect-AzAccount -UseDeviceAuthentication
 
 Write-Host "---> Verify registration of the required Azure resource providers" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
-@("Microsoft.Compute", "Microsoft.Storage", "Microsoft.Network") | ForEach-Object {
+@("Microsoft.Compute", "Microsoft.Storage", "Microsoft.Network", "Microsoft.KeyVault") | ForEach-Object {
   Register-AzResourceProvider -ProviderNamespace $_
 }
 
@@ -219,9 +219,9 @@ Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-windows
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-powershell-quickstart
 $rndKV = (New-Guid).ToString().Split("-")[0]
-$paramKeyVault = "test-KV-$rndKV" # unique keyvault name
+$paramKeyVault = "test-KeyVault-$rndKV" # unique keyvault name
 # Create a Key Vault configured for encryption keys
-New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption
+New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption -Tag $paramTags
 # Encrypt the virtual machine
 $KeyVault = Get-AzKeyVault -VaultName "$paramKeyVault" -ResourceGroupName "$paramResourceGroup"
 $paramVolumeType = "All" # Windows: The VolumeType parameter may be omitted, in which case the operation defaults to All; if the VolumeType parameter is present for a Windows virtual machine, it must be set to either All or OS.
