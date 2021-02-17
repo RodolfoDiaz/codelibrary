@@ -13,8 +13,9 @@ $ErrorActionPreference = "Stop"
 # 3- Create a resource group.
 # 4- Create virtual network resources.
 # 5- Create the virtual machine.
-# 6- Enable Azure Disk Encryption.
-# 7- Connect to the VM.
+# 6- Attach a data disk to the VM.
+# 7- Enable Azure Disk Encryption.
+# 8- Connect to the VM.
 
 
 # --------------- 1 --------------- 
@@ -209,7 +210,24 @@ Write-Host "---> Virtual Machine status:" -ForegroundColor Green
 $virtualMachine
 
 
-# --------------- 6 --------------- 
+# --------------- 7 --------------- 
+Write-Host "---> Attach a data disk to the VM" -ForegroundColor Green
+# https://docs.microsoft.com/en-us/azure/virtual-machines/linux/add-disk
+# SkuName: Specifies the Sku name of the storage account. 
+# Available values are Standard_LRS, Premium_LRS, StandardSSD_LRS, and UltraSSD_LRS.
+$storageType = "Standard_LRS"
+$diskSizeGB = 64
+$dataDiskName = $paramVMName + "_testDataDisk"
+$paramLun = 1 # Lun: Specifies the logical unit number (LUN) for a data disk.
+$diskConfig = New-AzDiskConfig -SkuName "$storageType" -Location "$paramLocation" -CreateOption "Empty" -DiskSizeGB "$diskSizeGB" -Tag $paramTags
+$dataDisk1 = New-AzDisk -DiskName "$dataDiskName" -Disk $diskConfig -ResourceGroupName "$paramResourceGroup"
+$vm = Get-AzVM -Name "$paramVMName" -ResourceGroupName "$paramResourceGroup"
+$vm = Add-AzVMDataDisk -VM $vm -Name "$dataDiskName" -CreateOption "Attach" -ManagedDiskId $dataDisk1.Id -Lun $paramLun
+Update-AzVM -VM $vm -ResourceGroupName "$paramResourceGroup"
+Write-Host "---> You have to connect to the VM to initialize the disk and mount it."
+
+
+# --------------- 8 --------------- 
 Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
 # and compliance commitments. It uses the DM-Crypt feature of Linux to provide volume encryption 
@@ -230,16 +248,23 @@ Set-AzVMDiskEncryptionExtension -ResourceGroupName "$paramResourceGroup" -VMName
 # Verify the encryption process
 Get-AzVmDiskEncryptionStatus -ResourceGroupName "$paramResourceGroup" -VMName "$paramVMName"
 # Azure Disk Encryption system requirements and troubleshooting: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-overview
-Write-Host "---> Wait until the encryption process is done and 'Provisioning succeeded' before you try to connect to the VM through SSH." -ForegroundColor Magenta
-Write-Host "---> CHECK STATUS: Get-AzVmDiskEncryptionStatus -ResourceGroupName $paramResourceGroup -VMName $paramVMName"
+Write-Host "---> Wait until the encryption process is done and status is 'OsVolumeEncrypted : Encrypted' before you try to connect to the VM through SSH." -ForegroundColor Magenta
+Write-Host "---> CHECK STATUS:"
+Write-Host "---> Get-AzVmDiskEncryptionStatus -ResourceGroupName $paramResourceGroup -VMName $paramVMName"
 
 
-# --------------- 7 --------------- 
+# --------------- 8 --------------- 
 Write-Host "---> Connect to Virtual Machine '$paramVMName'" -ForegroundColor Green
 Write-Host "---> Username is: $paramVMusername"
 Write-Host "---> Public IP address is: "
 Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress"
-Write-Host "---> CHECK STATUS: Get-AzPublicIpAddress -Name $paramPublicIpAddress | Select-Object IpAddress"
+Write-Host "---> GET PUBLIC IP ADDRESS:"
+Write-Host "---> Get-AzPublicIpAddress -Name $paramPublicIpAddress | Select-Object IpAddress"
 # $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
 Write-Host "---> Enter the following command: ssh $paramVMusername@IpAddress"
 # ssh ${paramVMusername}@${VMIpAddress}
+
+# Install the Apache web server
+# sudo apt-get update
+# sudo apt-get install apache2 -y
+# sudo systemctl status apache2 --no-pager
