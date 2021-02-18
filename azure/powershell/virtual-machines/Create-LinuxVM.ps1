@@ -268,3 +268,9 @@ Write-Host "---> Enter the following command: ssh $paramVMusername@IpAddress"
 # sudo apt-get update
 # sudo apt-get install apache2 -y
 # sudo systemctl status apache2 --no-pager
+
+# Maintenance commands
+# $vm = Get-AzVM -Name "$paramVMName" -ResourceGroupName "$paramResourceGroup"
+# Restart-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
+# Stop-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
+# Remove-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName

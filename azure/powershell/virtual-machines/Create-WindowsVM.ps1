@@ -247,3 +247,9 @@ Write-Host "---> Get-AzPublicIpAddress -Name $paramPublicIpAddress | Select-Obje
 # $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
 Write-Host "---> Use Microsoft Remote Desktop client. In Windows you can use the following command: mstsc /v:IpAddress"
 # mstsc /v:$VMIpAddress
+
+# Maintenance commands
+# $vm = Get-AzVM -Name "$paramVMName" -ResourceGroupName "$paramResourceGroup"
+# Restart-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
+# Stop-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
+# Remove-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
