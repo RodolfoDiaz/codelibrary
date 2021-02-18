@@ -186,5 +186,8 @@ The top command is generally used to check memory and cpu usage per process. How
 
     top
 
+## Other commands
 
-
+- ps -l - to show all the running processes
+- dmesg - to list all the kernel messages
+- lsblk - to list all the block devices - here you will see your drives
