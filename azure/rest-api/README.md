@@ -9,6 +9,9 @@
 
 ### Services
 
+* [Compute](https://docs.microsoft.com/en-us/rest/api/compute/)
+    * [Virtual Machines](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines)
+
 * [Resource Management](https://docs.microsoft.com/en-us/rest/api/resources/)
     * [Providers](https://docs.microsoft.com/en-us/rest/api/resources/providers)
     * [Resources](https://docs.microsoft.com/en-us/rest/api/resources/resources)

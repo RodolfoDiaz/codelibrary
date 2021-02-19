@@ -190,7 +190,7 @@ echo "---> Public IP address is: "
 az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv
 echo "---> GET PUBLIC IP ADDRESS:"
 echo "---> az network public-ip show --resource-group $paramResourceGroup --name $paramPublicIpAddress --query \"{address: ipAddress}\"" 
-$VMIpAddress=$(az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv)
+VMIpAddress=$(az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv)
 echo "---> Enter the following command: ssh $paramVMusername@$VMIpAddress"
 # ssh ${paramVMusername}@${VMIpAddress}
 
