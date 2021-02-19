@@ -8,30 +8,16 @@ $ErrorActionPreference = "Stop"
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/quick-create-powershell
 
 # The deployment process is:
-# 1- Use ssh-keygen to create an SSH key pair.
-# 2- Log in to Azure.
-# 3- Create a resource group.
-# 4- Create virtual network resources.
-# 5- Create the virtual machine.
-# 6- Attach a data disk to the VM.
-# 7- Enable Azure Disk Encryption.
-# 8- Connect to the VM.
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create virtual network resources.
+# 4- Create the virtual machine.
+# 5- Attach a data disk to the VM.
+# 6- Enable Azure Disk Encryption.
+# 7- Connect to the VM.
 
 
 # --------------- 1 --------------- 
-Write-Host "---> Use ssh-keygen to create an SSH key pair." -ForegroundColor Green
-# An SSH key consists of a pair of files. One is the private key, which should never 
-# be shared with anyone. The other is the public key. The other file is a public key 
-# which allows you to log into the containers and VMs you provision. When you generate 
-# the keys, you will use ssh-keygen to store the keys in a safe location so you can bypass 
-# the login prompt when connecting to your instances.
-if (-not (Test-Path ~\.ssh\id_rsa.pub -PathType Leaf)) {
-  # https://www.ssh.com/ssh/keygen/
-  ssh-keygen -m PEM -t rsa -b 4096
-} 
-
-
-# --------------- 2 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/azure/authenticate-azureps
 Connect-AzAccount -UseDeviceAuthentication
@@ -44,7 +30,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 }
 
 
-# --------------- 3 --------------- 
+# --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = (New-Guid).ToString().Split("-")[0]
@@ -61,7 +47,7 @@ Write-Host "---> Resource Group details:" -ForegroundColor Green
 $resourceGroup
 
 
-# --------------- 4 --------------- 
+# --------------- 3 --------------- 
 Write-Host "---> Create virtual network resources" -ForegroundColor Green
 # When you set up a virtual network, you specify the available address spaces, subnets, and security. 
 # If the VNet will be connected to other VNets, you must select address ranges that are not overlapping. 
@@ -152,7 +138,7 @@ Write-Host "---> Network Interface details:" -ForegroundColor Green
 $nic
 
 
-# --------------- 5 --------------- 
+# --------------- 4 --------------- 
 Write-Host "---> Create virtual machine configuration" -ForegroundColor Green
 
 $paramVMusername = "azureuser"
@@ -194,7 +180,7 @@ Write-Host "---> Virtual Machine status:" -ForegroundColor Green
 $virtualMachine
 
 
-# --------------- 6 --------------- 
+# --------------- 5 --------------- 
 Write-Host "---> Attach a data disk to the VM" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-disk-ps
 # SkuName: Specifies the Sku name of the storage account. 
@@ -211,7 +197,7 @@ Update-AzVM -VM $vm -ResourceGroupName "$paramResourceGroup"
 Write-Host "---> You have to connect to the VM to initialize the disk and format it."
 
 
-# --------------- 7 --------------- 
+# --------------- 6 --------------- 
 Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
 # and compliance commitments. It uses the Bitlocker feature of Windows to provide volume encryption 
@@ -232,12 +218,12 @@ Set-AzVMDiskEncryptionExtension -ResourceGroupName "$paramResourceGroup" -VMName
 # Verify the encryption process
 Get-AzVmDiskEncryptionStatus -ResourceGroupName "$paramResourceGroup" -VMName "$paramVMName"
 # Azure Disk Encryption system requirements and troubleshooting:  https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-overview
-Write-Host "---> Wait until the encryption process is done and status is 'OsVolumeEncrypted : Encrypted' before you try to connect to the VM through SSH." -ForegroundColor Magenta
+Write-Host "---> Wait until the encryption process is done and status is 'OsVolumeEncrypted : Encrypted' before you try to connect to the VM through RDP." -ForegroundColor Magenta
 Write-Host "---> CHECK STATUS:"
 Write-Host "---> Get-AzVmDiskEncryptionStatus -ResourceGroupName $paramResourceGroup -VMName $paramVMName"
 
 
-# --------------- 8 --------------- 
+# --------------- 7 --------------- 
 Write-Host "---> Connect to Virtual Machine '$paramVMName'" -ForegroundColor Green
 Write-Host "---> Username is: $paramVMusername"
 Write-Host "---> Public IP address is: "
@@ -247,6 +233,9 @@ Write-Host "---> Get-AzPublicIpAddress -Name $paramPublicIpAddress | Select-Obje
 # $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
 Write-Host "---> Use Microsoft Remote Desktop client. In Windows you can use the following command: mstsc /v:IpAddress"
 # mstsc /v:$VMIpAddress
+
+# Install IIS web server
+# Install-WindowsFeature -name Web-Server -IncludeManagementTools
 
 # Maintenance commands
 # $vm = Get-AzVM -Name "$paramVMName" -ResourceGroupName "$paramResourceGroup"
