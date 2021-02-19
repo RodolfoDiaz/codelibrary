@@ -249,6 +249,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Resources - List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resources?api-version=2020-06-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resources"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-06-01"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resources/list"
+					},
+					"response": []
 				}
 			]
 		},
@@ -868,6 +907,54 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "resourceGroupName",
+			"value": "test_resourcegroup_1"
+		},
+		{
+			"key": "resourceLocation",
+			"value": "westus"
+		},
+		{
+			"key": "vmName",
+			"value": ""
+		},
+		{
+			"key": "accountName",
+			"value": "teststorage"
 		}
 	]
 }
