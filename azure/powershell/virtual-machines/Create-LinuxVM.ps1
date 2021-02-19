@@ -210,7 +210,7 @@ Write-Host "---> Virtual Machine status:" -ForegroundColor Green
 $virtualMachine
 
 
-# --------------- 7 --------------- 
+# --------------- 6 --------------- 
 Write-Host "---> Attach a data disk to the VM" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/add-disk
 # SkuName: Specifies the Sku name of the storage account. 
@@ -227,7 +227,7 @@ Update-AzVM -VM $vm -ResourceGroupName "$paramResourceGroup"
 Write-Host "---> You have to connect to the VM to initialize the disk and mount it."
 
 
-# --------------- 8 --------------- 
+# --------------- 7 --------------- 
 Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
 # and compliance commitments. It uses the DM-Crypt feature of Linux to provide volume encryption 

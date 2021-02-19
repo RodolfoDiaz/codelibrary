@@ -194,7 +194,7 @@ Write-Host "---> Virtual Machine status:" -ForegroundColor Green
 $virtualMachine
 
 
-# --------------- 7 --------------- 
+# --------------- 6 --------------- 
 Write-Host "---> Attach a data disk to the VM" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-disk-ps
 # SkuName: Specifies the Sku name of the storage account. 

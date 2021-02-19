@@ -113,7 +113,7 @@ az network nic create \
 
 
 # --------------- 5 --------------- 
-echo "---> Create virtual machine configuration"
+echo "---> Create virtual machine"
 paramVMusername="azureuser"
 paramVMPassword="ChangeThisPassword@123"
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
@@ -145,7 +145,7 @@ az vm create \
   --tags $paramTags
 
 
-# --------------- 7 --------------- 
+# --------------- 6 --------------- 
 echo "---> Attach a data disk to the VM"
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/add-disk
 # SkuName: Specifies the Sku name of the storage account. 
@@ -161,7 +161,7 @@ az vm disk attach --resource-group "$paramResourceGroup" \
   --sku "$storageType" --lun "$paramLun" --size-gb "$diskSizeGB"
 
 
-# --------------- 8 --------------- 
+# --------------- 7 --------------- 
 echo "---> Enable Azure Disk Encryption"
 # Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
 # and compliance commitments. It uses the DM-Crypt feature of Linux to provide volume encryption 
@@ -181,3 +181,21 @@ az vm encryption show --resource-group "$paramResourceGroup" --name "$paramVMNam
 echo "---> Wait until the encryption process is done and status is 'OsVolumeEncrypted : Encrypted' before you try to connect to the VM through SSH."
 echo "---> CHECK STATUS:"
 echo "---> az vm encryption show --resource-group $paramResourceGroup --name $paramVMName"
+
+
+# --------------- 8 --------------- 
+echo "---> Connect to Virtual Machine '$paramVMName'"
+echo "---> Username is: $paramVMusername"
+echo "---> Public IP address is: "
+az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv
+echo "---> GET PUBLIC IP ADDRESS:"
+echo "---> az network public-ip show --resource-group $paramResourceGroup --name $paramPublicIpAddress --query \"{address: ipAddress}\"" 
+$VMIpAddress=$(az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv)
+echo "---> Enter the following command: ssh $paramVMusername@$VMIpAddress"
+# ssh ${paramVMusername}@${VMIpAddress}
+
+# Install the Apache web server
+# sudo apt-get update
+# sudo apt-get install apache2 -y
+# sudo systemctl status apache2 --no-pager
+
