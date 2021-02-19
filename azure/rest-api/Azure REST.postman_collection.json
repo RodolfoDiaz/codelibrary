@@ -9,39 +9,6 @@
 			"name": "Resource Groups",
 			"item": [
 				{
-					"name": "Get Resource Groups",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{bearerToken}}"
-							}
-						],
-						"url": {
-							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourcegroups?api-version=2017-05-10",
-							"protocol": "https",
-							"host": [
-								"management",
-								"azure",
-								"com"
-							],
-							"path": [
-								"subscriptions",
-								"{{subscriptionId}}",
-								"resourcegroups"
-							],
-							"query": [
-								{
-									"key": "api-version",
-									"value": "2017-05-10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Resource Groups - List",
 					"request": {
 						"auth": {
@@ -171,6 +138,61 @@
 							]
 						},
 						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups/delete"
+					},
+					"response": []
+				},
+				{
+					"name": "Resource Groups - Create Or Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"location\": \"{{resourceLocation}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourcegroups/:resourceGroupName?api-version=2020-06-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resourcegroups",
+								":resourceGroupName"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-06-01"
+								}
+							],
+							"variable": [
+								{
+									"key": "resourceGroupName",
+									"value": "{{resourceGroupName}}"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups/createorupdate"
 					},
 					"response": []
 				}
