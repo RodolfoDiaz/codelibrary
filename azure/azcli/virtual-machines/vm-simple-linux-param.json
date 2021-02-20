@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "value": "dev-wus-01-web"
+    },
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "authenticationType": {
+      "value": "sshPublicKey"
+    },
+    "ubuntuOSVersion": {
+      "value": "18.04-LTS"
+    },
+    "location": {
+      "value": "westus"
+    },
+    "VmSize": {
+      "value": "Standard_D2_V3"
+    }
+  }
+}

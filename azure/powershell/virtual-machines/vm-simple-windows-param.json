@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": "azureuser"
+    },
+    "adminPassword": {
+      "value": "ChangeThisPassword@123"
+    },
+    "OSVersion": {
+      "value": "2016-Datacenter-with-Containers"
+    },
+    "vmSize": {
+      "value": "Standard_D2_V3"
+    },
+    "location": {
+      "value": "westus"
+    },
+    "vmName": {
+      "value": "dev-wus-01-web"
+    }
+  }
+}

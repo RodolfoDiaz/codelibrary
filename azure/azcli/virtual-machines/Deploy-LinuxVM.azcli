@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure Virtual Machines - https://docs.microsoft.com/en-us/azure/virtual-machines/
+# Example taken from Azure Quickstart Templates
+# https://azure.microsoft.com/en-us/resources/templates/
+
+# The deployment process is:
+# 1- Use ssh-keygen to create an SSH key pair.
+# 2- Log in to Azure.
+# 3- Create a resource group.
+# 4- Deploy network resources and Virtual Machine.
+
+
+# --------------- 1 --------------- 
+echo "---> Use ssh-keygen to create an SSH key pair."
+# An SSH key consists of a pair of files. One is the private key, which should never 
+# be shared with anyone. The other is the public key. The other file is a public key 
+# which allows you to log into the containers and VMs you provision. When you generate 
+# the keys, you will use ssh-keygen to store the keys in a safe location so you can bypass 
+# the login prompt when connecting to your instances.
+if [ ! -f ~/.ssh/id_rsa.pub ]; then
+  # https://www.ssh.com/ssh/keygen/
+  ssh-keygen -m PEM -t rsa -b 4096
+fi
+
+
+# --------------- 2 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login --use-device-code
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
+az provider register --namespace "Microsoft.Compute"
+az provider register --namespace "Microsoft.Storage"
+az provider register --namespace "Microsoft.Network"
+az provider register --namespace "Microsoft.KeyVault"
+
+
+# --------------- 3 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="test_resourcegroup_$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 4 --------------- 
+echo "---> Deploy network resources and Virtual Machine"
+# See template/parameter details here: https://azure.microsoft.com/en-us/resources/templates/101-vm-simple-linux/
+# Reference:
+# https://docs.microsoft.com/en-us/cli/azure/deployment/group
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/parameter-files
+adminPasswordOrKey=$(eval cat ~/.ssh/id_rsa.pub)
+az deployment group create --resource-group "$paramResourceGroup" \
+  --template-uri "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json" \
+  --parameters adminPasswordOrKey="$adminPasswordOrKey" \
+  --parameters "vm-simple-linux-param.json"
+
+# Cleanup 
+# Remove Resource Group
+# az group delete --name $paramResourceGroup --yes
