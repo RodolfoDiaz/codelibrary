@@ -95,53 +95,6 @@
 					"response": []
 				},
 				{
-					"name": "Resource Groups - Delete",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourcegroups/:resourceGroupName?api-version=2020-06-01",
-							"protocol": "https",
-							"host": [
-								"management",
-								"azure",
-								"com"
-							],
-							"path": [
-								"subscriptions",
-								"{{subscriptionId}}",
-								"resourcegroups",
-								":resourceGroupName"
-							],
-							"query": [
-								{
-									"key": "api-version",
-									"value": "2020-06-01"
-								}
-							],
-							"variable": [
-								{
-									"key": "resourceGroupName",
-									"value": "{{resourceGroupName}}",
-									"type": "string"
-								}
-							]
-						},
-						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups/delete"
-					},
-					"response": []
-				},
-				{
 					"name": "Resource Groups - Create Or Update",
 					"request": {
 						"auth": {
@@ -195,12 +148,194 @@
 						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups/createorupdate"
 					},
 					"response": []
+				},
+				{
+					"name": "Resource Groups - Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourcegroups/:resourceGroupName?api-version=2020-06-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resourcegroups",
+								":resourceGroupName"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-06-01"
+								}
+							],
+							"variable": [
+								{
+									"key": "resourceGroupName",
+									"value": "{{resourceGroupName}}",
+									"type": "string"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resourcegroups/delete"
+					},
+					"response": []
 				}
 			]
 		},
 		{
 			"name": "Resources",
 			"item": [
+				{
+					"name": "Resources - List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resources?api-version=2020-06-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resources"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-06-01"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resources/list"
+					},
+					"response": []
+				},
+				{
+					"name": "Resources - Validate Move Resources",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(pm.info.requestName, () => {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.not.have.jsonBody('error');",
+									"});",
+									"pm.globals.set(\"validateResourceMove\", pm.response.headers.get(\"Location\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resources\" : [ \"/subscriptions/{{subscriptionId}}/resourceGroups/{{sourceResourceGroup}}/providers/Microsoft.Storage/storageAccounts/{{resourceToMove}}\" ],\n    \"targetResourceGroup\" : \"/subscriptions/{{subscriptionId}}/resourceGroups/{{destinationResourceGroup}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/:sourceResourceGroupName/validateMoveResources?api-version=2020-06-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resourceGroups",
+								":sourceResourceGroupName",
+								"validateMoveResources"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-06-01"
+								}
+							],
+							"variable": [
+								{
+									"key": "sourceResourceGroupName",
+									"value": "{{sourceResourceGroup}}"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resources/validatemoveresources"
+					},
+					"response": []
+				},
+				{
+					"name": "Resources - Get Result of Validate Move (wait for Retry-After period, 204 response means Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{validateResourceMove}}",
+							"host": [
+								"{{validateResourceMove}}"
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/learn/modules/move-azure-resources-another-resource-group/5-validate-resources"
+					},
+					"response": []
+				},
 				{
 					"name": "Resources - Delete By Id",
 					"request": {
@@ -247,45 +382,6 @@
 								}
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Resources - List",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resources?api-version=2020-06-01",
-							"protocol": "https",
-							"host": [
-								"management",
-								"azure",
-								"com"
-							],
-							"path": [
-								"subscriptions",
-								"{{subscriptionId}}",
-								"resources"
-							],
-							"query": [
-								{
-									"key": "api-version",
-									"value": "2020-06-01"
-								}
-							]
-						},
-						"description": "https://docs.microsoft.com/en-us/rest/api/resources/resources/list"
 					},
 					"response": []
 				}
@@ -458,55 +554,6 @@
 			"name": "Virtual Machines",
 			"item": [
 				{
-					"name": "Virtual Machines - List",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/:resourceGroupName/providers/Microsoft.Compute/virtualMachines?api-version=2020-12-01",
-							"protocol": "https",
-							"host": [
-								"management",
-								"azure",
-								"com"
-							],
-							"path": [
-								"subscriptions",
-								"{{subscriptionId}}",
-								"resourceGroups",
-								":resourceGroupName",
-								"providers",
-								"Microsoft.Compute",
-								"virtualMachines"
-							],
-							"query": [
-								{
-									"key": "api-version",
-									"value": "2020-12-01"
-								}
-							],
-							"variable": [
-								{
-									"key": "resourceGroupName",
-									"value": "{{resourceGroupName}}"
-								}
-							]
-						},
-						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/list"
-					},
-					"response": []
-				},
-				{
 					"name": "Virtual Machines - Get",
 					"request": {
 						"auth": {
@@ -557,6 +604,165 @@
 							]
 						},
 						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/get"
+					},
+					"response": []
+				},
+				{
+					"name": "Virtual Machines - List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/:resourceGroupName/providers/Microsoft.Compute/virtualMachines?api-version=2020-12-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resourceGroups",
+								":resourceGroupName",
+								"providers",
+								"Microsoft.Compute",
+								"virtualMachines"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-12-01"
+								}
+							],
+							"variable": [
+								{
+									"key": "resourceGroupName",
+									"value": "{{resourceGroupName}}"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/list"
+					},
+					"response": []
+				},
+				{
+					"name": "Virtual Machines - Instance View",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/:resourceGroupName/providers/Microsoft.Compute/virtualMachines/:vmName/instanceView?api-version=2020-12-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resourceGroups",
+								":resourceGroupName",
+								"providers",
+								"Microsoft.Compute",
+								"virtualMachines",
+								":vmName",
+								"instanceView"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-12-01"
+								}
+							],
+							"variable": [
+								{
+									"key": "resourceGroupName",
+									"value": "{{resourceGroupName}}"
+								},
+								{
+									"key": "vmName",
+									"value": "{{vmName}}"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/instanceview"
+					},
+					"response": []
+				},
+				{
+					"name": "Virtual Machines - Start",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/:resourceGroupName/providers/Microsoft.Compute/virtualMachines/:vmName/start?api-version=2020-12-01",
+							"protocol": "https",
+							"host": [
+								"management",
+								"azure",
+								"com"
+							],
+							"path": [
+								"subscriptions",
+								"{{subscriptionId}}",
+								"resourceGroups",
+								":resourceGroupName",
+								"providers",
+								"Microsoft.Compute",
+								"virtualMachines",
+								":vmName",
+								"start"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "2020-12-01"
+								}
+							],
+							"variable": [
+								{
+									"key": "resourceGroupName",
+									"value": "{{resourceGroupName}}"
+								},
+								{
+									"key": "vmName",
+									"value": "{{vmName}}"
+								}
+							]
+						},
+						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/start"
 					},
 					"response": []
 				},
@@ -617,116 +823,6 @@
 							]
 						},
 						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/poweroff"
-					},
-					"response": []
-				},
-				{
-					"name": "Virtual Machines - Start",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/:resourceGroupName/providers/Microsoft.Compute/virtualMachines/:vmName/start?api-version=2020-12-01",
-							"protocol": "https",
-							"host": [
-								"management",
-								"azure",
-								"com"
-							],
-							"path": [
-								"subscriptions",
-								"{{subscriptionId}}",
-								"resourceGroups",
-								":resourceGroupName",
-								"providers",
-								"Microsoft.Compute",
-								"virtualMachines",
-								":vmName",
-								"start"
-							],
-							"query": [
-								{
-									"key": "api-version",
-									"value": "2020-12-01"
-								}
-							],
-							"variable": [
-								{
-									"key": "resourceGroupName",
-									"value": "{{resourceGroupName}}"
-								},
-								{
-									"key": "vmName",
-									"value": "{{vmName}}"
-								}
-							]
-						},
-						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/start"
-					},
-					"response": []
-				},
-				{
-					"name": "Virtual Machines - Instance View",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/:resourceGroupName/providers/Microsoft.Compute/virtualMachines/:vmName/instanceView?api-version=2020-12-01",
-							"protocol": "https",
-							"host": [
-								"management",
-								"azure",
-								"com"
-							],
-							"path": [
-								"subscriptions",
-								"{{subscriptionId}}",
-								"resourceGroups",
-								":resourceGroupName",
-								"providers",
-								"Microsoft.Compute",
-								"virtualMachines",
-								":vmName",
-								"instanceView"
-							],
-							"query": [
-								{
-									"key": "api-version",
-									"value": "2020-12-01"
-								}
-							],
-							"variable": [
-								{
-									"key": "resourceGroupName",
-									"value": "{{resourceGroupName}}"
-								},
-								{
-									"key": "vmName",
-									"value": "{{vmName}}"
-								}
-							]
-						},
-						"description": "https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/instanceview"
 					},
 					"response": []
 				},
@@ -909,16 +1005,6 @@
 			"response": []
 		}
 	],
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "{{bearerToken}}",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -955,6 +1041,18 @@
 		{
 			"key": "accountName",
 			"value": "teststorage"
+		},
+		{
+			"key": "sourceResourceGroup",
+			"value": "resourcegroupProd"
+		},
+		{
+			"key": "destinationResourceGroup",
+			"value": "resourcegroupDev"
+		},
+		{
+			"key": "resourceToMove",
+			"value": "storageaccount022021"
 		}
 	]
 }
