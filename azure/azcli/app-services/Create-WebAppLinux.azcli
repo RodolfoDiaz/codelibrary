@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure App Services - https://docs.microsoft.com/en-us/azure/app-service/
+# https://docs.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=bash&pivots=python-framework-flask
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create an App Service plan.
+# 4- Create the Web App.
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login --use-device-code
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
+az provider register --namespace "Microsoft.Web"
+az provider register --namespace "Microsoft.Storage"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="test_resourcegroup_$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 3 --------------- 
+echo "---> Create an App Service plan"
+# https://azure.microsoft.com/en-us/pricing/details/app-service/
+paramAppServicePlan="app_service_plan_$RANDOM"
+paramSku="FREE" # Accepted values: sku {B1, B2, B3, D1, F1, FREE, I1, I1v2, I2, I2v2, I3, I3v2, P1V2, P1V3, P2V2, P2V3, P3V2, P3V3, PC2, PC3, PC4, S1, S2, S3, SHARED
+paramNumberofWorkers=1
+
+az appservice plan create --name "$paramAppServicePlan" \
+  --resource-group "$paramResourceGroup" --location "$paramLocation" \
+  --sku "$paramSku" --number-of-workers "$paramNumberofWorkers" \
+  --tags $paramTags --is-linux
+
+
+# --------------- 4 --------------- 
+# echo "---> Create the Web App"
+paramWebApp="test-web-$RANDOM"
+paramAppRuntime="python|3.6" # Use az webapp list-runtimes for available list.
+
+# You can create an empty Web App with this:
+# https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az_webapp_create
+# az webapp create --name "$paramWebApp" \
+#   --resource-group "$paramResourceGroup" --plan "$paramAppServicePlan" \
+#   --runtime "$paramAppRuntime" --tags $paramTags 
+
+# You can create the Web App and deploy in one shot with this:
+# https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az_webapp_up
+cd ./example/HelloWorld-Python
+# In case you want to run the web app in localhost:
+# python3 -m venv .venv
+# source .venv/bin/activate
+# pip install -r requirements.txt
+
+paramOsType="Linux" # Accepted values: Linux, Windows
+az webapp up --sku "$paramSku" --name "$paramWebApp" --plan "$paramAppServicePlan" \
+  --resource-group "$paramResourceGroup" --location "$paramLocation" \
+  --os-type "$paramOsType" --runtime "$paramAppRuntime" --launch-browser

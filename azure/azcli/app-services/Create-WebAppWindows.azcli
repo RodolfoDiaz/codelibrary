@@ -9,7 +9,8 @@ set -e
 # 1- Log in to Azure.
 # 2- Create a resource group.
 # 3- Create an App Service plan.
-# 4- Create the Web App.
+# 4- Create a new Web App.
+# 5- Deploy an ASP.NET Web App.
 
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
@@ -46,11 +47,30 @@ az appservice plan create --name "$paramAppServicePlan" \
   --resource-group "$paramResourceGroup" --location "$paramLocation" \
   --sku "$paramSku" --number-of-workers "$paramNumberofWorkers" \
   --tags $paramTags
-# --is-linux
 
 
 # --------------- 4 --------------- 
-echo "---> Create the Web App"
+echo "---> Create a new Web App"
 paramWebApp="test-web-$RANDOM"
+paramAppRuntime="DOTNET|5.0" # Use az webapp list-runtimes for available list.
 az webapp create --name "$paramWebApp" \
-  --resource-group "$paramResourceGroup" --plan "$paramAppServicePlan"
+  --resource-group "$paramResourceGroup" --plan "$paramAppServicePlan" \
+  --runtime "$paramAppRuntime" --tags $paramTags 
+
+# --------------- 5 --------------- 
+echo "---> Deploy an ASP.NET Web App"
+# https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source?view=azure-cli-latest#az_webapp_deployment_source_config_local_git
+cd ./example
+appFolderName="TestWebApp"
+if [ -d ./$appFolderName/ ]; then rm -rf $appFolderName; fi
+dotnet new mvc -n $appFolderName
+cd $appFolderName
+dotnet build
+dotnet publish --output pub
+cd pub
+zip -r site.zip *
+
+az webapp deployment source config-zip --name "$paramWebApp" \
+  --src site.zip --resource-group "$paramResourceGroup"
+
+python -m webbrowser "https://${paramWebApp}.azurewebsites.net"
