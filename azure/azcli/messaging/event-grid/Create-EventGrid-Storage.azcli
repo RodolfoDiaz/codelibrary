@@ -25,9 +25,8 @@ az login
 
 echo "---> Verify registration of the required Azure resource providers"
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
-az provider register --namespace "Microsoft.Web"
-az provider register --namespace "Microsoft.Storage"
 az provider register --namespace "Microsoft.EventGrid"
+az provider register --namespace "Microsoft.Storage"
 
 
 # --------------- 2 --------------- 

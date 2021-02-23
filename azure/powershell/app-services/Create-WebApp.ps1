@@ -4,7 +4,7 @@ Set-StrictMode -Version latest
 # Exit immediately if a command exits with a non-zero status.
 $ErrorActionPreference = "Stop"
 
-# Azure App Services - https://docs.microsoft.com/en-us/azure/app-service/
+# Azure App Service - https://docs.microsoft.com/en-us/azure/app-service/
 
 # The deployment process is:
 # 1- Log in to Azure.
@@ -21,7 +21,7 @@ Connect-AzAccount -UseDeviceAuthentication
 
 Write-Host "---> Verify registration of the required Azure resource providers" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
-@("Microsoft.Web", "Microsoft.Storage") | ForEach-Object {
+@("Microsoft.Web", "Microsoft.DomainRegistration") | ForEach-Object {
   Register-AzResourceProvider -ProviderNamespace $_
 }
 

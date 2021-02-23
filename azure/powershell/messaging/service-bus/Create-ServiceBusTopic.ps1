@@ -27,7 +27,7 @@ Connect-AzAccount
 
 Write-Host "---> Verify registration of the required Azure resource providers" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
-@("Microsoft.Web", "Microsoft.Storage", "Microsoft.ServiceBus") | ForEach-Object {
+@("Microsoft.ServiceBus", "Microsoft.Storage") | ForEach-Object {
   Register-AzResourceProvider -ProviderNamespace $_
 }
 

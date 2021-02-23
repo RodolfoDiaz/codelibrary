@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Azure App Services - https://docs.microsoft.com/en-us/azure/app-service/
+# Azure App Service - https://docs.microsoft.com/en-us/azure/app-service/
 # https://docs.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=bash&pivots=python-framework-flask
 
 # The deployment process is:
@@ -21,7 +21,7 @@ az login --use-device-code
 echo "---> Verify registration of the required Azure resource providers"
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
 az provider register --namespace "Microsoft.Web"
-az provider register --namespace "Microsoft.Storage"
+az provider register --namespace "Microsoft.DomainRegistration"
 
 
 # --------------- 2 --------------- 
