@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure App Services - https://docs.microsoft.com/en-us/azure/app-service/
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create an App Service plan.
+# 4- Create the Web App.
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login --use-device-code
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
+az provider register --namespace "Microsoft.Web"
+az provider register --namespace "Microsoft.Storage"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="test_resourcegroup_$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 3 --------------- 
+echo "---> Create an App Service plan"
+# https://azure.microsoft.com/en-us/pricing/details/app-service/
+paramAppServicePlan="app_service_plan_$RANDOM"
+paramSku="FREE" # Accepted values: sku {B1, B2, B3, D1, F1, FREE, I1, I1v2, I2, I2v2, I3, I3v2, P1V2, P1V3, P2V2, P2V3, P3V2, P3V3, PC2, PC3, PC4, S1, S2, S3, SHARED
+paramNumberofWorkers=1
+
+az appservice plan create --name "$paramAppServicePlan" \
+  --resource-group "$paramResourceGroup" --location "$paramLocation" \
+  --sku "$paramSku" --number-of-workers "$paramNumberofWorkers" \
+  --tags $paramTags
+# --is-linux
+
+
+# --------------- 4 --------------- 
+echo "---> Create the Web App"
+paramWebApp="test-web-$RANDOM"
+az webapp create --name "$paramWebApp" \
+  --resource-group "$paramResourceGroup" --plan "$paramAppServicePlan"

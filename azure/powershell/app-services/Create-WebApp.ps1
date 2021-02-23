@@ -48,7 +48,7 @@ Write-Host "---> Create an App Service plan" -ForegroundColor Green
 # https://azure.microsoft.com/en-us/pricing/details/app-service/
 $rndAppService = (New-Guid).ToString().Split("-")[0]
 $paramAppServicePlan = "app_service_plan_$rndAppService"
-$paramTier = "Free" # You have the choice between 5 SKUs: Free, Shared, Basic, Standard, Premium
+$paramTier = "Basic" # You have the choice between 5 SKUs: Free, Shared, Basic, Standard, Premium
 $paramWorkerSize = "Small" # Accepted values:	Small, Medium, Large, ExtraLarge
 $paramNumberofWorkers = "1" # worker pool instances, a number from 1 to 10
 # App Service Plan explained:
@@ -56,15 +56,18 @@ $paramNumberofWorkers = "1" # worker pool instances, a number from 1 to 10
 # Shared (D1) -> basic apps with low traffic and not business critical.
 # Basic -> dev and test of apps before production. B1 = Tier Basic + Size Small, B2 =	Tier Basic + Size Medium, B3 = Tier Basic + Size Large
 # Standard -> apps in production. S1 = Tier Standard + Size Small, S2 =	Tier Standard + Size Medium, S3 = Tier Standard + Size Large
-# Premium -> large scale apps in production. 
+# Premium -> large scale apps in production. P1 = Tier Premium + Size Small, P2 =	Tier Premium + Size Medium, P3 = Tier Premium + Size Large
 
-New-AzAppServicePlan -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Name "$paramAppServicePlan" `
-  -Linux -Tier "$paramTier" -WorkerSize "$paramWorkerSize" -NumberofWorkers "$paramNumberofWorkers" -Tag $paramTags
+New-AzAppServicePlan -Name "$paramAppServicePlan" `
+  -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" `
+  -Tier "$paramTier" -WorkerSize "$paramWorkerSize" -NumberofWorkers "$paramNumberofWorkers" `
+  -Tag $paramTags -Linux 
 
 
 # --------------- 4 --------------- 
 Write-Host "---> Create the Web App" -ForegroundColor Green
 $rndWebApp = (New-Guid).ToString().Split("-")[0]
 $paramWebApp = "test-web-$rndWebApp"
-New-AzWebApp -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Name "$paramWebApp" `
+New-AzWebApp -Name "$paramWebApp" `
+  -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" `
   -AppServicePlan "$paramAppServicePlan"
