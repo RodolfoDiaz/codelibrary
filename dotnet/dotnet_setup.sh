@@ -1,5 +1,5 @@
 # Install .Net Framework
-# hhttps://dotnet.microsoft.com/download
+# https://dotnet.microsoft.com/download
 if [ "$(uname)" == "Darwin" ]; then
     #brew install --cask dotnet  # version 3.1
     brew install --cask dotnet-sdk  # version 5.0
@@ -25,4 +25,9 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
       sudo apt-get install -y apt-transport-https && \
       sudo apt-get update && \
       sudo apt-get install -y aspnetcore-runtime-5.0
+
+    # Alternative install for Continuous Integration (CI) scenarios
+    # wget -q -O - https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.102
+    # export PATH="~/.dotnet:$PATH"
+    # echo "export PATH=~/.dotnet:\$PATH" >> ~/.bashrc
 fi
