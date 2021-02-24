@@ -122,7 +122,9 @@ paramVMPassword="ChangeThisPassword@123"
 paramVMName="devweb-$RANDOM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
 paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
-# Available source images: az vm image list-skus --location "westus" --offer "UbuntuServer" --publisher "Canonical" --output table
+# Get Source image information: 
+# az vm image list-skus --location "westus" --offer "UbuntuServer" --publisher "Canonical" --output table
+# List popular images: az vm image list --output table - https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage
 paramPublisher="Canonical"
 paramOffer="UbuntuServer"
 paramSkus="18.04-LTS"

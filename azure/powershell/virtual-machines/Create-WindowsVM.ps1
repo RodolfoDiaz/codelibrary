@@ -156,7 +156,11 @@ $securePassword = ConvertTo-SecureString "$paramVMPassword" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential ("$paramVMusername", $securePassword)
 
 # Create a virtual machine configuration
-# Available source images: Get-AzVMImageSku -Location "westus" -PublisherName "MicrosoftWindowsServer" -Offer "WindowsServer"
+# Get Source image information: 
+# Get-AzVMImageSku -Location "westus" -PublisherName "MicrosoftWindowsServer" -Offer "WindowsServer"
+# Get-AzVMImageSku -Location "westus" -PublisherName "MicrosoftWindowsDesktop" -Offer "Windows-10"
+# List all Publishers: Get-AzVMImagePublisher -Location "westus" | Select PublisherName
+# List all offers for Publisher: Get-AzVMImageOffer -Location "westus" -PublisherName "MicrosoftWindowsDesktop" | Select Offer
 $paramPublisher = "MicrosoftWindowsServer"
 $paramOffer = "WindowsServer"
 $paramSkus = "2019-datacenter-smalldisk-g2"

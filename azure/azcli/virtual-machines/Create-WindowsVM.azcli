@@ -108,7 +108,9 @@ paramVMPassword="ChangeThisPassword@123"
 paramVMName="devweb-$RANDOM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
 paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
-# Available source images: az vm image list-skus --location "westus" --offer "WindowsServer" --publisher "MicrosoftWindowsServer" --output table
+# Get Source image information: 
+# az vm image list-skus --location "westus" --offer "WindowsServer" --publisher "MicrosoftWindowsServer" --output table
+# az vm image list-skus --location "westus" --offer "Windows-10" --publisher "MicrosoftWindowsDesktop" --output table
 paramPublisher="MicrosoftWindowsServer"
 paramOffer="WindowsServer"
 paramSkus="2019-datacenter-smalldisk-g2"

@@ -170,7 +170,11 @@ $securePassword = ConvertTo-SecureString "$paramVMPassword" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential ("$paramVMusername", $securePassword)
 
 # Create a virtual machine configuration
-# Available source images: Get-AzVMImageSku -Location "westus" -PublisherName "Canonical" -Offer "UbuntuServer"
+# Get Source image information: 
+# Get-AzVMImageSku -Location "westus" -PublisherName "Canonical" -Offer "UbuntuServer"
+# Get-AzVMImageSku -Location "westus" -PublisherName "OpenLogic" -Offer "CentOs"
+# List all Publishers: Get-AzVMImagePublisher -Location "westus" | Select PublisherName
+# List all offers for Publisher: Get-AzVMImageOffer -Location "westus" -PublisherName "SUSE" | Select Offer
 $paramPublisher = "Canonical"
 $paramOffer = "UbuntuServer"
 $paramSkus = "18.04-LTS"
