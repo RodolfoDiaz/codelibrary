@@ -4,12 +4,14 @@
 set -e
 
 # Azure Key Vault - https://docs.microsoft.com/en-us/azure/key-vault/general/
+# https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli
 
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
-# 3- Create a secret in the KeyVault.
-# 4- Get a secret from the key vault.
+# 3- Create a Key Vault.
+# 4- Create a secret in the KeyVault.
+# 5- Get a secret from the key vault.
 
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
@@ -42,8 +44,23 @@ az keyvault create --name "$paramKeyVault" \
   --resource-group "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
 
 
-# --------------- 3 --------------- 
+# UNCOMMENT THIS SECTION AND SET USER PRINCIPAL NAME VALUE
+# echo "---> Give a user account permissions to manage secrets in Key Vault"
+# # https://docs.microsoft.com/en-us/cli/azure/keyvault?view=azure-cli-latest#az_keyvault_set_policy
+# paramUserPrincipal="user@domain.com" # take this value from Azure AD - Users -> User principal name
+# az keyvault set-policy --name "$paramKeyVault" \
+#     --upn "$paramUserPrincipal" \
+#   --key-permissions get create list import \
+#   --secret-permissions backup restore set get \
+#   --storage-permissions get set list
+
+
+# --------------- 4 --------------- 
 echo "---> Create a secret in the KeyVault"
+paramInputFile="SecretTestFile.txt"
+paramOutputFile="SecretDownload.txt"
+if [ -f $paramInputFile ]; then echo 'Remove old input file...'; rm $paramInputFile; fi
+if [ -f $paramOutputFile ]; then echo 'Remove old output file...'; rm $paramOutputFile; fi
 paramSecretName1="SecretKey"
 paramSecretDesc="This is a secret key"
 paramSecretValue="Key-123$"
@@ -51,14 +68,13 @@ az keyvault secret set --name "$paramSecretName1" \
   --vault-name "$paramKeyVault" --value "$paramSecretValue" --description "$paramSecretDesc" --tags $paramTags
 
 paramSecretName2="SecretFile"
-echo "This is a test file we want to keep safe" >> SecretTestFile.txt
-paramInputFile="SecretTestFile.txt"
+echo "This is a test file we want to keep safe" >> $paramInputFile
 paramSecretFileEncoding="utf-8" # accepted values: ascii, base64, hex, utf-16be, utf-16le, utf-8
 az keyvault secret set --name "$paramSecretName2" \
   --vault-name "$paramKeyVault" --file "$paramInputFile" --encoding "$paramSecretFileEncoding" --tags $paramTags
 
  
- # --------------- 4 --------------- 
+ # --------------- 5 --------------- 
 echo "---> Get a secret from the key vault"
 secretValue=$(az keyvault secret show \
   --name "$paramSecretName1" \
@@ -66,11 +82,10 @@ secretValue=$(az keyvault secret show \
   --query value \
   --output tsv)
 
-echo "The secret key is $secretValue"
+echo "---> The secret key is $secretValue"
 
-paramOutputFile="SecretDownload.txt"
 az keyvault secret download --name "$paramSecretName2" --vault-name "$paramKeyVault" --file "$paramOutputFile"
-echo "The '$paramOutputFile' file has been downloaded"
+echo "---> The '$paramOutputFile' file has been downloaded"
 
 # Cleanup 
 # Remove Resource Group
