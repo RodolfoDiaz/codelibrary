@@ -49,7 +49,9 @@ Write-Host "---> Create a Key Vault" -ForegroundColor Green
 # Key Vault naming rule: length	3-24, Alphanumerics and hyphens.
 $rndKV = (New-Guid).ToString().Split("-")[0]
 $paramKeyVault = "test-keyvault-$rndKV"
-$ketVault = New-AzKeyVault -Name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Tag $paramTags
+$paramSku = "standard" # Allowed values for Vault: premium, standard.
+$ketVault = New-AzKeyVault -Name "$paramKeyVault" -EnablePurgeProtection -Sku "$paramSku" `
+  -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Tag $paramTags
 Write-Host "---> Key Vault details:" -ForegroundColor Green
 $ketVault
 

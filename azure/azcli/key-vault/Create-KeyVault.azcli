@@ -40,7 +40,8 @@ fi
 echo "---> Create a Key Vault"
 # Key Vault naming rule: length	3-24, Alphanumerics and hyphens.
 paramKeyVault="test-keyvault-$RANDOM"
-az keyvault create --name "$paramKeyVault" \
+paramSku="standard" # Allowed values for Vault: premium, standard.
+az keyvault create --name "$paramKeyVault" --enable-purge-protection --sku "$paramSku" \
   --resource-group "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
 
 
@@ -78,7 +79,7 @@ az keyvault secret set --name "$paramSecretName2" \
 echo "---> Get a secret from the key vault"
 secretValue=$(az keyvault secret show \
   --name "$paramSecretName1" \
-  --vault-name $(az keyvault list --query [0].name --output tsv) \
+  --vault-name "$paramKeyVault" \
   --query value \
   --output tsv)
 
