@@ -96,8 +96,8 @@ $key
 # # You can choose to protect the key with software or HSM. 
 # $paramKeyPassword = = ConvertTo-SecureString -String "Password" -AsPlainText -Force
 # $paramFileLocation = "C:\Contoso\ITPfx.pfx"
-# $key = Import-AzKeyVaultCertificate -Name "$paramKey" -VaultName "$paramKeyVault" `
-#   -FilePath "$paramFileLocation" -Password $paramKeyPassword -Tag $paramTags
+# $key = Add-AzKeyVaultKey -Name "$paramKey" -VaultName "$paramKeyVault" `
+#   -KeyFilePath "$paramFileLocation" -KeyFilePassword $paramKeyPassword -Tag $paramTags
 
 
 # --------------- 5 --------------- 
