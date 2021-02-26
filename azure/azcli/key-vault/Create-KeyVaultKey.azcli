@@ -5,19 +5,20 @@ set -e
 
 # Azure Key Vault - https://docs.microsoft.com/en-us/azure/key-vault/general/
 # https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli
+# https://docs.microsoft.com/en-us/azure/key-vault/general/manage-with-cli2
 
-# Azure Key Vault is a secret store: a centralized cloud service for storing application secrets.
-# Key Vault allows users to store connection strings, secrets, passwords, certificates, access policies, 
-# file locks (making items in Azure read-only), and automation scripts. 
-# Key Vault is designed to store configuration secrets for server applications. It's not intended for 
-# storing data belonging to your app's users, and it shouldn't be used in the client-side part of an app. 
+# Azure Key Vault is a cloud-based key management solution, making it easier to create and control the 
+# encryption keys used to encrypt your data. 
+# A given key in a key vault is a cryptographic asset destined for a particular use such as the asymmetric 
+# master key of Microsoft Azure RMS, or the asymmetric keys used for SQL Server TDE (Transparent Data Encryption), 
+# CLE (Column Level Encryption) and Encrypted backup.
 
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
 # 3- Create a Key Vault.
-# 4- Create a secret in the KeyVault.
-# 5- Get a secret from the key vault.
+# 4- Create a Key in the KeyVault.
+# 5- Get a Key from the key vault.
 
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
@@ -63,40 +64,37 @@ az keyvault create --name "$paramKeyVault" --enable-purge-protection --sku "$par
 
 
 # --------------- 4 --------------- 
-echo "---> Create a secret in the KeyVault"
-# Secrets are small (less than 10K) data blobs protected by a HSM-generated key created with the Key Vault.
-# Secrets exist to simplify the process of persisting sensitive settings that almost every application has: 
-# storage account keys, .PFX files, SQL connection strings, data encryption keys, etc.
+echo "---> Create a Key in the KeyVault"
+paramKey="cryptographicKey1"
+paramProtection="software" # accepted values: hsm, software
+paramTypeOfKey="RSA" # accepted values: EC, EC-HSM, RSA, RSA-HSM, oct, oct-HSM
+paramKeySize="2048" # The key size in bits. For example: 2048, 3072, or 4096 for RSA. 128, 192, or 256 for oct.
 
-paramInputFile="SecretTestFile.txt"
-paramOutputFile="SecretDownload.txt"
-if [ -f $paramInputFile ]; then echo 'Remove old input file...'; rm $paramInputFile; fi
-if [ -f $paramOutputFile ]; then echo 'Remove old output file...'; rm $paramOutputFile; fi
-paramSecretName1="SecretKey"
-paramSecretDesc="This is a secret key"
-paramSecretValue="Key-123$"
-az keyvault secret set --name "$paramSecretName1" \
-  --vault-name "$paramKeyVault" --value "$paramSecretValue" --description "$paramSecretDesc" --tags $paramTags
+# For production use, it's recommended to use a Hardware Security Module (HSM)-protected keys and use 
+# software-protected keys in only test/pilot scenarios. There is an additional charge for HSM-backed keys per-month.
+# Hardware protected keys require --hsm-name (--hsm-name and --vault-name are mutually exclusive, specify just one of them)
+az keyvault key create --name "$paramKey" --vault-name "$paramKeyVault" \
+  --protection "$paramProtection" --kty "$paramTypeOfKey" --size "$paramKeySize" \
+  --tags $paramTags
 
-paramSecretName2="SecretFile"
-echo "This is a test file we want to keep safe" >> $paramInputFile
-paramSecretFileEncoding="utf-8" # accepted values: ascii, base64, hex, utf-16be, utf-16le, utf-8
-az keyvault secret set --name "$paramSecretName2" \
-  --vault-name "$paramKeyVault" --file "$paramInputFile" --encoding "$paramSecretFileEncoding" --tags $paramTags
+# If you have an existing key in a .pem file, you can upload it to Azure Key Vault. 
+# You can choose to protect the key with software or HSM. 
+# paramPemPassword=""
+# az keyvault key import --name "$paramKey" --vault-name "$paramKeyVault" \
+#   --pem-file "./softkey.pem" --pem-password "$paramPemPassword" --protection "$paramProtection" \
+#   --tags $paramTags
 
- 
+
 # --------------- 5 --------------- 
-echo "---> Get a secret from the key vault"
-secretValue=$(az keyvault secret show \
-  --name "$paramSecretName1" \
-  --vault-name "$paramKeyVault" \
-  --query value \
-  --output tsv)
+echo "---> Get a Key from the key vault"
+# Gets the public part of a stored key.
+az keyvault key show --name "$paramKey" --vault-name "$paramKeyVault"
 
-echo "---> The secret key is $secretValue"
+# Encrypt an arbitrary sequence of bytes using an encryption key that is stored in a Vault or HSM.
+# az keyvault key encrypt
 
-az keyvault secret download --name "$paramSecretName2" --vault-name "$paramKeyVault" --file "$paramOutputFile"
-echo "---> The '$paramOutputFile' file has been downloaded"
+# Decrypt a single block of encrypted data.
+# az keyvault key decrypt
 
 # Cleanup 
 # Remove Resource Group
