@@ -7,11 +7,18 @@ $ErrorActionPreference = "Stop"
 # Azure Key Vault - https://docs.microsoft.com/en-us/azure/key-vault/general/
 # https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-powershell
 
+# Azure Key Vault is a secret store: a centralized cloud service for storing application secrets.
+# Key Vault allows users to store connection strings, secrets, passwords, certificates, access policies, 
+# file locks (making items in Azure read-only), and automation scripts. 
+# Key Vault is designed to store configuration secrets for server applications. It's not intended for 
+# storing data belonging to your app's users, and it shouldn't be used in the client-side part of an app. 
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
-# 3- Create a storage account.
-# 4- Get the storage account connection string.
+# 3- Create a Key Vault.
+# 4- Create a secret in the KeyVault.
+# 5- Get a secret from the key vault.
 
 
 # --------------- 1 --------------- 
