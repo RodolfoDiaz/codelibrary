@@ -76,6 +76,10 @@ $ketVault
 
 # --------------- 4 --------------- 
 Write-Host "---> Get a secret from the key vault" -ForegroundColor Green
+# Secrets are small (less than 10K) data blobs protected by a HSM-generated key created with the Key Vault.
+# Secrets exist to simplify the process of persisting sensitive settings that almost every application has: 
+# storage account keys, .PFX files, SQL connection strings, data encryption keys, etc.
+
 $paramSecretName1 = "SecretKey"
 #$paramSecretDesc = "This is a secret key"
 $paramSecretValue = ConvertTo-SecureString "Key-123$" -AsPlainText -Force
