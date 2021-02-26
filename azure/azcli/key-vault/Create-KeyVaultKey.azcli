@@ -69,19 +69,25 @@ paramKey="cryptographicKey1"
 paramProtection="software" # accepted values: hsm, software
 paramTypeOfKey="RSA" # accepted values: EC, EC-HSM, RSA, RSA-HSM, oct, oct-HSM
 paramKeySize="2048" # The key size in bits. For example: 2048, 3072, or 4096 for RSA. 128, 192, or 256 for oct.
+if [ "$(uname)" == "Darwin" ]; then
+  expireDateTime=`date -u -j -v +2y '+%Y-%m-%dT%H:%MZ'`
+else
+  expireDateTime=`date -u -d "2 years" '+%Y-%m-%dT%H:%MZ'`
+fi
 
 # For production use, it's recommended to use a Hardware Security Module (HSM)-protected keys and use 
 # software-protected keys in only test/pilot scenarios. There is an additional charge for HSM-backed keys per-month.
 # Hardware protected keys require --hsm-name (--hsm-name and --vault-name are mutually exclusive, specify just one of them)
 az keyvault key create --name "$paramKey" --vault-name "$paramKeyVault" \
   --protection "$paramProtection" --kty "$paramTypeOfKey" --size "$paramKeySize" \
-  --tags $paramTags
+  --expires "$expireDateTime" --tags $paramTags
 
-# If you have an existing key in a .pem file, you can upload it to Azure Key Vault. 
-# You can choose to protect the key with software or HSM. 
-# paramPemPassword=""
+# # If you have an existing key in a .pem file, you can upload it to Azure Key Vault. 
+# # You can choose to protect the key with software or HSM. 
+# paramKeyPassword=""
+# paramFileLocation="./softkey.pem"
 # az keyvault key import --name "$paramKey" --vault-name "$paramKeyVault" \
-#   --pem-file "./softkey.pem" --pem-password "$paramPemPassword" --protection "$paramProtection" \
+#   --pem-file "$paramFileLocation" --pem-password "$paramKeyPassword" --protection "$paramProtection" \
 #   --tags $paramTags
 
 
