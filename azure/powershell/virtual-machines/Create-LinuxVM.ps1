@@ -222,6 +222,8 @@ Write-Host "---> Attach a data disk to the VM" -ForegroundColor Green
 $storageType = "Standard_LRS"
 $diskSizeGB = 64
 $dataDiskName = $paramVMName + "_testDataDisk"
+# Each storage device is assigned a unique numeric identifier, starting at zero. 
+# The full path to a device is represented by the bus number, target ID number, and Logical Unit Number (LUN)
 $paramLun = 1 # Lun: Specifies the logical unit number (LUN) for a data disk.
 $diskConfig = New-AzDiskConfig -SkuName "$storageType" -Location "$paramLocation" -CreateOption "Empty" -DiskSizeGB "$diskSizeGB" -Tag $paramTags
 $dataDisk1 = New-AzDisk -DiskName "$dataDiskName" -Disk $diskConfig -ResourceGroupName "$paramResourceGroup"
@@ -233,6 +235,9 @@ Write-Host "---> You have to connect to the VM to initialize the disk and mount 
 
 # --------------- 7 --------------- 
 Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
+# Protect data at rest: Data encryption at rest is a mandatory step toward 
+# data privacy, compliance, and data sovereignty.
+
 # Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
 # and compliance commitments. It uses the DM-Crypt feature of Linux to provide volume encryption 
 # for the OS and data disks of Azure virtual machines (VMs).

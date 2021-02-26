@@ -140,6 +140,8 @@ storageType="Standard_LRS"
 diskSizeGB=64
 dataDiskName=$paramVMName
 dataDiskName+="_testDataDisk"
+# Each storage device is assigned a unique numeric identifier, starting at zero. 
+# The full path to a device is represented by the bus number, target ID number, and Logical Unit Number (LUN)
 paramLun=1 # Lun: Specifies the logical unit number (LUN) for a data disk.
 
 az vm disk attach --resource-group "$paramResourceGroup" \
@@ -149,6 +151,9 @@ az vm disk attach --resource-group "$paramResourceGroup" \
 
 # --------------- 6 --------------- 
 echo "---> Enable Azure Disk Encryption"
+# Protect data at rest: Data encryption at rest is a mandatory step toward 
+# data privacy, compliance, and data sovereignty.
+
 # Azure Disk Encryption helps protect and safeguard your data to meet your organizational security 
 # and compliance commitments. It uses the Bitlocker feature of Windows to provide volume encryption 
 # for the OS and data disks of Azure virtual machines (VMs).
