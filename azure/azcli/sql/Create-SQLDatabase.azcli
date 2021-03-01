@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Azure SQL Database - https://docs.microsoft.com/en-us/azure/azure-sql/database/
+
+# The deployment process is:
+# 1- Log in to Azure.
+# 2- Create a resource group.
+# 3- Create a new Azure SQL Database logical server.
+# 4- Create a new sample database for testing
+
+
+# --------------- 1 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login --use-device-code
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
+az provider register --namespace "Microsoft.Sql"
+az provider register --namespace "Microsoft.Network"
+
+
+# --------------- 2 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="test_resourcegroup_$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 3 --------------- 
+echo "---> Create a new Azure SQL Database logical server"
+# https://docs.microsoft.com/en-us/cli/azure/sql/server?view=azure-cli-latest#az_sql_server_create
+paramAdminLogin="azureuser"
+paramAdminPassword="ChangeThisPassword@123"
+# Server name naming rule: 1-63 characters, Lowercase letters, numbers, and hyphens.
+paramDatabaseServer="test-server-$RANDOM"
+
+az sql server create --name "$paramDatabaseServer" --resource-group "$paramResourceGroup" --location "$paramLocation" \
+  --admin-user "$paramAdminLogin" --admin-password "$paramAdminPassword"
+
+
+# --------------- 4 --------------- 
+echo "---> Create a new sample database for testing"
+# https://docs.microsoft.com/en-us/cli/azure/sql/db?view=azure-cli-latest#az_sql_db_create
+paramDatabase="marketplaceDB"
+paramEditionSku="Basic" # Allowed values include: Basic, Standard, Premium, GeneralPurpose, BusinessCritical, Hyperscale.
+paramServiceObjective="Basic" # For example: Basic, S0, P1, GP_Gen4_1, GP_Gen5_S_8, BC_Gen5_2, HS_Gen5_32.
+
+az sql db create --name "$paramDatabase" --resource-group "$paramResourceGroup" --server "$paramDatabaseServer" \
+  --edition "$paramEditionSku" --service-objective "$paramServiceObjective" --sample-name "AdventureWorksLT" \
+  --tags $paramTags
+
+paramClientType="sqlcmd" # Allowed values: ado.net, jdbc, odbc, php, php_pdo, sqlcmd
+paramAuthType="SqlPassword" # accepted values: ADIntegrated, ADPassword, SqlPassword
+paramConnectionString=$(az sql db show-connection-string --name "$paramDatabase" --server "$paramDatabaseServer" \
+  --client "$paramClientType" --auth-type "$paramAuthType" --output tsv)
+
+echo "Set username and password to the connection string"
+paramConnectionString="${paramConnectionString/<username>/'$paramAdminLogin'}"
+paramConnectionString="${paramConnectionString/<password>/'$paramAdminPassword'}"
+
+echo "The connection string to the test database is:"
+echo "$paramConnectionString"
