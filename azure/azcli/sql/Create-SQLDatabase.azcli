@@ -61,12 +61,44 @@ az sql db create --name "$paramDatabase" --resource-group "$paramResourceGroup" 
 
 paramClientType="sqlcmd" # Allowed values: ado.net, jdbc, odbc, php, php_pdo, sqlcmd
 paramAuthType="SqlPassword" # accepted values: ADIntegrated, ADPassword, SqlPassword
-paramConnectionString=$(az sql db show-connection-string --name "$paramDatabase" --server "$paramDatabaseServer" \
+connectionStringCommand=$(az sql db show-connection-string --name "$paramDatabase" --server "$paramDatabaseServer" \
   --client "$paramClientType" --auth-type "$paramAuthType" --output tsv)
 
-echo "Set username and password to the connection string"
-paramConnectionString="${paramConnectionString/<username>/'$paramAdminLogin'}"
-paramConnectionString="${paramConnectionString/<password>/'$paramAdminPassword'}"
+connectionStringCommand="${connectionStringCommand/<username>/$paramAdminLogin}"
+connectionStringCommand="${connectionStringCommand/<password>/$paramAdminPassword}"
 
-echo "The connection string to the test database is:"
-echo "$paramConnectionString"
+# echo "The connection string to the test database is:"
+# echo "$connectionStringCommand"
+
+
+# --------------- 4 --------------- 
+echo "Creating a development server VM"
+paramVMusername="azureuser"
+paramVMPassword="ChangeThisPassword@123"
+paramAuthenticationType="all" # {all, password, ssh}
+paramVMName="devsql-$RANDOM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
+paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
+appServerPublicIp=$(az vm create \
+  --resource-group "$paramResourceGroup" \
+  --name "$paramVMName" \
+  --computer-name "$paramVMName" \
+  --admin-password "$paramVMPassword" \
+  --admin-username "$paramVMusername" \
+  --authentication-type "$paramAuthenticationType" \
+  --ssh-key-values "~/.ssh/id_rsa.pub" \
+  --image "UbuntuLTS" \
+  --size "$paramVMSize" \
+  --location "$paramLocation" \
+  --tags $paramTags \
+  --query "publicIpAddress" -o tsv)
+
+echo "Connect to the server at $appServerPublicIp"
+ssh $appServerPublicIp
+
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+source ~/.bashrc
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+sudo apt-get update
+sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
