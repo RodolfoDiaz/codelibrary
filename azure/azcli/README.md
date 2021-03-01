@@ -24,4 +24,6 @@ The Azure command-line interface (Azure CLI) is a set of commands used to create
 
 * [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/)
 
+* [Azure SQL](https://docs.microsoft.com/en-us/azure/azure-sql/)
+
 * [Virtual machines](https://docs.microsoft.com/en-us/azure/virtual-machines/)

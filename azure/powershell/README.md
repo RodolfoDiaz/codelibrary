@@ -24,4 +24,6 @@ Azure PowerShell is a set of cmdlets for managing Azure resources directly from 
 
 * [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/)
 
+* [Azure SQL](https://docs.microsoft.com/en-us/azure/azure-sql/)
+
 * [Virtual machines](https://docs.microsoft.com/en-us/azure/virtual-machines/)
