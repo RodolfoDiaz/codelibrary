@@ -10,7 +10,9 @@ set -e
 # 2- Create a resource group.
 # 3- Create a new Azure SQL Database logical server.
 # 4- Create a new sample database for testing.
-# 5- Connect to the server and configure SQL tools.
+# 5- Create a development server Linux VM.
+# 6- Configure VNet Rule to allow connection to the Azure Database server.
+# 7- Connect to the server at $VMIpAddress and install SQL Server command-line tools.
 
 
 # --------------- 1 --------------- 
@@ -68,12 +70,9 @@ connectionStringCommand=$(az sql db show-connection-string --name "$paramDatabas
 connectionStringCommand="${connectionStringCommand/<username>/$paramAdminLogin}"
 connectionStringCommand="${connectionStringCommand/<password>/$paramAdminPassword}"
 
-echo "The connection string command to the test database is:"
-echo "$connectionStringCommand"
-
 
 # --------------- 5 --------------- 
-echo "---> Creating a development server VM"
+echo "---> Creating a development server Linux VM"
 paramVMusername="azureuser"
 paramVMPassword="ChangeThisPassword@123"
 paramAuthenticationType="all" # {all, password, ssh}
@@ -94,6 +93,29 @@ VMIpAddress=$(az vm create \
   --tags $paramTags \
   --query "publicIpAddress" -o tsv)
 
-echo "---> Connect to the server at $VMIpAddress and configure SQL tools"
-# echo "$connectionStringCommand" >> server-config.sh
+az vm show --resource-group "$paramResourceGroup" --name "$paramVMName"
+
+# --------------- 6 --------------- 
+echo "---> Configure Virtual Network to allow connections to Microsoft SQL"
+az network vnet subnet update --name "${paramVMName}Subnet" --resource-group "$paramResourceGroup" --vnet-name "${paramVMName}VNET" --service-endpoints "Microsoft.Sql"
+echo "---> Configure our Azure Database server to connect to the Virtual Network"
+paramVnetRule="AllowServerInVNET"
+az sql server vnet-rule create --resource-group "$paramResourceGroup" --name "$paramVnetRule" --server "$paramDatabaseServer" \
+  --subnet "${paramVMName}Subnet" --vnet-name "${paramVMName}VNET"
+
+
+# --------------- 7 --------------- 
+echo "---> Connect to the server at $VMIpAddress and install SQL Server command-line tools"
 cat server-config.sh | ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
+
+echo "---> Connect to the development server VM with this command:"
+echo "ssh ${paramVMusername}@${VMIpAddress}"
+echo "---> Connect to the test database with this command:"
+echo "$connectionStringCommand"
+echo "---> Enter a query in sqlcmd, for example:"
+echo "SELECT TOP 10 FirstName, LastName, EmailAddress, Phone FROM SalesLT.Customer;"
+echo "GO"
+
+# Cleanup 
+# Remove Resource Group
+# az group delete --name $paramResourceGroup --yes
