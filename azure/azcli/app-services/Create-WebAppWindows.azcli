@@ -11,6 +11,8 @@ set -e
 # 3- Create an App Service plan.
 # 4- Create a new Web App.
 # 5- Deploy an ASP.NET Web App.
+# 6- Configure logging for the Web App.
+# 7- Start live log tracing for the Web App.
 
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
@@ -74,3 +76,16 @@ az webapp deployment source config-zip --name "$paramWebApp" \
   --src site.zip --resource-group "$paramResourceGroup"
 
 python -m webbrowser "https://${paramWebApp}.azurewebsites.net"
+
+# --------------- 6 --------------- 
+echo "---> Configure logging for the Web App"
+paramLogLevel="verbose" # accepted values: error, information, verbose, warning
+az webapp log config --name "$paramWebApp" --resource-group "$paramResourceGroup" --level "$paramLogLevel" --web-server-logging "filesystem" --application-logging  "filesystem"
+
+echo "---> Start live log tracing for the Web App"
+# By default all live traces configured by az webapp log config will be shown, but you can scope to certain providers/folders, e.g. 'application', 'http', etc.
+az webapp log tail --name "$paramWebApp" --resource-group "$paramResourceGroup"
+
+# Cleanup 
+# Remove Resource Group
+# az group delete --name $paramResourceGroup --yes
