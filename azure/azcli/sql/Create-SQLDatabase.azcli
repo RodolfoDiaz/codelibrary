@@ -84,6 +84,8 @@ connectionStringCommand=$(az sql db show-connection-string --name "$paramDatabas
 connectionStringCommand="${connectionStringCommand/<username>/$paramAdminLogin}"
 connectionStringCommand="${connectionStringCommand/<password>/$paramAdminPassword}"
 
+echo "---> Connect to the test database with this command:"
+echo "$connectionStringCommand"
 
 # --------------- 6 --------------- 
 echo "---> Creating a development server Linux VM"
@@ -92,6 +94,7 @@ paramVMPassword="ChangeThisPassword@123"
 paramAuthenticationType="all" # {all, password, ssh}
 paramVMName="devsql-$RANDOM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
 paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
+paramOSImage="UbuntuLTS" # For Red Hat use: "RHEL" - az vm image list --output table
 VMIpAddress=$(az vm create \
   --resource-group "$paramResourceGroup" \
   --name "$paramVMName" \
@@ -101,7 +104,7 @@ VMIpAddress=$(az vm create \
   --authentication-type "$paramAuthenticationType" \
   --ssh-key-values "~/.ssh/id_rsa.pub" \
   --ssh-dest-key-path "/home/$paramVMusername/.ssh/authorized_keys" \
-  --image "UbuntuLTS" \
+  --image "$paramOSImage" \
   --size "$paramVMSize" \
   --location "$paramLocation" \
   --tags $paramTags \
