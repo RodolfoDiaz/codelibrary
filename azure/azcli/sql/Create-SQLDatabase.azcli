@@ -6,16 +6,30 @@ set -e
 # Azure SQL Database - https://docs.microsoft.com/en-us/azure/azure-sql/database/
 
 # The deployment process is:
-# 1- Log in to Azure.
-# 2- Create a resource group.
-# 3- Create a new Azure SQL Database logical server.
-# 4- Create a new sample database for testing.
-# 5- Create a development server Linux VM.
-# 6- Configure VNet Rule to allow connection to the Azure Database server.
-# 7- Connect to the server at $VMIpAddress and install SQL Server command-line tools.
-
+# 1- Use ssh-keygen to create an SSH key pair.
+# 2- Log in to Azure.
+# 3- Create a resource group.
+# 4- Create a new Azure SQL Database logical server.
+# 5- Create a new sample database for testing.
+# 6- Create a development server Linux VM.
+# 7- Configure VNet Rule to allow connection to the Azure Database server.
+# 8- Connect to the server at $VMIpAddress and install SQL Server command-line tools.
 
 # --------------- 1 --------------- 
+echo "---> Use ssh-keygen to create an SSH key pair."
+# An SSH key consists of a pair of files. One is the private key, which should never 
+# be shared with anyone. The other is the public key. The other file is a public key 
+# which allows you to log into the containers and VMs you provision. When you generate 
+# the keys, you will use ssh-keygen to store the keys in a safe location so you can bypass 
+# the login prompt when connecting to your instances.
+if [ ! -f ~/.ssh/id_rsa.pub ]; then
+  # https://www.ssh.com/ssh/keygen/
+  ssh-keygen -m PEM -t rsa -b 4096
+else
+ echo "SSH key file found at ~/.ssh"
+fi
+
+# --------------- 2 --------------- 
 echo "---> Log in to Azure"
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
 az login --use-device-code
@@ -27,7 +41,7 @@ az provider register --namespace "Microsoft.Sql"
 az provider register --namespace "Microsoft.Network"
 
 
-# --------------- 2 --------------- 
+# --------------- 3 --------------- 
 echo "---> Creating resource group"
 paramResourceGroup="test_resourcegroup_$RANDOM"
 paramLocation="westus"
@@ -39,7 +53,7 @@ if [ "$rgExists" == "false" ]; then
 fi
 
 
-# --------------- 3 --------------- 
+# --------------- 4 --------------- 
 echo "---> Create a new Azure SQL Database logical server"
 # https://docs.microsoft.com/en-us/cli/azure/sql/server?view=azure-cli-latest#az_sql_server_create
 paramAdminLogin="azureuser"
@@ -51,7 +65,7 @@ az sql server create --name "$paramDatabaseServer" --resource-group "$paramResou
   --admin-user "$paramAdminLogin" --admin-password "$paramAdminPassword"
 
 
-# --------------- 4 --------------- 
+# --------------- 5 --------------- 
 echo "---> Create a new sample database for testing"
 # https://docs.microsoft.com/en-us/cli/azure/sql/db?view=azure-cli-latest#az_sql_db_create
 paramDatabase="marketplaceDB"
@@ -71,7 +85,7 @@ connectionStringCommand="${connectionStringCommand/<username>/$paramAdminLogin}"
 connectionStringCommand="${connectionStringCommand/<password>/$paramAdminPassword}"
 
 
-# --------------- 5 --------------- 
+# --------------- 6 --------------- 
 echo "---> Creating a development server Linux VM"
 paramVMusername="azureuser"
 paramVMPassword="ChangeThisPassword@123"
@@ -95,7 +109,7 @@ VMIpAddress=$(az vm create \
 
 az vm show --resource-group "$paramResourceGroup" --name "$paramVMName"
 
-# --------------- 6 --------------- 
+# --------------- 7 --------------- 
 echo "---> Configure Virtual Network to allow connections to Microsoft SQL"
 az network vnet subnet update --name "${paramVMName}Subnet" --resource-group "$paramResourceGroup" --vnet-name "${paramVMName}VNET" --service-endpoints "Microsoft.Sql"
 echo "---> Configure our Azure Database server to connect to the Virtual Network"
@@ -104,7 +118,7 @@ az sql server vnet-rule create --resource-group "$paramResourceGroup" --name "$p
   --subnet "${paramVMName}Subnet" --vnet-name "${paramVMName}VNET"
 
 
-# --------------- 7 --------------- 
+# --------------- 8 --------------- 
 echo "---> Connect to the server at $VMIpAddress and install SQL Server command-line tools"
 cat server-config.sh | ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
 
