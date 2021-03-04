@@ -63,6 +63,8 @@ New-AzAppServicePlan -Name "$paramAppServicePlan" `
   -Tier "$paramTier" -WorkerSize "$paramWorkerSize" -NumberofWorkers "$paramNumberofWorkers" `
   -Tag $paramTags -Linux 
 
+# The app must be running in the Standard, Premium, or Isolated tier in order for you to enable multiple deployment slots.
+# New-AzWebAppSlot
 
 # --------------- 4 --------------- 
 Write-Host "---> Create the Web App" -ForegroundColor Green
