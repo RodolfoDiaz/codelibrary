@@ -12,8 +12,8 @@ set -e
 # 4- Create a new Azure SQL Database logical server.
 # 5- Create a new sample database for testing.
 # 6- Create a development server Linux VM.
-# 7- Configure VNet Rule to allow connection to the Azure Database server.
-# 8- Connect to the server at $VMIpAddress and install SQL Server command-line tools.
+# 7- Configure a Virtual Network Rule to allow connections from the development server (VM) to the Azure Database server.
+# 8- Connect to the development server and installs SQL Server command-line tools.
 
 # --------------- 1 --------------- 
 echo "---> Use ssh-keygen to create an SSH key pair."
@@ -122,7 +122,7 @@ az sql server vnet-rule create --resource-group "$paramResourceGroup" --name "$p
 
 
 # --------------- 8 --------------- 
-echo "---> Connect to the server at $VMIpAddress and install SQL Server command-line tools"
+echo "---> Connect to the server at $VMIpAddress and installs SQL Server command-line tools"
 cat server-config.sh | ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
 
 echo "---> Connect to the development server VM with this command:"
