@@ -11,8 +11,8 @@ set -e
 # 3- Create an App Service plan.
 # 4- Create a new Web App.
 # 5- Deploy an ASP.NET Web App.
-# 6- Configure logging for the Web App.
-# 7- Start live log tracing for the Web App.
+# 6- Configure Cross-Origin Resource Sharing (CORS).
+# 7- Configure logging for the Web App and start live log tracing.
 
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
@@ -75,9 +75,31 @@ zip -r site.zip *
 az webapp deployment source config-zip --name "$paramWebApp" \
   --src site.zip --resource-group "$paramResourceGroup"
 
-python -m webbrowser "https://${paramWebApp}.azurewebsites.net"
 
 # --------------- 6 --------------- 
+echo "---> Configure Cross-Origin Resource Sharing (CORS)"
+# Cross-Origin Resource Sharing (CORS) allows JavaScript code running in a browser on an external host to interact 
+# with your backend. Specify the origins that should be allowed to make cross-origin calls
+
+# Space separated origins that should be allowed to make cross-origin calls. To allow all, use "*" and remove all other origins from the list.
+paramAllowedOrigins="https://myapps.com"
+az webapp cors add --name "$paramWebApp" --resource-group "$paramResourceGroup" --allowed-origins "$paramAllowedOrigins"
+
+# If your app requires credentials such as cookies or authentication tokens to be sent, the browser may require the 
+# ACCESS-CONTROL-ALLOW-CREDENTIALS header on the response. To enable this in App Service, set properties.cors.supportCredentials 
+# to true in your CORS config. This cannot be enabled when allowedOrigins includes '*'.
+az resource update --name "web" --resource-group "$paramResourceGroup" --namespace "Microsoft.Web" \
+ --resource-type "config" --parent "sites/$paramWebApp" --set "properties.cors.supportCredentials=true"
+
+# Host a RESTful API with CORS in Azure App Service - https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-rest-api
+# App Service CORS vs. your CORS - https://docs.microsoft.com/en-us/aspnet/core/security/cors
+
+
+# Open the Web App in your default web browser
+python -m webbrowser "https://${paramWebApp}.azurewebsites.net"
+
+
+# --------------- 7 --------------- 
 echo "---> Configure logging for the Web App"
 paramLogLevel="verbose" # accepted values: error, information, verbose, warning
 az webapp log config --name "$paramWebApp" --resource-group "$paramResourceGroup" --level "$paramLogLevel" --web-server-logging "filesystem" --application-logging  "filesystem"
