@@ -5,6 +5,11 @@ set -e
 
 # Azure Event Hubs - https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-quickstart-cli
 
+# Azure Event Hubs works in a Publisher - Subscriber model. In this model, your solution produce series of events, that report
+# a condition and enable subscribers to analyze a condition over time. For example, an IoT device, such as temperature sensor
+# that keeps sending messages about the temperature of an industrial equipment over time for analysis by another system.
+
+
 # Azure Event Hubs REST API
 # https://docs.microsoft.com/en-us/rest/api/eventhub/
 

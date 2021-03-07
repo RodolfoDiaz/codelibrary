@@ -5,6 +5,9 @@ set -e
 
 # Azure Queue Storage - https://docs.microsoft.com/en-us/azure/storage/queues/
 
+# Azure Queue Storage works in a Producer - Consumer model.
+# Queues are responsible for providing data from producers to consumers and hold onto any data put onto it until consumed.
+
 # Azure Queue Storage is a service for storing large numbers of messages. You access messages from anywhere 
 # in the world via authenticated calls using HTTP or HTTPS. A queue message can be up to 64 KB in size.
 # Azure supports two types of queue mechanisms: Storage queues and Service Bus queues. 
@@ -74,10 +77,17 @@ queueName="howtoqueue"
 az storage queue create --name "$queueName" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
 az storage queue list --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
 echo "---> Create messages"
-az storage message put --queue-name "$queueName" --content "This is the first message!" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+paramTimeToLive=3600 # Specifies the time-to-live interval for the message, in seconds. The time-to-live may be any positive number or -1 for infinity. If this parameter is omitted, the default time-to-live is 7 days.
+az storage message put --queue-name "$queueName" --content "This is the first message!" --time-to-live "$paramTimeToLive" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
 az storage message put --queue-name "$queueName" --content "This is the second message!" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
 echo "---> Get messages"
-az storage message get --queue-name "$queueName" --num-messages "32" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+paramNumMessage=5 # A nonzero integer value that specifies the number of messages to retrieve from the queue, up to a maximum of 32.
+# Peek retrieves one or more messages from the front of the queue, but does not alter the visibility of the message.
+az storage message peek --queue-name "$queueName" --num-messages "$paramNumMessage" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
+# Get retrieves one or more messages from the front of the queue.  When you take (get) a message, it is not going to be
+# visible to anyone else looking at that queue until that visibility timeout has expired.
+paramVisibilityTimeOut=300 # Specifies the new visibility timeout value, in seconds, relative to server time. The new value must be larger than or equal to 1 second, and cannot be larger than 7 days.
+az storage message get --queue-name "$queueName" --num-messages "$paramNumMessage" --visibility-timeout "$paramVisibilityTimeOut" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
 #az storage queue delete --name "$queueName" --account-key "$accountKey" --account-name "$paramStorageAccount" --connection-string "$storageConnectionString"
 
 

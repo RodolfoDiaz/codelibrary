@@ -5,6 +5,15 @@ set -e
 
 # Azure Service Bus Queues - https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-cli
 
+# Azure Service Bus Queues works in a Producer - Consumer model.
+# Queues are responsible for providing data from producers to consumers and hold onto any data put onto it until consumed.
+# Azure Service Bus provides the following (compared to Storage Queues):
+# - Support for receiving messages without polling (with AMQP 1.0)
+# - Guaranteed message processing order (FIFO)
+# - Detect duplicate messages
+# - Support messages up to 256 KB
+# - Support publishing and consuming in batches
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.

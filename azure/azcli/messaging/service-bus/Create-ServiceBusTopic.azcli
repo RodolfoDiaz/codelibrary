@@ -5,6 +5,9 @@ set -e
 
 # Azure Service Bus Topics - https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-tutorial-topics-subscriptions-cli
 
+# Azure Service Bus Topics works in a Publisher - Subscriber model. Topics will have subscription.
+# For each subscription we define a filter (3 types: boolean, SQL, correlation filters )
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
