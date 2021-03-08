@@ -6,6 +6,10 @@ $ErrorActionPreference = "Stop"
 
 # Azure Event Hubs - https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-quickstart-powershell
 
+# Azure Event Hubs works in a Publisher - Subscriber model. In this case, your solution produce series of  time-ordered events, that report
+# a condition and enable subscribers to analyze them. For example, telemetry, an IoT device, such as temperature sensor
+# that keeps sending messages about the temperature of an industrial equipment over time for analysis by another system.
+
 # Azure Event Hubs REST API
 # https://docs.microsoft.com/en-us/rest/api/eventhub/
 

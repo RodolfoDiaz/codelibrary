@@ -5,6 +5,13 @@ set -e
 
 # Azure Event Grid - https://docs.microsoft.com/en-us/azure/event-grid/
 
+# Azure Event Grid works in a Publisher - Subscriber model. In this case, your solution produce
+# discrete events, that report state changes that a system can act on (enable subscribers to take action).
+# For example, an IoT device that sends a message saying 'the alarm was set and somebody open a door', 
+# then a system takes some action (call the police, send a security guard).
+# Other examples: an account was created or an image uploaded, if something is listening or subscribing 
+# to that event, there's generally some action that it takes upon receiving the notification.
+
 # Route custom events to web endpoint with PowerShell and Event Grid
 # https://docs.microsoft.com/en-us/azure/event-grid/custom-event-quickstart
 
