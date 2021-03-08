@@ -52,15 +52,15 @@ az keyvault create --name "$paramKeyVault" --enable-purge-protection --sku "$par
   --resource-group "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
 
 
-# UNCOMMENT THIS SECTION AND SET USER PRINCIPAL NAME VALUE
-# echo "---> Give a user account permissions to manage secrets in Key Vault"
-# # https://docs.microsoft.com/en-us/cli/azure/keyvault?view=azure-cli-latest#az_keyvault_set_policy
-# paramUserPrincipal="user@domain.com" # take this value from Azure AD - Users -> User principal name
-# az keyvault set-policy --name "$paramKeyVault" \
-#     --upn "$paramUserPrincipal" \
-#   --key-permissions get create list import \
-#   --secret-permissions backup restore set get \
-#   --storage-permissions get set list
+echo "---> Access policies: Give a user account permissions to access items in the new Key Vault"
+paramUserPrincipal=$(az ad signed-in-user show --query "userPrincipalName" --output tsv) # You can take this value from Azure AD - Users -> User principal name
+# See the full list of permissions here: https://docs.microsoft.com/en-us/cli/azure/keyvault?view=azure-cli-latest#az_keyvault_set_policy
+az keyvault set-policy --name "$paramKeyVault" \
+    --upn "$paramUserPrincipal" \
+  --key-permissions get create list import \
+  --secret-permissions backup restore set get \
+  --storage-permissions get set list \
+  --certificate-permissions get list
 
 
 # --------------- 4 --------------- 

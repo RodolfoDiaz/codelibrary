@@ -63,15 +63,16 @@ Write-Host "---> Key Vault details:" -ForegroundColor Green
 $ketVault
 
 
-# UNCOMMENT THIS SECTION AND SET USER PRINCIPAL NAME VALUE
-# Write-Host "---> Give a user account permissions to manage secrets in Key Vault" -ForegroundColor Green
-# $paramUserPrincipal = "user@domain.com" # take this value from Azure AD - Users -> User principal name
-# # See permissions lists here: https://docs.microsoft.com/en-us/powershell/module/az.keyvault/set-azkeyvaultaccesspolicy
-# Set-AzKeyVaultAccessPolicy -VaultName "$paramKeyVault" `
-#   -UserPrincipalName "$paramUserPrincipal"  `
-#   -PermissionsToSecrets get, set, delete `
-#   -PermissionsToCertificates list, get `
-#   -PermissionsToKeys list, get
+Write-Host "---> Access policies: Give a user account permissions to access items in a Key Vault" -ForegroundColor Green
+$currentlyLoggedInUser = Get-AzADUser
+$paramUserPrincipal = $currentlyLoggedInUser.UserPrincipalName # You can take this value from Azure AD - Users -> User principal name
+# See the full list of permissions here: https://docs.microsoft.com/en-us/powershell/module/az.keyvault/set-azkeyvaultaccesspolicy
+Set-AzKeyVaultAccessPolicy -VaultName "$paramKeyVault" `
+  -UserPrincipalName "$paramUserPrincipal"  `
+  -PermissionsToSecrets get, set, delete `
+  -PermissionsToCertificates list, get `
+  -PermissionsToKeys list, get, create, update `
+  -PermissionsToStorage list, get, set, update
 
 
 # --------------- 4 --------------- 
