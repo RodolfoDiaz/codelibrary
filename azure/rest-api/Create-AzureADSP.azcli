@@ -12,10 +12,14 @@ az account set --subscription "subscription-id"
 
 # Create a service principal and configure its access to Azure resources. 
 # https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals
-az ad sp create-for-rbac --name "my-azure-subscription" --role Contributor
+az ad sp create-for-rbac --name "user-for-postman" --role Contributor
+# In Azure Portal, you can see this record from Azure Active Directory -> App registrations -> All applications
 
-# service principal name, or object id
+# Enter the appId/clientId
 spId="00000000-0000-0000-0000-000000000000"
+
+# Show service principal information
+az ad sp show --id $spId
 
 # List a service principal's credentials.
 az ad sp credential list --id $spId
@@ -28,9 +32,9 @@ az ad sp delete --id $spId
 # Get account information (tenantId and subscription id)
 az account show
 # List service principal info (appId)
-az ad sp list --display-name "my-azure-subscription"
+az ad sp list --display-name "user-for-postman"
 # Reset a service principal credential. Use upon expiration of the service principal's credentials, or in the event that login credentials are lost.
-az ad sp credential reset --name "my-azure-subscription"
+az ad sp credential reset --name "user-for-postman"
 
 # In Postman, open the "Environments" tab, select "Azure REST" environment and enter the settings from the Service Principal and Azure account info:
 # tenant = tenantId (az account show)
