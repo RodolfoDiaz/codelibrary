@@ -39,6 +39,7 @@ echo "---> Verify registration of the required Azure resource providers"
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
 az provider register --namespace "Microsoft.Sql"
 az provider register --namespace "Microsoft.Network"
+az provider register --namespace "Microsoft.Compute"
 
 
 # --------------- 3 --------------- 
@@ -94,7 +95,7 @@ paramVMPassword="ChangeThisPassword@123"
 paramAuthenticationType="all" # {all, password, ssh}
 paramVMName="devsql-$RANDOM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
 paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
-paramOSImage="UbuntuLTS" # For Red Hat use: "RHEL" - az vm image list --output table
+paramOSImage="UbuntuLTS" # For Red Hat Linux use: "RHEL", or check more images with: az vm image list --output table
 VMIpAddress=$(az vm create \
   --resource-group "$paramResourceGroup" \
   --name "$paramVMName" \
