@@ -6,12 +6,14 @@ set -e
 # Azure Queue Storage - https://docs.microsoft.com/en-us/azure/storage/queues/
 
 # Azure Queue Storage works in a Producer - Consumer model.
-# Queues are responsible for providing data from producers to consumers and hold onto any data put onto it until consumed.
+# Queues are responsible for providing data from producers to consumers and hold the data we put until it is consumed.
 
 # Azure Queue Storage is a service for storing large numbers of messages. You access messages from anywhere 
-# in the world via authenticated calls using HTTP or HTTPS. A queue message can be up to 64 KB in size.
-# Azure supports two types of queue mechanisms: Storage queues and Service Bus queues. 
-# Storage queues are part of the Azure Storage infrastructure.
+# in the world via authenticated calls using HTTP or HTTPS. A single message can be up to 64 KiB in size (not KB).
+# Messages exist within a single queue. Storage Queue requires an Azure Storage account general-purpose v2.
+# The number of messages is limited only by the size of the storage account, but a single queue cannot exceed 500 TiB (not TB).
+# Supports a configurable time-to-live per message (with the default at 7 days). A storage account can support 
+# 20000 messages per second (assuming 1 KiB message). A single queue can support 2000 messages per second (1 KiB message).
 
 # Queue service REST API
 # https://docs.microsoft.com/en-us/rest/api/storageservices/queue-service-rest-api
