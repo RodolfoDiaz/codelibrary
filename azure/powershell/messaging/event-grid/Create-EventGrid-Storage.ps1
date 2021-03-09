@@ -13,7 +13,9 @@ $ErrorActionPreference = "Stop"
 # Other examples: an account was created or an image uploaded, if something is listening or subscribing 
 # to that event, there's generally some action that it takes upon receiving the notification.
 
-# Route storage events to web endpoint with PowerShell
+# In Azure portal you create a resource "Event Grid System Topics", to setup the event grid topic with an 
+# Azure service (for this example, select topic type = 'Storage Accounts')
+# Quickstart code: Route storage events to web endpoint with PowerShell
 # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-event-quickstart-powershell
 
 # The deployment process is:

@@ -12,7 +12,9 @@ set -e
 # Other examples: an account was created or an image uploaded, if something is listening or subscribing 
 # to that event, there's generally some action that it takes upon receiving the notification.
 
-# Route custom events to web endpoint with PowerShell and Event Grid
+# In Azure portal you create a resource "Event Grid Topics", to setup the event grid topic with 
+# custom event to a web endpoint (Web hook)
+# Quickstart code: Route custom events to web endpoint with PowerShell and Event Grid
 # https://docs.microsoft.com/en-us/azure/event-grid/custom-event-quickstart
 
 # The deployment process is:
