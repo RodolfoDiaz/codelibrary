@@ -76,8 +76,9 @@ Write-Host "---> Creating an event hub in the namespace you created" -Foreground
 $rndeventhub = (New-Guid).ToString().Split("-")[0]
 $env:varEventHubName = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
 $env:varEventHubName = "test_eventhub_$rndeventhub"
-$retentionInDays = 1  # Message Retention customization is not available in a Basic Tier Namespace. Change variable $paramNamespaceSku to "Standard" to increase message retention.
-$eventhub = New-AzEventHub -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramEventHubNamespace" -Name "$env:varEventHubName" -MessageRetentionInDays $retentionInDays
+$paramRetentionInDays = 1  # Message Retention customization is not available in a Basic Tier Namespace. Change variable $paramNamespaceSku to "Standard" to increase message retention to a maximum of 7 days.
+$paramPartitionCount = 4  # Maximum is 32 partitions. You should create as many partitions as you are expecting concurrent subscribing reading applications.
+$eventhub = New-AzEventHub -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramEventHubNamespace" -Name "$env:varEventHubName" -PartitionCount $paramPartitionCount -MessageRetentionInDays $paramRetentionInDays
 Write-Host "---> Event Hub details:" -ForegroundColor Green
 $eventhub
 
