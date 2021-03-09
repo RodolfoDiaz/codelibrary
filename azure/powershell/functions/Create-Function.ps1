@@ -110,6 +110,11 @@ $functionAppRuntimeStack = $appToDeploy.runtimeStack
 # The version of the functions runtime stack. 
 # Allowed values for each --runtime are: node -> [8, 10, 12, 14], java -> [8, 11], powershell -> [7.0], python -> [3.6, 3.7, 3.8].
 $functionRuntimeVersion = $appToDeploy.runtimeVersion
+# Hosting: Azure Functions run in a service plan on Azure App Service. You choose one of the following options:
+# - Consumption Plan (serverless automatic scale, limited to 5 minutes each function invocation), 
+# - App Service Plan (traditional pricing model, no time limit) 
+# - Premium Plan (for faster performance, enhanced security and reserved instances).
+# To specify the hosting choice you use either: -Location (for the consumption plan location) or -PlanName (for the App Service Plan you created)
 $functionApp = New-AzFunctionApp -Location "$paramLocation" -Name "$paramFunctionApp" -ResourceGroupName "$paramResourceGroup" -StorageAccountName "$paramStorageAccount" -OSType "$paramFunctionAppOS" -FunctionsVersion "$paramFunctionAppVersion" -Runtime "$functionAppRuntimeStack" -RuntimeVersion "$functionRuntimeVersion" -Tag $paramTags
 Write-Host "---> Function App details:" -ForegroundColor Green
 $functionApp
