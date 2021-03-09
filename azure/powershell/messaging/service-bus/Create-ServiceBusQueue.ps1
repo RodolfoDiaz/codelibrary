@@ -6,6 +6,17 @@ $ErrorActionPreference = "Stop"
 
 # Azure Service Bus Queues - https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quickstart-powershell
 
+# Azure Service Bus Queues work in a Producer-Consumer model (one to one).
+# Azure Service Bus Topics work in a Publisher-Subscriber model (one to many). Topics will have subscriptions.
+# For each subscription we define a filter (there are 3 types: boolean filter, SQL filter and correlation filters)
+# Azure Service Bus provides the following (compared to Storage Queues):
+# - Support for receiving messages without polling (with AMQP 1.0)
+# - Guaranteed message processing order (FIFO)
+# - Detect duplicate messages
+# - Messages can be up to 256 KB
+# - Support publishing and consuming in batches
+# - Service Bus queues are limited to 80 GB
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
