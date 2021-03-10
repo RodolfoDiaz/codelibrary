@@ -238,6 +238,7 @@ Write-Host "---> Username is: $paramVMusername"
 Write-Host "---> Public IP address is: "
 Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress"
 Write-Host "---> GET PUBLIC IP ADDRESS:"
+# ALTERNATIVE METHOD: Get-AzPublicIpAddress -ResourceGroupName "$paramResourceGroup" -Name "$paramVMName" | Select-Object IpAddress
 Write-Host "---> Get-AzPublicIpAddress -Name $paramPublicIpAddress | Select-Object IpAddress"
 # $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
 Write-Host "---> Use Microsoft Remote Desktop client. In Windows you can use the following command: mstsc /v:IpAddress"

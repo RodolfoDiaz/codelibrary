@@ -194,7 +194,7 @@ echo "---> az vm encryption show --resource-group $paramResourceGroup --name $pa
 echo "---> Connect to Virtual Machine '$paramVMName'"
 echo "---> Username is: $paramVMusername"
 echo "---> Public IP address is: "
-# az vm list-ip-addresses --resource-group "$paramResourceGroup" --name "$paramVMName"
+# ALTERNATIVE METHOD: az vm list-ip-addresses --resource-group "$paramResourceGroup" --name "$paramVMName"
 az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv
 echo "---> GET PUBLIC IP ADDRESS:"
 echo "---> az network public-ip show --resource-group $paramResourceGroup --name $paramPublicIpAddress --query \"{address: ipAddress}\"" 

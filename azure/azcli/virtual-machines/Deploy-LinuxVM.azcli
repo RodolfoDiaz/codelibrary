@@ -6,6 +6,9 @@ set -e
 # Azure Virtual Machines - https://docs.microsoft.com/en-us/azure/virtual-machines/
 # Example taken from Azure Quickstart Templates
 # https://azure.microsoft.com/en-us/resources/templates/
+# Azure Resource Manager - Reference:
+# https://docs.microsoft.com/en-us/cli/azure/deployment/group
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/parameter-files
 
 # The deployment process is:
 # 1- Use ssh-keygen to create an SSH key pair.
@@ -55,15 +58,17 @@ fi
 
 # --------------- 4 --------------- 
 echo "---> Deploy network resources and Virtual Machine"
-# See template/parameter details here: https://azure.microsoft.com/en-us/resources/templates/101-vm-simple-linux/
-# Reference:
-# https://docs.microsoft.com/en-us/cli/azure/deployment/group
-# https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/parameter-files
-adminPasswordOrKey=$(eval cat ~/.ssh/id_rsa.pub)
+# See template/parameter details here: 
+# 1- https://azure.microsoft.com/en-us/resources/templates/101-vm-simple-linux/
+paramTemplateUri="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json"
+# 2- https://azure.microsoft.com/en-us/resources/templates/ubuntu-desktop-gnome-rdp/
+#paramTemplateUri="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/ubuntu-desktop-gnome-rdp/azuredeploy.json"
+paramAdminPasswordOrKey=$(eval cat ~/.ssh/id_rsa.pub)
+paramJsonFile="vm-simple-linux-param.json"
 az deployment group create --resource-group "$paramResourceGroup" \
-  --template-uri "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json" \
-  --parameters adminPasswordOrKey="$adminPasswordOrKey" \
-  --parameters "vm-simple-linux-param.json"
+  --template-uri "$paramTemplateUri" \
+  --parameters adminPasswordOrKey="$paramAdminPasswordOrKey" \
+  --parameters "$paramJsonFile"
 
 # Cleanup 
 # Remove Resource Group
