@@ -8,17 +8,14 @@
     "adminUsername": {
       "value": "azureuser"
     },
-    "authenticationType": {
-      "value": "sshPublicKey"
-    },
     "ubuntuOSVersion": {
       "value": "18.04-LTS"
     },
     "location": {
       "value": "westus"
     },
-    "VmSize": {
-      "value": "Standard_D2_V3"
+    "vmSize": {
+      "value": "Standard_D2s_V3"
     }
   }
 }

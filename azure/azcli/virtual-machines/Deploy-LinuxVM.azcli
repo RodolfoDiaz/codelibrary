@@ -6,6 +6,7 @@ set -e
 # Azure Virtual Machines - https://docs.microsoft.com/en-us/azure/virtual-machines/
 # Example taken from Azure Quickstart Templates
 # https://azure.microsoft.com/en-us/resources/templates/
+
 # Azure Resource Manager - Reference:
 # https://docs.microsoft.com/en-us/cli/azure/deployment/group
 # https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/parameter-files
@@ -59,16 +60,27 @@ fi
 # --------------- 4 --------------- 
 echo "---> Deploy network resources and Virtual Machine"
 # See template/parameter details here: 
-# 1- https://azure.microsoft.com/en-us/resources/templates/101-vm-simple-linux/
-paramTemplateUri="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json"
-# 2- https://azure.microsoft.com/en-us/resources/templates/ubuntu-desktop-gnome-rdp/
-#paramTemplateUri="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/ubuntu-desktop-gnome-rdp/azuredeploy.json"
-paramAdminPasswordOrKey=$(eval cat ~/.ssh/id_rsa.pub)
-paramJsonFile="vm-simple-linux-param.json"
+if [ "$1" == "gui" ]; then
+  echo "---> Linux VM Desktop (GUI) https://azure.microsoft.com/en-us/resources/templates/101-ubuntu-mate-desktop-vscode/"
+  paramTemplateUri="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-ubuntu-mate-desktop-vscode/azuredeploy.json"
+  paramAuthenticationType="password"
+  paramAdminPasswordOrKey="ChangeThisPassword@123"
+  echo "---> To connect to the VM use Remove Desktop Connection (RDP) with the User ID 'azureuser' and the password indicated in this script"
+elif [ "$1" == "" ]; then
+  echo "---> Simple Linux VM (no GUI): https://azure.microsoft.com/en-us/resources/templates/101-vm-simple-linux/"
+  paramTemplateUri="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json"
+  paramAuthenticationType="sshPublicKey"
+  paramAdminPasswordOrKey=$(eval cat ~/.ssh/id_rsa.pub)
+  echo "---> To connect to the VM execute: ssh azureuser@<Public IP Address>"
+fi
+paramJsonFile="vm-parameters.json"
 az deployment group create --resource-group "$paramResourceGroup" \
   --template-uri "$paramTemplateUri" \
-  --parameters adminPasswordOrKey="$paramAdminPasswordOrKey" \
+  --parameters authenticationType="$paramAuthenticationType" adminPasswordOrKey="$paramAdminPasswordOrKey" \
   --parameters "$paramJsonFile"
+
+echo "---> Show IP Addresses"
+az vm list-ip-addresses --resource-group "$paramResourceGroup"
 
 # Cleanup 
 # Remove Resource Group

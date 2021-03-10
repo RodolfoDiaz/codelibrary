@@ -8,6 +8,10 @@ $ErrorActionPreference = "Stop"
 # Example taken from Azure Quickstart Templates
 # https://azure.microsoft.com/en-us/resources/templates/
 
+# Azure Resource Manager - Reference:
+# https://docs.microsoft.com/en-us/cli/azure/deployment/group
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/parameter-files
+
 # The deployment process is:
 # 1- Log in to Azure.
 # 2- Create a resource group.
@@ -47,12 +51,11 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Deploy network resources and Virtual Machine" -ForegroundColor Green
 # See template/parameter details here: https://azure.microsoft.com/en-us/resources/templates/101-vm-simple-windows/
-# Reference:
-# https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroupdeployment
-# https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/parameter-files
+$paramTemplateUri = "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-windows/azuredeploy.json"
+$paramJsonFile = "vm-parameters.json"
 New-AzResourceGroupDeployment -ResourceGroupName "$paramResourceGroup" `
-  -TemplateUri "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-windows/azuredeploy.json" `
-  -TemplateParameterFile "vm-simple-windows-param.json"
+  -TemplateUri "$paramTemplateUri" `
+  -TemplateParameterFile "$paramJsonFile"
 
 # Cleanup 
 # Remove Resource Group - Get-Help Remove-AzResourceGroup -Online
