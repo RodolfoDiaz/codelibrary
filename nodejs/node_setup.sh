@@ -10,10 +10,11 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     
     # Install Node Version Manager - https://github.com/nvm-sh/nvm
     if ! [ -d ~/.nvm/ ]; then
-        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | bash
+        cd ~
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        source ~/.nvm/nvm.sh
     fi
     # Install Node.js and select the latest version as default
-    source ~/.nvm/nvm.sh
     nvm install 14 && nvm alias default 14
     # npm update -g
 fi
