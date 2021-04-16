@@ -1,5 +1,12 @@
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+# If no web browser is available or the web browser fails to open, use device code flow with az login --use-device-code.
 az login
+
+# List Azure Active Directory users.
+az ad user list
+
+# Get a list of subscriptions for the logged in account.
+az account list
 
 # Show the versions of Azure CLI modules and extensions.
 az version

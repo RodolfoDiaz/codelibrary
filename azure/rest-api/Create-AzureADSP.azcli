@@ -12,7 +12,7 @@ az account set --subscription "subscription-id"
 
 # Create a service principal and configure its access to Azure resources. 
 # https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals
-az ad sp create-for-rbac --name "user-for-postman" --role Contributor
+az ad sp create-for-rbac --name "rest-api-postman" --role Contributor
 # In Azure Portal, you can see this record from Azure Active Directory -> App registrations -> All applications
 
 # Enter the appId/clientId
