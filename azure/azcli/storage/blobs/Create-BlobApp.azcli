@@ -23,7 +23,7 @@ set -e
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
-az login
+az login --use-device-code
 # az account list
 
 echo "---> Verify registration of the required Azure resource providers"
@@ -105,7 +105,7 @@ az storage blob list --container-name "$paramContainerName" --prefix "FolderA/Fo
 # --------------- 6 --------------- 
 echo "---> Create the application"
 # https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-nodejs
-appFolderName=blobTestApp
+appFolderName="FileUploadApp"
 if [ -d ./$appFolderName ]; then echo 'Remove old folder...'; rm -rf $appFolderName; fi
 mkdir $appFolderName
 cp index.js $appFolderName

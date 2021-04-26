@@ -4,7 +4,7 @@
 # Postman to generate a Bearer Token and then call the Azure REST APIs.
 
 # Log in to Azure
-az login
+az login --use-device-code
 # The output will return an "id" attribute that you will use in the next command.
 
 # Set a subscription to be the current active subscription.

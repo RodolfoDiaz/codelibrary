@@ -115,16 +115,16 @@ func start --verbose
 # Create supporting Azure resources for your function:
 # https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-csharp?tabs=azure-powershell%2Cbrowser
 # 1- Sign in to Azure. 
-#    Connect-AzAccount
-# 2- Create a resource group named AzureFunctionsQuickstart-rg in the westus region.
-#    New-AzResourceGroup -Name AzureFunctionsQuickstart-rg -Location westus
+#    Connect-AzAccount -UseDeviceAuthentication
+# 2- Create a resource group named "rg-testappname-shared-001" in the westus region.
+#    New-AzResourceGroup -Name "rg-testappname-shared-001" -Location westus
 # 3- Create a general-purpose storage account in your resource group and region.
-#    New-AzStorageAccount -ResourceGroupName AzureFunctionsQuickstart-rg -Name <STORAGE_NAME> -SkuName Standard_LRS -Location westus
+#    New-AzStorageAccount -ResourceGroupName "rg-testappname-shared-001" -Name "stappdata001" -SkuName Standard_LRS -Location westus
 # 4- Create the function app in Azure.
-#    New-AzFunctionApp -Name <APP_NAME> -ResourceGroupName AzureFunctionsQuickstart-rg -StorageAccount <STORAGE_NAME> -Runtime dotnet -FunctionsVersion 3 -Location 'West US'
+#    New-AzFunctionApp -Name <APP_NAME> -ResourceGroupName "rg-testappname-shared-001" -StorageAccount "stappdata001" -Runtime dotnet -FunctionsVersion 3 -Location 'West US'
 # 5- Deploy the function project to Azure.
 #    func azure functionapp publish <APP_NAME>
 # 6- Run the following command to view near real-time streaming logs.
 #    func azure functionapp logstream <APP_NAME>
 # 7- Clean up resources.
-#    Remove-AzResourceGroup -Name AzureFunctionsQuickstart-rg
+#    Remove-AzResourceGroup -Name "rg-testappname-shared-001"

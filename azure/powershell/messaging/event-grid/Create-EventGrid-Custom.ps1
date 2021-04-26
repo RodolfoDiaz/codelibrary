@@ -30,7 +30,7 @@ $ErrorActionPreference = "Stop"
 # --------------- 1 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/azure/authenticate-azureps
-Connect-AzAccount
+Connect-AzAccount -UseDeviceAuthentication
 #$tenantId = (Get-AzContext).Tenant.Id
 
 Write-Host "---> Verify registration of the required Azure resource providers" -ForegroundColor Green

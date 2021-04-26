@@ -18,7 +18,7 @@ set -e
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
-az login
+az login --use-device-code
 # az account list
 
 echo "---> Verify registration of the required Azure resource providers"
