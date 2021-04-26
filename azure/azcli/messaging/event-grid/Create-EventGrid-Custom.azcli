@@ -39,7 +39,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -51,13 +51,13 @@ fi
 
 # --------------- 3 --------------- 
 echo "---> Create a custom topic"
-topicname="test-topic-$RANDOM"
+topicname="evgt-testappname-dev-$RANDOM"
 az eventgrid topic create --name "$topicname" --location "$paramLocation" --resource-group "$paramResourceGroup" --tags $paramTags
 
 
 # --------------- 4 --------------- 
 echo "---> Create a message endpoint"
-sitename="test-website-$RANDOM"
+sitename="app-testappname-dev-$RANDOM"
 az deployment group create \
   --resource-group "$paramResourceGroup" \
   --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/master/azuredeploy.json" \
@@ -70,7 +70,7 @@ python -m webbrowser "https://$sitename.azurewebsites.net"
 # --------------- 5 --------------- 
 echo "---> Subscribe to a custom topic"
 endpoint="https://$sitename.azurewebsites.net/api/updates"
-eventSubscriptionName="gridCustomTest"
+eventSubscriptionName="evgs-testappname-dev"
 sourceResourceId=$(az eventgrid topic show --name "$topicname" --resource-group "$paramResourceGroup" --query "id" --output tsv)
 
 az eventgrid event-subscription create \

@@ -47,7 +47,7 @@ az provider register --namespace "Microsoft.KeyVault"
 
 # --------------- 3 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 

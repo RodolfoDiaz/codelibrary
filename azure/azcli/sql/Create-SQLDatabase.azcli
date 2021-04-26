@@ -44,7 +44,7 @@ az provider register --namespace "Microsoft.Compute"
 
 # --------------- 3 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -60,7 +60,7 @@ echo "---> Create a new Azure SQL Database logical server"
 paramAdminLogin="azureuser"
 paramAdminPassword="ChangeThisPassword@123"
 # Server name naming rule: 1-63 characters, Lowercase letters, numbers, and hyphens.
-paramDatabaseServer="test-server-$RANDOM"
+paramDatabaseServer="sql-testappname-dev-$RANDOM"
 
 az sql server create --name "$paramDatabaseServer" --resource-group "$paramResourceGroup" --location "$paramLocation" \
   --admin-user "$paramAdminLogin" --admin-password "$paramAdminPassword"
@@ -69,7 +69,7 @@ az sql server create --name "$paramDatabaseServer" --resource-group "$paramResou
 # --------------- 5 --------------- 
 echo "---> Create a new sample database for testing"
 # https://docs.microsoft.com/en-us/cli/azure/sql/db?view=azure-cli-latest#az_sql_db_create
-paramDatabase="marketplaceDB"
+paramDatabase="sqldb-marketplace-dev"
 paramEditionSku="Basic" # Allowed values include: Basic, Standard, Premium, GeneralPurpose, BusinessCritical, Hyperscale.
 paramServiceObjective="Basic" # For example: Basic, S0, P1, GP_Gen4_1, GP_Gen5_S_8, BC_Gen5_2, HS_Gen5_32.
 
@@ -93,7 +93,7 @@ echo "---> Creating a development server Linux VM"
 paramVMusername="azureuser"
 paramVMPassword="ChangeThisPassword@123"
 paramAuthenticationType="all" # {all, password, ssh}
-paramVMName="devsql-$RANDOM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
+paramVMName="vmserver$RANDOM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
 paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
 paramOSImage="UbuntuLTS" # For Red Hat Linux use: "RHEL", or check more images with: az vm image list --output table
 VMIpAddress=$(az vm create \

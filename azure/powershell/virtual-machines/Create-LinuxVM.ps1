@@ -48,7 +48,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
+$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -70,14 +70,14 @@ Write-Host "---> Create virtual network resources" -ForegroundColor Green
 
 # Create a subnet configuration
 # Segregate your network: you might assign 10.1.0.0 to VMs, 10.2.0.0 to back-end services, and 10.3.0.0 to SQL Server VMs.
-$paramNetworkSubnetConfig = "frontendSubnet"
+$paramNetworkSubnetConfig = "snet-shared-001"
 $subnetConfig = New-AzVirtualNetworkSubnetConfig `
   -Name "$paramNetworkSubnetConfig" `
   -AddressPrefix 192.168.1.0/24
 
 # Create a virtual network
 $rndVNET = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramVirtualNetwork = "test-VirtualNetwork-$rndVNET"
+$paramVirtualNetwork = "vnet-shared-$rndVNET"
 $paramAddressPrefix = "192.168.0.0/16"
 $vnet = New-AzVirtualNetwork `
   -ResourceGroupName "$paramResourceGroup" `
@@ -89,7 +89,7 @@ $vnet = New-AzVirtualNetwork `
 
 # Create a public IP address and specify a DNS name
 $rndIPAddress = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramPublicIpAddress = "test-PublicIP-$rndIPAddress"
+$paramPublicIpAddress = "pip-vm-shared-$rndIPAddress"
 $pip = New-AzPublicIpAddress `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -99,7 +99,7 @@ $pip = New-AzPublicIpAddress `
   -Tag $paramTags
 
 # Create an inbound network security group rule for port 22 (SSH)
-$paramNSGRule1 = "test-NSGRule-SSH"
+$paramNSGRule1 = "nsg-sshallow-001"
 $nsgRuleSSH = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule1"  `
   -Description "Allow SSH" `
@@ -113,7 +113,7 @@ $nsgRuleSSH = New-AzNetworkSecurityRuleConfig `
   -Access "Allow"
 
 # Create an inbound network security group rule for port 80 (Web)
-$paramNSGRule2 = "test-NSGRule-WWW"
+$paramNSGRule2 = "nsg-weballow-001"
 $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Name "$paramNSGRule2"  `
   -Description "Allow Web server port 80" `
@@ -128,7 +128,7 @@ $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
 
 # Create a network security group
 $rndNSG = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramNetworkSecurityGroup = "test-NSG-$rndNSG"
+$paramNetworkSecurityGroup = "nsg-testappname-$rndNSG"
 $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -138,7 +138,7 @@ $nsg = New-AzNetworkSecurityGroup `
 
 # Create a virtual network card and associate with public IP address and NSG
 $rndNIC = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramNetworkInterface = "test-NetworkInterface-$rndNIC"
+$paramNetworkInterface = "nic-01-vm-shared-$rndNIC"
 $nic = New-AzNetworkInterface `
   -Name "$paramNetworkInterface" `
   -ResourceGroupName "$paramResourceGroup" `
@@ -161,7 +161,7 @@ $rndVM = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
 # A good convention is to include the following information in the name: Environment (dev, prod, QA), 
 # Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
-$paramVMName = "devweb-$rndVM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
+$paramVMName = "vmserver$rndVM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
 $paramVMSize = "Standard_D2S_V3" # Check available sizes: Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
 
@@ -244,7 +244,7 @@ Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-linux
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-powershell-quickstart
 $rndKV = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramKeyVault = "test-KeyVault-$rndKV" # unique keyvault name
+$paramKeyVault = "kv-testappname-shared-$rndKV" # unique keyvault name
 # Create a Key Vault configured for encryption keys
 New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption -Tag $paramTags
 # Encrypt the virtual machine

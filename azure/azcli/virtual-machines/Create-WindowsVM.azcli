@@ -32,7 +32,7 @@ az provider register --namespace "Microsoft.KeyVault"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -51,8 +51,8 @@ echo "---> Create virtual network resources"
 
 # Create a virtual network and subnet
 # Segregate your network: you might assign 10.1.0.0 to VMs, 10.2.0.0 to back-end services, and 10.3.0.0 to SQL Server VMs.
-paramNetworkSubnetConfig="frontendSubnet"
-paramVirtualNetwork="test-VirtualNetwork-$RANDOM"
+paramNetworkSubnetConfig="snet-shared-001"
+paramVirtualNetwork="vnet-shared-$RANDOM"
 paramSubnetPrefix="192.168.1.0/24"
 paramAddressPrefix="192.168.0.0/16"
 az network vnet create --resource-group "$paramResourceGroup" --name "$paramVirtualNetwork" \
@@ -60,34 +60,34 @@ az network vnet create --resource-group "$paramResourceGroup" --name "$paramVirt
   --subnet-prefix "$paramSubnetPrefix" --location "$paramLocation" --tags $paramTags
 
 # Create a public IP address and specify a DNS name
-paramPublicIpAddress="test-PublicIP-$RANDOM"
+paramPublicIpAddress="pip-vm-shared-$RANDOM"
 az network public-ip create \
   --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" \
   --allocation-method "Static" --idle-timeout 4 \
   --location "$paramLocation" --tags $paramTags
 
 # Create a network security group.
-paramNetworkSecurityGroup="test-NSG-$RANDOM"
+paramNetworkSecurityGroup="nsg-testappname-$RANDOM"
 az network nsg create \
   --resource-group "$paramResourceGroup" \
   --name "$paramNetworkSecurityGroup" \
   --location "$paramLocation" --tags $paramTags
 
 # Create network security group rules
-paramNSGRule1="test-NSGRule-RDP"
+paramNSGRule1="nsg-rdpallow-001"
 az network nsg rule create --resource-group "$paramResourceGroup" --nsg-name "$paramNetworkSecurityGroup" \
   --name "$paramNSGRule1" --priority 1000 --source-address-prefixes "*" --source-port-ranges "*" \
   --destination-address-prefix "*" --destination-port-ranges "3389" \
   --access "Allow" --protocol "Tcp" --direction "Inbound" --description "Allow RDP"
 
-paramNSGRule2="test-NSGRule-WWW"
+paramNSGRule2="nsg-weballow-001"
 az network nsg rule create --resource-group "$paramResourceGroup" --nsg-name "$paramNetworkSecurityGroup" \
   --name "$paramNSGRule2" --priority 1001 --source-address-prefixes "*" --source-port-ranges "*" \
   --destination-address-prefix "*" --destination-port-ranges "80" \
   --access "Allow" --protocol "Tcp" --direction "Inbound" --description "Allow Web server port 80"
 
 # Create a virtual network card with the public IP address and network security group.
-paramNetworkInterface="test-NetworkInterface-$RANDOM"
+paramNetworkInterface="nic-01-vm-shared-$RANDOM"
 az network nic create \
   --resource-group "$paramResourceGroup" \
   --name "$paramNetworkInterface" \
@@ -105,7 +105,7 @@ paramVMPassword="ChangeThisPassword@123"
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
 # A good convention is to include the following information in the name: Environment (dev, prod, QA), 
 # Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
-paramVMName="devweb-$RANDOM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
+paramVMName="vmserver$RANDOM" # Windows VM names may only contain 1-15 letters, numbers, '.', and '-'.
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
 paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
 # Get Source image information: 
@@ -159,7 +159,7 @@ echo "---> Enable Azure Disk Encryption"
 # for the OS and data disks of Azure virtual machines (VMs).
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-windows
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-cli-quickstart
-paramKeyVault="test-KeyVault-$RANDOM" # unique keyvault name
+paramKeyVault="kv-testappname-shared-$RANDOM" # unique keyvault name
 # Create a Key Vault configured for encryption keys
 az keyvault create --name "$paramKeyVault" --resource-group "$paramResourceGroup" \
   --location "$paramLocation" --enabled-for-disk-encryption --tags $paramTags

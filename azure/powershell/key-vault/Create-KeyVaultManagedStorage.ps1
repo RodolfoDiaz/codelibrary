@@ -42,7 +42,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
+$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -59,7 +59,7 @@ $resourceGroup
 Write-Host "---> Create a Key Vault" -ForegroundColor Green
 # Key Vault naming rule: length	3-24, Alphanumerics and hyphens.
 $rndKV = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$keyVaultName = "test-keyvault-$rndKV"
+$keyVaultName = "kv-testappname-shared-$rndKV"
 $paramSku = "standard" # Allowed values for Vault: premium, standard.
 $ketVault = New-AzKeyVault -Name "$keyVaultName" -EnablePurgeProtection -Sku "$paramSku" `
   -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Tag $paramTags
@@ -74,7 +74,7 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # to the storage account name. That should be suitable to make it globally unique.
 $rndAcct = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$storageAccountName = "teststorage$rndAcct"
+$storageAccountName = "stappdata$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $paramStorageKind = "StorageV2"     # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 $newStorageParams = @{
@@ -137,7 +137,7 @@ $sasToken = New-AzStorageAccountSasToken -Service blob, file, Table, Queue -Reso
 
 # Sets an account SAS definition '$paramSASDefinition' on a KeyVault-managed storage account '$storageAccountName' in vault '$keyVaultName'. 
 # https://docs.microsoft.com/en-us/powershell/module/az.keyvault/set-azkeyvaultmanagedstoragesasdefinition
-$paramSASDefinition = "testStoragePermission1"
+$paramSASDefinition = "stappdataPermission1"
 Set-AzKeyVaultManagedStorageSasDefinition -AccountName "$storageAccountName" -VaultName "$keyVaultName" -Name "$paramSASDefinition" -TemplateUri $sasToken -SasType 'account' -ValidityPeriod ([System.Timespan]::FromDays(30))
 
 

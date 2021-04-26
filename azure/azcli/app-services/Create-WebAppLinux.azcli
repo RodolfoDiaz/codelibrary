@@ -26,7 +26,7 @@ az provider register --namespace "Microsoft.DomainRegistration"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -44,7 +44,7 @@ echo "---> Create an App Service plan"
 # P3V3(Premium V3 Large), PC2 (Premium Container Small),PC3 (Premium Container Medium), PC4 (Premium Container Large), 
 # I1 (Isolated Small), I2 (Isolated Medium), I3 (Isolated Large), I1v2 (Isolated V2 Small), I2v2 (Isolated V2 Medium), I3v2 (Isolated V2 Large).
 
-paramAppServicePlan="app_service_plan_$RANDOM"
+paramAppServicePlan="plan-testappname-dev-$RANDOM"
 paramSku="FREE" # Accepted values: B1, B2, B3, D1, F1, FREE, I1, I1v2, I2, I2v2, I3, I3v2, P1V2, P1V3, P2V2, P2V3, P3V2, P3V3, PC2, PC3, PC4, S1, S2, S3, SHARED
 paramNumberofWorkers=1
 
@@ -58,7 +58,7 @@ az appservice plan create --name "$paramAppServicePlan" \
 
 # --------------- 4 --------------- 
 # echo "---> Create the Web App"
-paramWebApp="test-web-$RANDOM"
+paramWebApp="app-testappname-dev-$RANDOM"
 paramAppRuntime="python|3.6" # Use az webapp list-runtimes for available list.
 
 # You can create an empty Web App with this:

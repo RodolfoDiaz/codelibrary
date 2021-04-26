@@ -1028,7 +1028,7 @@
 	"variable": [
 		{
 			"key": "resourceGroupName",
-			"value": "test_resourcegroup_1"
+			"value": "rg-testappname-shared-001"
 		},
 		{
 			"key": "resourceLocation",
@@ -1036,11 +1036,11 @@
 		},
 		{
 			"key": "vmName",
-			"value": ""
+			"value": "vmserver001"
 		},
 		{
 			"key": "accountName",
-			"value": "teststorage"
+			"value": "stappdata001"
 		},
 		{
 			"key": "sourceResourceGroup",
@@ -1052,7 +1052,7 @@
 		},
 		{
 			"key": "resourceToMove",
-			"value": "storageaccount022021"
+			"value": "stappdata001"
 		}
 	]
 }

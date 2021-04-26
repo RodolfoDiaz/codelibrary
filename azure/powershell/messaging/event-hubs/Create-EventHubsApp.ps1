@@ -47,7 +47,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
+$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -64,7 +64,7 @@ $resourceGroup
 Write-Host "---> Creating an Event Hubs namespace" -ForegroundColor Green
 $rndehns = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Namespace naming rules: length 6-50, Alphanumerics and hyphens.
-$paramEventHubNamespace = "test-eventhubsnamespace-$rndehns"
+$paramEventHubNamespace = "evhns-testappname-dev-$rndehns"
 $paramNamespaceSku = "Basic"  # Event Hubs comes in Basic, Standard, and Dedicated tiers. https://azure.microsoft.com/en-us/pricing/details/event-hubs/
 $eventHubNamespace = New-AzEventHubNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramEventHubNamespace" -Location "$paramLocation" -SkuName $paramNamespaceSku -Tag $paramTags
 Write-Host "---> Event Hub Namespace details:" -ForegroundColor Green
@@ -75,7 +75,7 @@ $eventHubNamespace
 Write-Host "---> Creating an event hub in the namespace you created" -ForegroundColor Green
 $rndeventhub = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $env:varEventHubName = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
-$env:varEventHubName = "test_eventhub_$rndeventhub"
+$env:varEventHubName = "evh-testappname-dev-$rndeventhub"
 $paramRetentionInDays = 1  # Message Retention customization is not available in a Basic Tier Namespace. Change variable $paramNamespaceSku to "Standard" to increase message retention to a maximum of 7 days.
 $paramPartitionCount = 4  # Maximum is 32 partitions. You should create as many partitions as you are expecting concurrent subscribing reading applications.
 $eventhub = New-AzEventHub -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramEventHubNamespace" -Name "$env:varEventHubName" -PartitionCount $paramPartitionCount -MessageRetentionInDays $paramRetentionInDays
@@ -133,7 +133,7 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # to the storage account name. That should be suitable to make it globally unique.
 $rndAcct = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-$paramStorageAccount = "teststorage$rndAcct"
+$paramStorageAccount = "stappdata$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 $paramStorageKind = "StorageV2"     # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 $newStorageParams = @{

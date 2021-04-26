@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "vmName": {
-      "value": "dev-wus-01-web"
+      "value": "vmserver001"
     },
     "adminUsername": {
       "value": "azureuser"

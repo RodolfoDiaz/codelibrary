@@ -40,7 +40,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -58,7 +58,7 @@ echo "---> Creating a storage account"
 # to the storage account name. That should be suitable to make it globally unique.
 
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-paramStorageAccount="teststorage$RANDOM"
+paramStorageAccount="stappdata$RANDOM"
 paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 paramStorageKind="StorageV2"    # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 az storage account create --name "$paramStorageAccount" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags
@@ -74,7 +74,7 @@ echo $storageConnectionString
 
 # --------------- 5 --------------- 
 echo "---> Create a message endpoint"
-sitename="test-website-$RANDOM"
+sitename="app-testappname-dev-$RANDOM"
 az deployment group create \
   --resource-group "$paramResourceGroup" \
   --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/master/azuredeploy.json" \

@@ -41,7 +41,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -53,7 +53,7 @@ fi
 
 # --------------- 3 --------------- 
 echo "---> Creating a Service Bus messaging namespace"
-paramServiceBusNamespace="test-servicebusnamespace-$RANDOM"
+paramServiceBusNamespace="sb-testappname-dev-$RANDOM"
 paramNamespaceSku="Basic"  # Service Bus comes in Basic, standard, and premium tiers. For Queues you need "Basic".
 az servicebus namespace create --resource-group "$paramResourceGroup" --name "$paramServiceBusNamespace" --sku "$paramNamespaceSku" --location "$paramLocation" --tags $paramTags
 
@@ -61,7 +61,7 @@ az servicebus namespace create --resource-group "$paramResourceGroup" --name "$p
 # --------------- 4 --------------- 
 echo "---> Creating a queue in the namespace you created"
 # Namespace naming rules: length 6-50, Alphanumerics and hyphens.
-export queueName="test_servicebusqueue_$RANDOM"
+export queueName="sbq-testappname-dev-$RANDOM"
 az servicebus queue create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --name "$queueName"
 
 # --------------- 5 --------------- 

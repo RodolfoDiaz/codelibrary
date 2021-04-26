@@ -34,7 +34,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="test_resourcegroup_$RANDOM"
+paramResourceGroup="rg-testappname-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -52,7 +52,7 @@ echo "---> Creating a storage account"
 # to the storage account name. That should be suitable to make it globally unique.
 
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-AZURE_STORAGE_ACCOUNT="teststorage$RANDOM"
+AZURE_STORAGE_ACCOUNT="stappdata$RANDOM"
 paramStorageSku="Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
 paramStorageKind="StorageV2"    # https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 az storage account create --name "$AZURE_STORAGE_ACCOUNT" --resource-group "$paramResourceGroup" --location "$paramLocation" --sku "$paramStorageSku" --kind "$paramStorageKind" --tags $paramTags

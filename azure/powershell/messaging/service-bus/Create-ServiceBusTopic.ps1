@@ -47,7 +47,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
+$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -64,7 +64,7 @@ $resourceGroup
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
 $rndsbns = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Namespace naming rules: length 6-50, Alphanumerics and hyphens.
-$paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
+$paramServiceBusNamespace = "sb-testappname-dev-$rndsbns"
 $paramNamespaceSku = "Standard"  # Service Bus comes in Basic, standard, and premium tiers. For Topics you need "Standard" - https://azure.microsoft.com/en-us/pricing/details/service-bus/
 $serviceBusNamespace = New-AzServiceBusNamespace -ResourceGroupName "$paramResourceGroup" -Name "$paramServiceBusNamespace" -SkuName "$paramNamespaceSku" -Location "$paramLocation"  -Tag $paramTags
 Write-Host "---> Service Bus Namespace details:" -ForegroundColor Green
@@ -75,7 +75,7 @@ $serviceBusNamespace
 Write-Host "---> Creating a topic in the namespace" -ForegroundColor Green
 $rndtopic = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $env:paramServiceBusTopic = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
-$env:paramServiceBusTopic = "test_servicebustopic_$rndtopic"
+$env:paramServiceBusTopic = "sbt-testappname-dev-$rndtopic"
 $serviceBusTopic = New-AzServiceBusTopic -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$env:paramServiceBusTopic" -EnablePartitioning $True
 Write-Host "---> Service Bus Topic details:" -ForegroundColor Green
 $serviceBusTopic
