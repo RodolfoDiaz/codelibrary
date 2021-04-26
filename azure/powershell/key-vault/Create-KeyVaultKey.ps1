@@ -37,7 +37,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
@@ -54,7 +54,7 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Create a Key Vault" -ForegroundColor Green
 # Key Vault naming rule: length	3-24, Alphanumerics and hyphens.
-$rndKV = (New-Guid).ToString().Split("-")[0]
+$rndKV = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramKeyVault = "test-keyvault-$rndKV"
 $paramSku = "standard" # Allowed values for Vault: premium, standard.
 $ketVault = New-AzKeyVault -Name "$paramKeyVault" -EnablePurgeProtection -Sku "$paramSku" `

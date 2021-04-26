@@ -33,7 +33,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
@@ -62,7 +62,7 @@ $subnetConfig = New-AzVirtualNetworkSubnetConfig `
   -AddressPrefix 192.168.1.0/24
 
 # Create a virtual network
-$rndVNET = (New-Guid).ToString().Split("-")[0]
+$rndVNET = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramVirtualNetwork = "test-VirtualNetwork-$rndVNET"
 $paramAddressPrefix = "192.168.0.0/16"
 $vnet = New-AzVirtualNetwork `
@@ -74,7 +74,7 @@ $vnet = New-AzVirtualNetwork `
   -Tag $paramTags
 
 # Create a public IP address and specify a DNS name
-$rndIPAddress = (New-Guid).ToString().Split("-")[0]
+$rndIPAddress = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramPublicIpAddress = "test-PublicIP-$rndIPAddress"
 $pip = New-AzPublicIpAddress `
   -ResourceGroupName "$paramResourceGroup" `
@@ -113,7 +113,7 @@ $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
   -Access "Allow"
 
 # Create a network security group
-$rndNSG = (New-Guid).ToString().Split("-")[0]
+$rndNSG = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramNetworkSecurityGroup = "test-NSG-$rndNSG"
 $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
@@ -123,7 +123,7 @@ $nsg = New-AzNetworkSecurityGroup `
   -Tag $paramTags
 
 # Create a virtual network card and associate with public IP address and NSG
-$rndNIC = (New-Guid).ToString().Split("-")[0]
+$rndNIC = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramNetworkInterface = "test-NetworkInterface-$rndNIC"
 $nic = New-AzNetworkInterface `
   -Name "$paramNetworkInterface" `
@@ -143,7 +143,7 @@ Write-Host "---> Create virtual machine configuration" -ForegroundColor Green
 
 $paramVMusername = "azureuser"
 $paramVMPassword = "ChangeThisPassword@123"
-$rndVM = (New-Guid).ToString().Split("-")[0]
+$rndVM = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
 # A good convention is to include the following information in the name: Environment (dev, prod, QA), 
 # Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
@@ -213,7 +213,7 @@ Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # for the OS and data disks of Azure virtual machines (VMs).
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-windows
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-powershell-quickstart
-$rndKV = (New-Guid).ToString().Split("-")[0]
+$rndKV = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramKeyVault = "test-KeyVault-$rndKV" # unique keyvault name
 # Create a Key Vault configured for encryption keys
 New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption -Tag $paramTags

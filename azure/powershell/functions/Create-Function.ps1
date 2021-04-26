@@ -33,7 +33,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
@@ -52,7 +52,7 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # We need a storage account for the deployed code to live in. Storage accounts also
 # need a globally unique name, so we"ll take the first section of a GUID and append it 
 # to the storage account name. That should be suitable to make it globally unique.
-$rndAcct = (New-Guid).ToString().Split("-")[0]
+$rndAcct = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
 $paramStorageAccount = "teststorage$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types
@@ -98,7 +98,7 @@ $appToDeploy = @{
 # }
 
 # Create the Function App
-$rndFunc = (New-Guid).ToString().Split("-")[0]
+$rndFunc = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Function App naming rules: length 2-59,	Alphanumerics and hyphens.
 $paramFunctionApp = "test-functionapp-$rndFunc"
 $paramFunctionAppVersion = "3"

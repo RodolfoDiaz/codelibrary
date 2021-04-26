@@ -46,7 +46,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
@@ -62,7 +62,7 @@ $resourceGroup
 
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
-$rndsbns = (New-Guid).ToString().Split("-")[0]
+$rndsbns = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Namespace naming rules: length 6-50, Alphanumerics and hyphens.
 $paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
 $paramNamespaceSku = "Standard"  # Service Bus comes in Basic, standard, and premium tiers. For Topics you need "Standard" - https://azure.microsoft.com/en-us/pricing/details/service-bus/
@@ -73,7 +73,7 @@ $serviceBusNamespace
 
 # --------------- 4 --------------- 
 Write-Host "---> Creating a topic in the namespace" -ForegroundColor Green
-$rndtopic = (New-Guid).ToString().Split("-")[0]
+$rndtopic = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $env:paramServiceBusTopic = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
 $env:paramServiceBusTopic = "test_servicebustopic_$rndtopic"
 $serviceBusTopic = New-AzServiceBusTopic -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$env:paramServiceBusTopic" -EnablePartitioning $True

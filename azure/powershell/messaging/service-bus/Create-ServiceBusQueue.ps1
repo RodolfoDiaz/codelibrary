@@ -44,7 +44,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
@@ -60,7 +60,7 @@ $resourceGroup
 
 # --------------- 3 --------------- 
 Write-Host "---> Creating a Service Bus messaging namespace" -ForegroundColor Green
-$rndsbns = (New-Guid).ToString().Split("-")[0]
+$rndsbns = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Namespace naming rules: length 6-50, Alphanumerics and hyphens.
 $paramServiceBusNamespace = "test-servicebusnamespace-$rndsbns"
 $paramNamespaceSku = "Basic"  # Service Bus comes in Basic, Standard, and Premium tiers. For Queues you need "Basic" - https://azure.microsoft.com/en-us/pricing/details/service-bus/
@@ -71,7 +71,7 @@ $serviceBusNamespace
 
 # --------------- 4 --------------- 
 Write-Host "---> Creating a queue in the namespace you created" -ForegroundColor Green
-$rndqueue = (New-Guid).ToString().Split("-")[0]
+$rndqueue = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $env:queueName = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
 $env:queueName = "test_servicebusqueue_$rndqueue"
 $serviceBusQueue = New-AzServiceBusQueue -ResourceGroupName "$paramResourceGroup" -NamespaceName "$paramServiceBusNamespace" -Name "$env:queueName"

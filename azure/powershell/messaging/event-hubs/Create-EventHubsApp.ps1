@@ -46,7 +46,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
@@ -62,7 +62,7 @@ $resourceGroup
 
 # --------------- 3 --------------- 
 Write-Host "---> Creating an Event Hubs namespace" -ForegroundColor Green
-$rndehns = (New-Guid).ToString().Split("-")[0]
+$rndehns = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Namespace naming rules: length 6-50, Alphanumerics and hyphens.
 $paramEventHubNamespace = "test-eventhubsnamespace-$rndehns"
 $paramNamespaceSku = "Basic"  # Event Hubs comes in Basic, Standard, and Dedicated tiers. https://azure.microsoft.com/en-us/pricing/details/event-hubs/
@@ -73,7 +73,7 @@ $eventHubNamespace
 
 # --------------- 4 --------------- 
 Write-Host "---> Creating an event hub in the namespace you created" -ForegroundColor Green
-$rndeventhub = (New-Guid).ToString().Split("-")[0]
+$rndeventhub = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $env:varEventHubName = "" # Initialization - With PowerShell's StrictMode set to ON uninitialized variables are flagged as an error.
 $env:varEventHubName = "test_eventhub_$rndeventhub"
 $paramRetentionInDays = 1  # Message Retention customization is not available in a Basic Tier Namespace. Change variable $paramNamespaceSku to "Standard" to increase message retention to a maximum of 7 days.
@@ -131,7 +131,7 @@ Write-Host "---> Creating a storage account" -ForegroundColor Green
 # We need a storage account for the deployed code to live in. Storage accounts also
 # need a globally unique name, so we"ll take the first section of a GUID and append it 
 # to the storage account name. That should be suitable to make it globally unique.
-$rndAcct = (New-Guid).ToString().Split("-")[0]
+$rndAcct = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only.
 $paramStorageAccount = "teststorage$rndAcct"
 $paramStorageSku = "Standard_LRS"  # https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types

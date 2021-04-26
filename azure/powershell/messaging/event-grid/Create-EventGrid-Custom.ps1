@@ -43,7 +43,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 # --------------- 2 --------------- 
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
-$rndResourceGroup = (New-Guid).ToString().Split("-")[0]
+$rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $paramResourceGroup = "test_resourcegroup_$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
@@ -59,7 +59,7 @@ $resourceGroup
 
 # --------------- 3 --------------- 
 Write-Host "---> Create a custom topic" -ForegroundColor Green
-$rndTopic = (New-Guid).ToString().Split("-")[0]
+$rndTopic = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $topicname = "test-topic-$rndTopic"
 $eventGridTopic = New-AzEventGridTopic -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Name "$topicname" -Tag $paramTags
 Write-Host "---> Event Grid Topic details:" -ForegroundColor Green
@@ -68,7 +68,7 @@ $eventGridTopic
 
 # --------------- 4 --------------- 
 Write-Host "---> Create a message endpoint" -ForegroundColor Green
-$rndSite = (New-Guid).ToString().Split("-")[0]
+$rndSite = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 $sitename = "test-website-$rndSite"
 
 $resourceGroupDeployment = New-AzResourceGroupDeployment `
