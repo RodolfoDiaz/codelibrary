@@ -59,7 +59,7 @@ $resourceGroup
 Write-Host "---> Create a Key Vault" -ForegroundColor Green
 # Key Vault naming rule: length	3-24, Alphanumerics and hyphens.
 $rndKV = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$keyVaultName = "kv-testappname-shared-$rndKV"
+$keyVaultName = "kv-shared-$rndKV"
 $paramSku = "standard" # Allowed values for Vault: premium, standard.
 $ketVault = New-AzKeyVault -Name "$keyVaultName" -EnablePurgeProtection -Sku "$paramSku" `
   -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Tag $paramTags

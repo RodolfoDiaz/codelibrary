@@ -56,14 +56,14 @@ Write-Host "---> Create virtual network resources" -ForegroundColor Green
 
 # Create a subnet configuration
 # Segregate your network: you might assign 10.1.0.0 to VMs, 10.2.0.0 to back-end services, and 10.3.0.0 to SQL Server VMs.
-$paramNetworkSubnetConfig = "snet-shared-001"
+$paramNetworkSubnetConfig = "snet-shared-$paramLocation-001"
 $subnetConfig = New-AzVirtualNetworkSubnetConfig `
   -Name "$paramNetworkSubnetConfig" `
   -AddressPrefix 192.168.1.0/24
 
 # Create a virtual network
 $rndVNET = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramVirtualNetwork = "vnet-shared-$rndVNET"
+$paramVirtualNetwork = "vnet-shared-$paramLocation-$rndVNET"
 $paramAddressPrefix = "192.168.0.0/16"
 $vnet = New-AzVirtualNetwork `
   -ResourceGroupName "$paramResourceGroup" `
@@ -75,7 +75,7 @@ $vnet = New-AzVirtualNetwork `
 
 # Create a public IP address and specify a DNS name
 $rndIPAddress = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramPublicIpAddress = "pip-vm-shared-$rndIPAddress"
+$paramPublicIpAddress = "pip-testappname-dev-$paramLocation-$rndIPAddress"
 $pip = New-AzPublicIpAddress `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -172,6 +172,7 @@ $TimeZone = "Pacific Standard Time"
 Set-AzVMOperatingSystem -VM $vmConfig -Windows -ComputerName $ComputerName -Credential $cred -EnableAutoUpdate -TimeZone $TimeZone
 Set-AzVMSourceImage -VM $vmConfig -PublisherName "$paramPublisher" -Offer "$paramOffer" -Skus "$paramSkus" -Version "$paramVersion"
 Add-AzVMNetworkInterface -VM $vmConfig -Id $nic.Id
+Set-AzVMOSDisk -VM $vmConfig -Name "osdisk-$paramVMName" -CreateOption "FromImage"
 
 Write-Host "---> Creating virtual machine '$paramVMName'..." -ForegroundColor Green
 # Combine the previous configuration definitions to create the virtual machine
@@ -191,14 +192,14 @@ Write-Host "---> Attach a data disk to the VM" -ForegroundColor Green
 # Available values are Standard_LRS, Premium_LRS, StandardSSD_LRS, and UltraSSD_LRS.
 $storageType = "Standard_LRS"
 $diskSizeGB = 64
-$dataDiskName = $paramVMName + "_testDataDisk"
+$dataDiskName = "disk-$paramVMName"
 # Each storage device is assigned a unique numeric identifier, starting at zero. 
 # The full path to a device is represented by the bus number, target ID number, and Logical Unit Number (LUN)
-$paramLun = 1 # Lun: Specifies the logical unit number (LUN) for a data disk.
+$paramLun = 0 # Lun: Specifies the logical unit number (LUN) for a data disk.
 $diskConfig = New-AzDiskConfig -SkuName "$storageType" -Location "$paramLocation" -CreateOption "Empty" -DiskSizeGB "$diskSizeGB" -Tag $paramTags
 $dataDisk1 = New-AzDisk -DiskName "$dataDiskName" -Disk $diskConfig -ResourceGroupName "$paramResourceGroup"
 $vm = Get-AzVM -Name "$paramVMName" -ResourceGroupName "$paramResourceGroup"
-$vm = Add-AzVMDataDisk -VM $vm -Name "$dataDiskName" -CreateOption "Attach" -ManagedDiskId $dataDisk1.Id -Lun $paramLun
+$vm = Add-AzVMDataDisk -VM $vm -Name "$dataDiskName" -Caching "ReadWrite" -CreateOption "Attach" -ManagedDiskId $dataDisk1.Id -Lun $paramLun
 Update-AzVM -VM $vm -ResourceGroupName "$paramResourceGroup"
 Write-Host "---> You have to connect to the VM to initialize the disk and format it."
 
@@ -214,7 +215,7 @@ Write-Host "---> Enable Azure Disk Encryption" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-windows
 # https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-powershell-quickstart
 $rndKV = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramKeyVault = "kv-testappname-shared-$rndKV" # unique keyvault name
+$paramKeyVault = "kv-shared-$rndKV" # unique keyvault name
 # Create a Key Vault configured for encryption keys
 New-AzKeyvault -name "$paramKeyVault" -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -EnabledForDiskEncryption -Tag $paramTags
 # Encrypt the virtual machine

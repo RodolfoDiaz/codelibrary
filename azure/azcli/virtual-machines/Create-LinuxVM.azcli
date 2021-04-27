@@ -65,8 +65,8 @@ echo "---> Create virtual network resources"
 
 # Create a virtual network and subnet
 # Segregate your network: you might assign 10.1.0.0 to VMs, 10.2.0.0 to back-end services, and 10.3.0.0 to SQL Server VMs.
-paramNetworkSubnetConfig="snet-shared-001"
-paramVirtualNetwork="vnet-shared-$RANDOM"
+paramNetworkSubnetConfig="snet-shared-$paramLocation-001"
+paramVirtualNetwork="vnet-shared-$paramLocation-$RANDOM"
 paramSubnetPrefix="192.168.1.0/24"
 paramAddressPrefix="192.168.0.0/16"
 az network vnet create --resource-group "$paramResourceGroup" --name "$paramVirtualNetwork" \
@@ -74,7 +74,7 @@ az network vnet create --resource-group "$paramResourceGroup" --name "$paramVirt
   --subnet-prefix "$paramSubnetPrefix" --location "$paramLocation" --tags $paramTags
 
 # Create a public IP address and specify a DNS name
-paramPublicIpAddress="pip-vm-shared-$RANDOM"
+paramPublicIpAddress="pip-testappname-dev-$paramLocation-$RANDOM"
 az network public-ip create \
   --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" \
   --allocation-method "Static" --idle-timeout 4 \
@@ -142,6 +142,7 @@ az vm create \
   --ssh-key-values "~/.ssh/id_rsa.pub" \
   --ssh-dest-key-path "/home/$paramVMusername/.ssh/authorized_keys" \
   --image "$paramPublisher:$paramOffer:$paramSkus:$paramVersion" \
+  --os-disk-name "osdisk-$paramVMName" \
   --size "$paramVMSize" \
   --location "$paramLocation" \
   --tags $paramTags
@@ -154,15 +155,15 @@ echo "---> Attach a data disk to the VM"
 # Available values are Standard_LRS, Premium_LRS, StandardSSD_LRS, and UltraSSD_LRS.
 storageType="Standard_LRS"
 diskSizeGB=64
-dataDiskName=$paramVMName
-dataDiskName+="_testDataDisk"
+dataDiskName="disk-$paramVMName"
 # Each storage device is assigned a unique numeric identifier, starting at zero. 
 # The full path to a device is represented by the bus number, target ID number, and Logical Unit Number (LUN)
-paramLun=1 # Lun: Specifies the logical unit number (LUN) for a data disk.
+paramLun=0 # Lun: Specifies the logical unit number (LUN) for a data disk.
 
 az vm disk attach --resource-group "$paramResourceGroup" \
   --vm-name "$paramVMName" --name "$dataDiskName" --new \
-  --sku "$storageType" --lun "$paramLun" --size-gb "$diskSizeGB"
+  --sku "$storageType" --lun "$paramLun" --size-gb "$diskSizeGB" \
+  --caching "ReadWrite"
 
 
 # --------------- 7 --------------- 
@@ -175,7 +176,7 @@ echo "---> Enable Azure Disk Encryption"
 # for the OS and data disks of Azure virtual machines (VMs).
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-linux
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption-cli-quickstart
-paramKeyVault="kv-testappname-shared-$RANDOM" # unique keyvault name
+paramKeyVault="kv-shared-$RANDOM" # unique keyvault name
 # Create a Key Vault configured for encryption keys
 az keyvault create --name "$paramKeyVault" --resource-group "$paramResourceGroup" \
   --location "$paramLocation" --enabled-for-disk-encryption --tags $paramTags
