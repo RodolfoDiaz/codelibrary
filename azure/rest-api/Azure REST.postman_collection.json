@@ -812,19 +812,19 @@
 	"variable": [
 		{
 			"key": "resourceGroupName",
-			"value": ""
+			"value": "rg-testappname-shared-001"
 		},
 		{
 			"key": "resourceLocation",
-			"value": ""
+			"value": "westus"
 		},
 		{
 			"key": "vmName",
-			"value": ""
+			"value": "vmserver001"
 		},
 		{
 			"key": "accountName",
-			"value": ""
+			"value": "stappdata"
 		},
 		{
 			"key": "sourceResourceGroup",
@@ -864,7 +864,7 @@
 		},
 		{
 			"key": "resource",
-			"value": ""
+			"value": "https://management.azure.com/"
 		}
 	]
 }

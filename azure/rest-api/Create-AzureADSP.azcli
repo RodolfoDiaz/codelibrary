@@ -30,7 +30,7 @@ echo "-*- Copy the 'Pre-request Script' from the blog and configure it in a new 
 # If you need to reset a service principal credential, either upon expiration, or in the event that login credentials are lost.
 # az ad sp credential reset --name "$SERVICE_PRINCIPAL_NAME"
 
-echo "--> In Postman, enter the following variables in the 'Azure REST' collection:"
+echo "--> In Postman, enter the following variables in the 'Azure REST' collection as 'CURRENT VALUE':"
 echo " 1- Create a variable 'tenantId' with value: $TENANT_ID"
 echo " 2- Create a variable 'clientId' with value: $APP_ID"
 echo " 3- Create a variable 'clientSecret' with value: $SP_PASSWORD"
@@ -38,5 +38,5 @@ echo " 4- Create a variable 'subscriptionId' with value: $SUBSCRIPTION_ID"
 echo " 5- Create a variable 'resource' with value: https://management.azure.com/"
 
 # CLEANUP
-# If no longer needed, delete a service principal and its role assignments.
+# If it is no longer needed, delete the service principal created and its role assignments.
 # az ad sp delete --id "$APP_ID"
