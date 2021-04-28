@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "633be493-218b-4ef9-9c16-b4d7281b235d",
+		"_postman_id": "cff31983-2882-4131-8562-8e289d619534",
 		"name": "Azure REST",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -11,16 +11,6 @@
 				{
 					"name": "Resource Groups - List",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -50,16 +40,6 @@
 				{
 					"name": "Resource Groups - Get",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -96,16 +76,6 @@
 				{
 					"name": "Resource Groups - Create Or Update",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -151,16 +121,6 @@
 				{
 					"name": "Resource Groups - Delete",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -202,16 +162,6 @@
 				{
 					"name": "Resources - List",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -256,16 +206,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -312,16 +252,6 @@
 				{
 					"name": "Resources - Get Result of Validate Move (wait for Retry-After period, 204 response means Success)",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -337,16 +267,6 @@
 				{
 					"name": "Resources - Delete By Id",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -391,16 +311,6 @@
 				{
 					"name": "Storage Accounts - List",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -432,16 +342,6 @@
 				{
 					"name": "Storage Accounts - Create",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -495,16 +395,6 @@
 				{
 					"name": "Storage Accounts - Delete",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -554,16 +444,6 @@
 				{
 					"name": "Virtual Machines - Get",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -608,16 +488,6 @@
 				{
 					"name": "Virtual Machines - List",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -657,16 +527,6 @@
 				{
 					"name": "Virtual Machines - Instance View",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -712,16 +572,6 @@
 				{
 					"name": "Virtual Machines - Start",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"url": {
@@ -767,16 +617,6 @@
 				{
 					"name": "Virtual Machines - Power Off",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"url": {
@@ -827,16 +667,6 @@
 				{
 					"name": "Virtual Machines - Deallocate",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"url": {
@@ -882,16 +712,6 @@
 				{
 					"name": "Virtual Machines - Delete",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{bearerToken}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -934,82 +754,48 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "Get AAD Token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(pm.info.requestName, () => {",
-							"    pm.response.to.not.be.error;",
-							"    pm.response.to.not.have.jsonBody('error');",
-							"});",
-							"pm.globals.set(\"bearerToken\", pm.response.json().access_token);"
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded"
-					}
-				],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "grant_type",
-							"value": "client_credentials",
-							"type": "text"
-						},
-						{
-							"key": "client_id",
-							"value": "{{clientId}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{clientSecret}}",
-							"type": "text"
-						},
-						{
-							"key": "resource",
-							"value": "{{resource}}",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "https://login.microsoftonline.com/{{tenantId}}/oauth2/token",
-					"protocol": "https",
-					"host": [
-						"login",
-						"microsoftonline",
-						"com"
-					],
-					"path": [
-						"{{tenantId}}",
-						"oauth2",
-						"token"
-					]
-				}
-			},
-			"response": []
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					""
+					"if (!pm.collectionVariables.get(\"bearerToken\") || Date.now() > new Date(pm.collectionVariables.get(\"bearerTokenExpiresOn\") * 1000)) {",
+					"    pm.sendRequest({",
+					"        url: 'https://login.microsoftonline.com/' + pm.collectionVariables.get(\"tenantId\") + '/oauth2/token',",
+					"        method: 'POST',",
+					"        header: 'Content-Type: application/x-www-form-urlencoded',",
+					"        body: {",
+					"            mode: 'urlencoded',",
+					"            urlencoded: [",
+					"                { key: \"grant_type\", value: \"client_credentials\", disabled: false },",
+					"                { key: \"client_id\", value: pm.collectionVariables.get(\"clientId\"), disabled: false },",
+					"                { key: \"client_secret\", value: pm.collectionVariables.get(\"clientSecret\"), disabled: false },",
+					"                { key: \"resource\", value: pm.collectionVariables.get(\"resource\") || \"https://management.azure.com/\", disabled: false }",
+					"            ]",
+					"        }",
+					"    }, function (err, res) {",
+					"        if (err) {",
+					"            console.log(err);",
+					"        } else {",
+					"            let resJson = res.json();",
+					"            pm.collectionVariables.set(\"bearerTokenExpiresOn\", resJson.expires_on);",
+					"            pm.collectionVariables.set(\"bearerToken\", resJson.access_token);",
+					"        }",
+					"    });",
+					"}"
 				]
 			}
 		},
@@ -1026,31 +812,59 @@
 	"variable": [
 		{
 			"key": "resourceGroupName",
-			"value": "rg-testappname-shared-001"
+			"value": ""
 		},
 		{
 			"key": "resourceLocation",
-			"value": "westus"
+			"value": ""
 		},
 		{
 			"key": "vmName",
-			"value": "vmserver001"
+			"value": ""
 		},
 		{
 			"key": "accountName",
-			"value": "stappdata001"
+			"value": ""
 		},
 		{
 			"key": "sourceResourceGroup",
-			"value": "resourcegroupProd"
+			"value": ""
 		},
 		{
 			"key": "destinationResourceGroup",
-			"value": "resourcegroupDev"
+			"value": ""
 		},
 		{
 			"key": "resourceToMove",
-			"value": "stappdata001"
+			"value": ""
+		},
+		{
+			"key": "bearerTokenExpiresOn",
+			"value": ""
+		},
+		{
+			"key": "bearerToken",
+			"value": ""
+		},
+		{
+			"key": "tenantId",
+			"value": ""
+		},
+		{
+			"key": "clientId",
+			"value": ""
+		},
+		{
+			"key": "clientSecret",
+			"value": ""
+		},
+		{
+			"key": "subscriptionId",
+			"value": ""
+		},
+		{
+			"key": "resource",
+			"value": ""
 		}
 	]
 }

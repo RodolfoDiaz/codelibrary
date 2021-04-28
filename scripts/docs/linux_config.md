@@ -79,6 +79,12 @@ To install Nano text editor on Debian or Ubuntu machines, execute the following 
 
 For reference read [here](https://linuxize.com/post/how-to-use-apt-command/).
 
+## Network settings
+
+You can get the IP address that is configured by using the following command:
+
+    ip addr | grep eth0
+
 ## Set DNS Nameservers
 
 The /etc/resolv.conf is the main configuration file for the DNS name resolver library. The resolver is a set of functions in the C library that provide access to the Internet Domain Name System (DNS).  More reference [here](https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/).
