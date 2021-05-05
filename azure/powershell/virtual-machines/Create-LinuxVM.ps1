@@ -176,8 +176,8 @@ $cred = New-Object System.Management.Automation.PSCredential ("$paramVMusername"
 # List all Publishers: Get-AzVMImagePublisher -Location "westus" | Select PublisherName
 # List all offers for Publisher: Get-AzVMImageOffer -Location "westus" -PublisherName "SUSE" | Select Offer
 $paramPublisher = "Canonical"
-$paramOffer = "UbuntuServer"
-$paramSkus = "18.04-LTS"
+$paramOffer = "0001-com-ubuntu-server-focal"
+$paramSkus = "20_04-lts-gen2"
 $paramVersion = "latest"
 
 $vmConfig = New-AzVMConfig `
