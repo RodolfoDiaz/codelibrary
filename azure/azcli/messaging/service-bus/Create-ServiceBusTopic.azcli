@@ -42,7 +42,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="rg-testappname-shared-$RANDOM"
+paramResourceGroup="rg-testapp1-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -55,14 +55,14 @@ fi
 # --------------- 3 --------------- 
 echo "---> Creating a Service Bus messaging namespace"
 # Namespace naming rules: length 6-50, Alphanumerics and hyphens.
-paramServiceBusNamespace="sb-testappname-dev-$RANDOM"
+paramServiceBusNamespace="sb-testapp1-dev-$RANDOM"
 paramNamespaceSku="Standard"  # Service Bus comes in Basic, standard, and premium tiers. For Topics you need "Standard".
 az servicebus namespace create --resource-group "$paramResourceGroup" --name "$paramServiceBusNamespace" --sku "$paramNamespaceSku" --location "$paramLocation" --tags $paramTags
 
 
 # --------------- 4 --------------- 
 echo "---> Creating a topic in the namespace"
-export paramServiceBusTopic="sbt-testappname-dev-$RANDOM"
+export paramServiceBusTopic="sbt-testapp1-dev-$RANDOM"
 az servicebus topic create --resource-group "$paramResourceGroup" --namespace-name "$paramServiceBusNamespace" --name "$paramServiceBusTopic"
 
 

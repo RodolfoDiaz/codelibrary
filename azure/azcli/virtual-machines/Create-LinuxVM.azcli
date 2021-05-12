@@ -46,7 +46,7 @@ az provider register --namespace "Microsoft.KeyVault"
 
 # --------------- 3 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="rg-testappname-shared-$RANDOM"
+paramResourceGroup="rg-testapp1-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -74,14 +74,14 @@ az network vnet create --resource-group "$paramResourceGroup" --name "$paramVirt
   --subnet-prefix "$paramSubnetPrefix" --location "$paramLocation" --tags $paramTags
 
 # Create a public IP address and specify a DNS name
-paramPublicIpAddress="pip-testappname-dev-$paramLocation-$RANDOM"
+paramPublicIpAddress="pip-testapp1-dev-$paramLocation-$RANDOM"
 az network public-ip create \
   --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" \
   --allocation-method "Static" --idle-timeout 4 \
   --location "$paramLocation" --tags $paramTags
 
 # Create a network security group.
-paramNetworkSecurityGroup="nsg-testappname-$RANDOM"
+paramNetworkSecurityGroup="nsg-testapp1-$RANDOM"
 az network nsg create \
   --resource-group "$paramResourceGroup" \
   --name "$paramNetworkSecurityGroup" \

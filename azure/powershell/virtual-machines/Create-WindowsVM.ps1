@@ -34,7 +34,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
+$paramResourceGroup = "rg-testapp1-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -75,7 +75,7 @@ $vnet = New-AzVirtualNetwork `
 
 # Create a public IP address and specify a DNS name
 $rndIPAddress = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramPublicIpAddress = "pip-testappname-dev-$paramLocation-$rndIPAddress"
+$paramPublicIpAddress = "pip-testapp1-dev-$paramLocation-$rndIPAddress"
 $pip = New-AzPublicIpAddress `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `
@@ -114,7 +114,7 @@ $nsgRuleWeb = New-AzNetworkSecurityRuleConfig `
 
 # Create a network security group
 $rndNSG = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramNetworkSecurityGroup = "nsg-testappname-$rndNSG"
+$paramNetworkSecurityGroup = "nsg-testapp1-$rndNSG"
 $nsg = New-AzNetworkSecurityGroup `
   -ResourceGroupName "$paramResourceGroup" `
   -Location "$paramLocation" `

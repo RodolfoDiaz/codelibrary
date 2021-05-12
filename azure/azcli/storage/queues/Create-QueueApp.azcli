@@ -40,7 +40,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="rg-testappname-shared-$RANDOM"
+paramResourceGroup="rg-testapp1-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 

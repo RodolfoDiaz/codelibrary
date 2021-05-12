@@ -40,7 +40,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="rg-testappname-shared-$RANDOM"
+paramResourceGroup="rg-testapp1-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -74,7 +74,7 @@ echo $storageConnectionString
 
 # --------------- 5 --------------- 
 echo "---> Create a message endpoint"
-sitename="app-testappname-dev-$RANDOM"
+sitename="app-testapp1-dev-$RANDOM"
 az deployment group create \
   --resource-group "$paramResourceGroup" \
   --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/master/azuredeploy.json" \

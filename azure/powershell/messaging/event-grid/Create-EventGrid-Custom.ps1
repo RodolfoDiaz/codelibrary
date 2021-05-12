@@ -44,7 +44,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
+$paramResourceGroup = "rg-testapp1-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -60,7 +60,7 @@ $resourceGroup
 # --------------- 3 --------------- 
 Write-Host "---> Create a custom topic" -ForegroundColor Green
 $rndTopic = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$topicname = "evgt-testappname-dev-$rndTopic"
+$topicname = "evgt-testapp1-dev-$rndTopic"
 $eventGridTopic = New-AzEventGridTopic -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" -Name "$topicname" -Tag $paramTags
 Write-Host "---> Event Grid Topic details:" -ForegroundColor Green
 $eventGridTopic
@@ -69,7 +69,7 @@ $eventGridTopic
 # --------------- 4 --------------- 
 Write-Host "---> Create a message endpoint" -ForegroundColor Green
 $rndSite = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$sitename = "app-testappname-dev-$rndSite"
+$sitename = "app-testapp1-dev-$rndSite"
 
 $resourceGroupDeployment = New-AzResourceGroupDeployment `
   -ResourceGroupName "$paramResourceGroup" `
@@ -88,7 +88,7 @@ Start-Process "https://$($sitename).azurewebsites.net"
 # --------------- 5 --------------- 
 Write-Host "---> Subscribe to a topic" -ForegroundColor Green
 $endpoint = "https://$sitename.azurewebsites.net/api/updates"
-$eventSubscriptionName = "evgs-testappname-dev"
+$eventSubscriptionName = "evgs-testapp1-dev"
 
 $eventGridSubscription = New-AzEventGridSubscription `
   -EventSubscriptionName "$eventSubscriptionName" `

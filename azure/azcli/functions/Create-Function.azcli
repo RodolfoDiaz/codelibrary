@@ -29,7 +29,7 @@ az provider register --namespace "Microsoft.Storage"
 
 # --------------- 2 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="rg-testappname-shared-$RANDOM"
+paramResourceGroup="rg-testapp1-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -66,7 +66,7 @@ echo "---> Create a Function App"
 # https://docs.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az_functionapp_create
 # https://docs.microsoft.com/en-us/azure/azure-functions/functions-versions
 # Function App naming rules: length 2-59,	Alphanumerics and hyphens.
-paramFunctionApp="func-testappname-dev-$RANDOM"
+paramFunctionApp="func-testapp1-dev-$RANDOM"
 paramFunctionAppVersion="3"
 
 # deployFunctionAppOS="Windows"

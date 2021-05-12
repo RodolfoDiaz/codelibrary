@@ -30,7 +30,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
+$paramResourceGroup = "rg-testapp1-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -47,7 +47,7 @@ $resourceGroup
 Write-Host "---> Create an App Service plan" -ForegroundColor Green
 # https://azure.microsoft.com/en-us/pricing/details/app-service/
 $rndAppService = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramAppServicePlan = "plan-testappname-dev-$rndAppService"
+$paramAppServicePlan = "plan-testapp1-dev-$rndAppService"
 $paramTier = "Basic" # You have the choice between 5 SKUs: Free, Shared, Basic, Standard, Premium
 $paramWorkerSize = "Small" # Accepted values:	Small, Medium, Large, ExtraLarge
 $paramNumberofWorkers = "1" # worker pool instances, a number from 1 to 10
@@ -69,7 +69,7 @@ New-AzAppServicePlan -Name "$paramAppServicePlan" `
 # --------------- 4 --------------- 
 Write-Host "---> Create the Web App" -ForegroundColor Green
 $rndWebApp = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramWebApp = "app-testappname-dev-$rndWebApp"
+$paramWebApp = "app-testapp1-dev-$rndWebApp"
 New-AzWebApp -Name "$paramWebApp" `
   -ResourceGroupName "$paramResourceGroup" -Location "$paramLocation" `
   -AppServicePlan "$paramAppServicePlan"

@@ -44,7 +44,7 @@ az provider register --namespace "Microsoft.Compute"
 
 # --------------- 3 --------------- 
 echo "---> Creating resource group"
-paramResourceGroup="rg-testappname-shared-$RANDOM"
+paramResourceGroup="rg-testapp1-shared-$RANDOM"
 paramLocation="westus"
 paramTags="Environment=Test Department=IT"
 
@@ -60,7 +60,7 @@ echo "---> Create a new Azure SQL Database logical server"
 paramAdminLogin="azureuser"
 paramAdminPassword="ChangeThisPassword@123"
 # Server name naming rule: 1-63 characters, Lowercase letters, numbers, and hyphens.
-paramDatabaseServer="sql-testappname-dev-$RANDOM"
+paramDatabaseServer="sql-testapp1-dev-$RANDOM"
 
 az sql server create --name "$paramDatabaseServer" --resource-group "$paramResourceGroup" --location "$paramLocation" \
   --admin-user "$paramAdminLogin" --admin-password "$paramAdminPassword"

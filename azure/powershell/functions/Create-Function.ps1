@@ -34,7 +34,7 @@ Write-Host "---> Verify registration of the required Azure resource providers" -
 Write-Host "---> Creating resource group" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/powershell/module/az.resources/
 $rndResourceGroup = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
-$paramResourceGroup = "rg-testappname-shared-$rndResourceGroup"
+$paramResourceGroup = "rg-testapp1-shared-$rndResourceGroup"
 $paramLocation = "westus"
 $paramTags = @{Environment = "Test"; Department = "IT" }
 
@@ -100,7 +100,7 @@ $appToDeploy = @{
 # Create the Function App
 $rndFunc = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # Function App naming rules: length 2-59,	Alphanumerics and hyphens.
-$paramFunctionApp = "func-testappname-dev-$rndFunc"
+$paramFunctionApp = "func-testapp1-dev-$rndFunc"
 $paramFunctionAppVersion = "3"
 # Set the OS type for the app to be created. accepted values: Linux, Windows
 $paramFunctionAppOS = $appToDeploy.functionAppOS
