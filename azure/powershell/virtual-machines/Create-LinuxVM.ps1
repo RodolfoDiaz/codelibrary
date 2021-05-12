@@ -7,16 +7,17 @@ $ErrorActionPreference = "Stop"
 # Azure Virtual Machines - https://docs.microsoft.com/en-us/azure/virtual-machines/
 # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-powershell
 
-# The deployment process is:
-# 1- Use ssh-keygen to create an SSH key pair.
-# 2- Log in to Azure.
-# 3- Create a resource group.
-# 4- Create virtual network resources.
-# 5- Create the virtual machine.
-# 6- Attach a data disk to the VM.
-# 7- Enable Azure Disk Encryption.
-# 8- Connect to the VM.
-
+<#
+  The deployment process is:
+  1- Use ssh-keygen to create an SSH key pair.
+  2- Log in to Azure.
+  3- Create a resource group.
+  4- Create virtual network resources.
+  5- Create the virtual machine.
+  6- Attach a data disk to the VM.
+  7- Enable Azure Disk Encryption.
+  8- Connect to the VM.
+#>
 
 # --------------- 1 --------------- 
 Write-Host "---> Use ssh-keygen to create an SSH key pair." -ForegroundColor Green
@@ -155,8 +156,6 @@ $nic
 # --------------- 5 --------------- 
 Write-Host "---> Create virtual machine configuration" -ForegroundColor Green
 
-$paramVMusername = "azureuser"
-$paramVMPassword = "ChangeThisPassword@123"
 $rndVM = "{0:D5}" -f ( Get-Random -Minimum 0 -Maximum 99999 )
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
 # A good convention is to include the following information in the name: Environment (dev, prod, QA), 
@@ -165,7 +164,9 @@ $paramVMName = "vmserver$rndVM" # Linux VM names may only contain 1-64 letters, 
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
 $paramVMSize = "Standard_D2S_V3" # Check available sizes: Get-AzComputeResourceSku | where {$_.Locations -icontains "$paramLocation"}
 
-# Define a credential object
+# Authentication
+$paramVMusername = "azureuser"
+$paramVMPassword = "ChangeThisPassword@123"
 $securePassword = ConvertTo-SecureString "$paramVMPassword" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential ("$paramVMusername", $securePassword)
 
@@ -183,11 +184,6 @@ $paramVersion = "latest"
 $vmConfig = New-AzVMConfig `
     -VMName "$paramVMName" `
     -VMSize $paramVMSize | `
-  Set-AzVMOperatingSystem `
-    -Linux `
-    -ComputerName "$paramVMName" `
-    -Credential $cred `
-    -DisablePasswordAuthentication | `
   Set-AzVMSourceImage `
     -PublisherName "$paramPublisher" `
     -Offer "$paramOffer" `
@@ -199,10 +195,19 @@ $vmConfig = New-AzVMConfig `
     -Name "osdisk-$paramVMName" `
     -CreateOption "FromImage"
 
+# Configure user authentication
+Write-Host "---> Configure user authentication" -ForegroundColor Green
+Set-AzVMOperatingSystem `
+  -Linux `
+  -VM $vmConfig `
+  -ComputerName "$paramVMName" `
+  -Credential $cred
+
 # Configure the SSH key
+Write-Host "---> Update SSH authentication key" -ForegroundColor Green
 $sshPublicKey = Get-Content ~/.ssh/id_rsa.pub
 Add-AzVMSshPublicKey `
-  -VM $vmconfig `
+  -VM $vmConfig `
   -KeyData $sshPublicKey `
   -Path "/home/$paramVMusername/.ssh/authorized_keys"
 
@@ -272,14 +277,23 @@ Write-Host "---> Public IP address is: "
 Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress"
 Write-Host "---> GET PUBLIC IP ADDRESS:"
 Write-Host "---> Get-AzPublicIpAddress -Name $paramPublicIpAddress | Select-Object IpAddress"
-# $VMIpAddress = (Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress").IpAddress
-Write-Host "---> Enter the following command: ssh $paramVMusername@IpAddress"
-# ssh ${paramVMusername}@${VMIpAddress}
+$PublicIpAddress = Get-AzPublicIpAddress -Name "$paramPublicIpAddress" | Select-Object "IpAddress"
+if ($PublicIpAddress -ne $null) {
+  $VMIpAddress = $PublicIpAddress.IpAddress
+}
+Write-Host "---> Enter the following command: ssh $paramVMusername@$VMIpAddress -o StrictHostKeyChecking=no"
+# ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
 
-# Install the Apache web server
+# Install NGINX web server:
 # sudo apt-get update
+# sudo apt-get -y install nginx
+# sudo systemctl status nginx
+#
+# OR you can install the Apache web server:
+#
 # sudo apt-get install apache2 -y
 # sudo systemctl status apache2 --no-pager
+# Open your web browser and try: http://$paramPublicIpAddress
 
 # Maintenance commands
 # $vm = Get-AzVM -Name "$paramVMName" -ResourceGroupName "$paramResourceGroup"

@@ -114,8 +114,6 @@ az network nic create \
 
 # --------------- 5 --------------- 
 echo "---> Create virtual machine"
-paramVMusername="azureuser"
-paramVMPassword="ChangeThisPassword@123"
 # You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
 # A good convention is to include the following information in the name: Environment (dev, prod, QA), 
 # Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
@@ -129,6 +127,9 @@ paramPublisher="Canonical"
 paramOffer="0001-com-ubuntu-server-focal"
 paramSkus="20_04-lts-gen2"
 paramVersion="latest"
+# Authentication
+paramVMusername="azureuser"
+paramVMPassword="ChangeThisPassword@123"
 paramAuthenticationType="all" # {all, password, ssh}
 
 az vm create \
@@ -139,13 +140,19 @@ az vm create \
   --admin-password "$paramVMPassword" \
   --admin-username "$paramVMusername" \
   --authentication-type "$paramAuthenticationType" \
-  --ssh-key-values "~/.ssh/id_rsa.pub" \
-  --ssh-dest-key-path "/home/$paramVMusername/.ssh/authorized_keys" \
   --image "$paramPublisher:$paramOffer:$paramSkus:$paramVersion" \
   --os-disk-name "osdisk-$paramVMName" \
   --size "$paramVMSize" \
   --location "$paramLocation" \
   --tags $paramTags
+
+echo "---> Update SSH authentication key"
+# https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/vmaccess
+az vm user update \
+  --resource-group "$paramResourceGroup" \
+  --name "$paramVMName" \
+  --username "$paramVMusername" \
+  --ssh-key-value ~/.ssh/id_rsa.pub
 
 
 # --------------- 6 --------------- 
@@ -200,13 +207,14 @@ az network public-ip show --resource-group "$paramResourceGroup" --name "$paramP
 echo "---> GET PUBLIC IP ADDRESS:"
 echo "---> az network public-ip show --resource-group $paramResourceGroup --name $paramPublicIpAddress --query \"{address: ipAddress}\"" 
 VMIpAddress=$(az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv)
-echo "---> Enter the following command: ssh $paramVMusername@$VMIpAddress"
-# ssh ${paramVMusername}@${VMIpAddress}
+echo "---> Enter the following command: ssh $paramVMusername@$VMIpAddress -o StrictHostKeyChecking=no"
+# ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
 
 # Install the Apache web server
 # sudo apt-get update
 # sudo apt-get install apache2 -y
 # sudo systemctl status apache2 --no-pager
+# Open your web browser and try: http://$paramPublicIpAddress
 
 # Maintenance commands
 # az vm show --resource-group "$paramResourceGroup" --name "$paramVMName"
