@@ -38,7 +38,7 @@ if [ "$(uname)" == "Darwin" ]; then
         pip3 freeze | xargs pip3 uninstall -y
         brew uninstall python
         rm /usr/local/bin/pip
-        rm -rf /usr/local/lib/python3.7
+        rm -rf /usr/local/lib/python3.9
         # uninstalling dependecies for python
         brew uninstall sqlite
         brew uninstall gdbm
@@ -49,23 +49,32 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     if [ "$1" == "i" ]; then
         echo "Install/Updating Python in Linux"
-        # -- For Debian derivatives such as Ubuntu
-        # apt list --installed | grep python
-        # sudo apt update
-        # sudo apt install python3-pip -y
-        # sudo apt install python3-venv -y
+        # -- For Ubuntu Linux
+        sudo apt autoremove
+        sudo apt update
+        sudo apt install software-properties-common
+        sudo add-apt-repository ppa:deadsnakes/ppa
+        #sudo apt install python3-pip
+        sudo apt install python3.9
+
+        # Create symbolic link to python3
+        # cd /usr/bin/
+        # sudo ln -s /usr/bin/python3.9 /usr/bin/python
+
         # -- For Amazon Linux
         # pip3 install --upgrade --user awscli
         # aws --version
-        mkdir ~/newproject
-        cd ~/newproject
-        python3 -m venv my_env
-        source my_env/bin/activate
-        python -m pip install --upgrade pip setuptools wheel --user
-        pip3 install --upgrade pip setuptools wheel --user
-        echo "Python 3 - Upgrade all outdated packages (to list them: pip3 list --outdated)"
-        pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U
-        #pip3 install PIP_MODULE
-        deactivate
+
+        # Virtual Environments
+        # mkdir ~/newproject
+        # cd ~/newproject
+        # python3 -m venv my_env
+        # source my_env/bin/activate
+        # python -m pip install --upgrade pip setuptools wheel --user
+        # pip3 install --upgrade pip setuptools wheel --user
+        # echo "Python 3 - Upgrade all outdated packages (to list them: pip3 list --outdated)"
+        # pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U
+        # #pip3 install PIP_MODULE
+        # deactivate
     fi
 fi
