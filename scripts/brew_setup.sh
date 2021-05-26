@@ -1,5 +1,11 @@
 # Homebrew - The missing package manager for macOS
 # https://brew.sh/
+
+if [ "$(uname)" != "Darwin" ]; then
+  echo 'This script is only for macOS'
+  exit
+fi
+
 if brew ls --versions > /dev/null; then
   echo "Homebrew is installed, updating..."
   brew update && brew upgrade && brew cleanup

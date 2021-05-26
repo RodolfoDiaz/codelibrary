@@ -1,3 +1,8 @@
+if [ "$(uname)" != "Darwin" ]; then
+  echo 'This script is only for macOS'
+  exit
+fi
+
 # Remove all Mac generated files '._'
 # man dot_clean
 find . -name '._*'
