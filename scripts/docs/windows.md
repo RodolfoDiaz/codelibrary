@@ -58,8 +58,9 @@
  | PATH	| DESCRIPTION | 
  | ---- | ----------- |
  | %UserProfile%\Desktop | Desktop folder for current user |
- | %AppData%\Microsoft\Windows\Start Menu\Programs  | Start Menu folder for current user | 
- | %USERPROFILE%\AppData\Local\Temp | C:\Users\\`{username}`\AppData\Local\Temp | 
+ | %AppData%\Microsoft\Windows\SendTo | Send To folder for current user | 
+ | %AppData%\Microsoft\Windows\Start Menu\Programs | Start Menu folder for current user | 
  | %ProgramData%\Microsoft\Windows\Start Menu\Programs | Start Menu folder for all users |
+ | %USERPROFILE%\AppData\Local\Temp | C:\Users\\`{username}`\AppData\Local\Temp | 
  | %SystemRoot%\system\ | C:\Windows\System | 
  | %SystemRoot%\system32\ | C:\Windows\System32 | 
