@@ -14,13 +14,18 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
         source ~/.nvm/nvm.sh
     fi
-    # Install Node.js and select the latest version as default
-    nvm install 14 && nvm alias default 14
+    # Install Node.js and select the latest LTS version as default
+    nvm install --lts --latest-npm
+    nvm use --lts
+    nvm set-colors cgYmW
 
-    # Latest version:
-    #nvm install node --reinstall-packages-from=node
-    # Stable (LTS) version:
-    #nvm install lts/* --reinstall-packages-from=node
+    # Install Latest version:
+    # nvm install node --reinstall-packages-from=node
+    # Install Stable (LTS) version:
+    # nvm install lts/* --reinstall-packages-from=node
+
+    nvm ls
+    #  nvm uninstall <version>
 
     # npm update -g
 fi
