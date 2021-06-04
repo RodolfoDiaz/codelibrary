@@ -12,8 +12,10 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     if ! [ -d ~/.nvm/ ]; then
         cd ~
         wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-        source ~/.nvm/nvm.sh
     fi
+
+    source ~/.nvm/nvm.sh
+
     # Install Node.js and select the latest LTS version as default
     nvm install --lts --latest-npm
     nvm use --lts
