@@ -1,20 +1,18 @@
-if [ "$(uname)" != "Darwin" ]; then
-  echo 'This script is only for macOS'
-  exit
-fi
+if [ "$(uname)" == "Darwin" ]; then
+  # Remove all ._ files using dot_clean - Reference: man dot_clean
+  dot_clean -n .
+  # Also you can use: find . -name '._*' -type f -delete
+  # Another alternative is:  find . -name '._*' -exec rm -rf {} \;
 
-# Remove all Mac generated files '._'
-# man dot_clean
-find . -name '._*'
-dot_clean -n .
-# An alternative is to use the following:  find . -name '._*' -exec rm -rf {} \;
-# Find .DS_Store files
-find . -name '.DS_Store'
-# man find
-# Recursively Remove .DS_Store
-find . -name '.DS_Store' -type f -delete
-# Disable Creation of Metadata Files on Network Volumes 
-defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
-# Disable Creation of Metadata Files on USB Volumes
-defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
-# Reference: http://docs.hardentheworld.org/OS/MacOS_10.12_Sierra/
+  # Remove all .DS_Store files - Reference: man find
+  find . -name '.DS_Store' -type f -delete
+
+  # Disable Creation of Metadata Files on Network Volumes 
+  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+  # Disable Creation of Metadata Files on USB Volumes
+  defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+  
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    find . -name '._*' -type f -delete
+    find . -name '.DS_Store' -type f -delete
+fi
