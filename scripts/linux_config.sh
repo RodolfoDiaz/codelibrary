@@ -25,8 +25,8 @@ elif [ "$1" == "s" ]; then
   fi
   echo "---> List packages installed (dpkg)"
   dpkg --list *$2* | grep --invert-match none
-  echo "---> List packages installed (apt list)"
-  apt list --installed | grep $2
+  # echo "---> List packages installed (apt list)"
+  # apt list --installed | grep $2
 elif [ "$1" == "r" ]; then
   # Remove automatically all unused packages
   sudo apt autoremove -y
