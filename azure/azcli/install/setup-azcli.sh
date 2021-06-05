@@ -32,6 +32,6 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
     if [ "$1" == "u" ]; then
         echo "Uninstalling Azure CLI on Linux"
-        sudo apt-get remove -y azure-cli
+        sudo apt remove -y azure-cli
     fi
 fi

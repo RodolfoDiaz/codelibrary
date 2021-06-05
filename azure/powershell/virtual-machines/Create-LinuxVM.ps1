@@ -285,13 +285,13 @@ Write-Host "---> Enter the following command: ssh $paramVMusername@$VMIpAddress 
 # ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
 
 # Install NGINX web server:
-# sudo apt-get update
-# sudo apt-get -y install nginx
+# sudo apt update
+# sudo apt -y install nginx
 # sudo systemctl status nginx
 #
 # OR you can install the Apache web server:
 #
-# sudo apt-get install apache2 -y
+# sudo apt install apache2 -y
 # sudo systemctl status apache2 --no-pager
 # Open your web browser and try: http://$paramPublicIpAddress
 

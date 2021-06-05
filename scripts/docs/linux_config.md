@@ -66,18 +66,64 @@ An alternative way is to add the User to the sudoers File.
 
 Edit the file and add a new entry, for example: username1 ALL=(root)NOPASSWD:ALL
 
-## apt Command in Linux
+## apt-get command
+
+Debian, mother Linux of distributions like Ubuntu, Linux Mint, elementary OS etc, has a robust packaging system and every component and application is built into a package that is installed on your system. Debian uses a set of tools called Advanced Packaging Tool (APT) to manage this packaging system. Don’t confuse it with the command apt, it’s not the same.
+
+These commands are way too low level and they have so many functionalities which are perhaps never used by an average Linux user. On the other hand, the most commonly used package management commands are scattered across apt-get and apt-cache.
+
+Debian Linux uses dpkg packaging system. A packaging system is a way to provide programs and applications for installation. This way, you don’t have to build a program from the source code which, is not a pretty way to handle packages.
+
+## apt command
+
+The apt commands have been introduced to solve the complexity found in apt-get and apt-cache. 
+
+apt consists some of the most widely used features from apt-get and apt-cache leaving aside obscure and seldom used features. It can also manage apt.conf file. With apt, you don’t have to fiddle your way from apt-get commands to apt-cache. apt is more structured and provides you with necessary options needed to manage packages.
 
 apt is a command-line utility for installing, updating, removing, and otherwise managing deb packages on Ubuntu, Debian, and related Linux distributions. It combines the most frequently used commands from the apt-get and apt-cache tools with different default values of some options.
 
     sudo apt update
     sudo apt upgrade
 
-To install Nano text editor on Debian or Ubuntu machines, execute the following command:
+For example, to install Nano text editor on Debian or Ubuntu machines, execute the following command:
 
     sudo apt install nano
 
 For reference read [here](https://linuxize.com/post/how-to-use-apt-command/).
+
+## Difference between apt and apt-get commands
+
+Let’s see which apt command replaces which apt-get and apt-cache command options.
+
+| apt command | the command it replaces | function of the command |
+| ----------- | ----------------------- | ----------------------- |
+| apt install	 | apt-get  | install	Installs a package |
+| apt remove	 | apt-get remove	 | Removes a package |
+| apt purge	     | apt-get purge	 | Removes package with configuration |
+| apt update	 | apt-get update	 | Refreshes repository index |
+| apt upgrade	 | apt-get upgrade	 | Upgrades all upgradable packages |
+| apt autoremove	 | apt-get autoremove	 | Removes unwanted packages |
+| apt full-upgrade	 | apt-get dist-upgrade	 | Upgrades packages with auto-handling of dependencies |
+| apt search	 | apt-cache search	 | Searches for the program |
+| apt show	     | apt-cache show	 | Shows package details |
+
+apt has a few commands of its own as well.
+
+| new apt command	| function of the command | 
+| ----------------- | ----------------------- |
+| apt list	        | Lists packages with criteria (installed, upgradable etc) | 
+| apt edit-sources	| Edits sources list | 
+
+## What is the difference between apt remove and apt purge?
+
+* apt remove just removes the binaries of a package. It leaves residue configuration files.
+* apt purge removes everything related to a package including the configuration files.
+
+If you used apt remove to a get rid of a particular software and then install it again, your software will have the same configuration files. Of course, you will be asked to override the existing configuration files when you install it again.
+
+Purge is useful when you have messed up with the configuration of a program. You want to completely erase its traces from the system and perhaps start afresh. And yes, you can use apt purge on an already removed package.
+
+------
 
 ## Network settings
 

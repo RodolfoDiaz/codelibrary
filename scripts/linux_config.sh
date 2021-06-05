@@ -16,7 +16,13 @@ elif [ "$1" == "i" ]; then
   sudo apt install unrar -y
 elif [ "$1" == "l" ]; then
   # List Installed Packages
-  apt list --installed
+  if [ "$2" == "" ] ||  [ "$2" == "i" ]; then
+    echo "---> List Packages installed"
+    apt list --installed
+  elif [ "$2" == "u" ]; then
+  echo "---> List Packages upgradeable"
+    apt list --upgradeable
+  fi
 elif [ "$1" == "s" ]; then
   # Search for packages installed with a pattern
   if [ "$2" == "" ]; then
@@ -31,5 +37,5 @@ elif [ "$1" == "r" ]; then
   # Remove automatically all unused packages
   sudo apt autoremove -y
   # Removing all residual config packages in Ubuntu:
-  sudo apt-get remove --purge `dpkg -l | grep '^rc' | awk '{print $2}'`
+  sudo apt remove --purge `dpkg -l | grep '^rc' | awk '{print $2}'`
 fi

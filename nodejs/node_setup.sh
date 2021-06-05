@@ -5,8 +5,8 @@ if [ "$(uname)" == "Darwin" ]; then
     brew install node
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Install Node.js using APT
-    # curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-    # sudo apt-get install -y nodejs
+    # curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    # sudo apt install -y nodejs
     
     # Install Node Version Manager - https://github.com/nvm-sh/nvm
     if ! [ -d ~/.nvm/ ]; then

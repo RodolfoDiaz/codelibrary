@@ -34,7 +34,7 @@ Setup a new Linux Ubuntu server (this will be designated the Build Agent).
         ```
     * Install the latest version of GitLab Runner:
         ```
-        sudo apt-get install gitlab-runner
+        sudo apt install gitlab-runner
         ```
     * Validate GitLab Runner setup, execute the following command:
         ```
