@@ -15,4 +15,5 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     find . -name '._*' -type f -delete
     find . -name '.DS_Store' -type f -delete
+    find . -name 'Thumbs.db' -type f -delete
 fi
