@@ -1,0 +1,28 @@
+## This is a directory/file filter template for WinMerge
+name: Custom Filter to exclude system folders
+desc: Supresses various OS system folders (Recycle Bin, Spotlight, etc.)
+
+## In WinMerge you browse to Edit > Options > System, set the Filter Folder as follows:
+## %LOCALAPPDATA%\Programs\WinMerge\Filters
+
+## Select if filter is inclusive or exclusive
+## Inclusive (loose) filter lets through all items not matching rules
+## Exclusive filter lets through only items that match to rule
+## include or exclude
+def: include
+
+## Filters for filenames begin with f:
+## Filters for directories begin with d:
+## (Inline comments begin with " ##" and extend to the end of the line)
+
+f: \.ext$ ## Filter for filename
+
+d: \\System Volume Information$ ## Filter for directory
+
+d: \$RECYCLE\.BIN ## Filter for directory
+
+d: \\.TemporaryItems$ ## Filter for directory
+
+d: \\.Spotlight-V100$ ## Filter for directory
+
+d: \\.fseventsd$ ## Filter for directory
