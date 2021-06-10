@@ -4,7 +4,7 @@
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
   if [ "$1" == "" ]; then
-      echo "No argurment found. Use 'i' to install Docker, 'u' to execute image update and cleanup, 'l' to list containers/images, 'r' to remove Docker, 's' to start the service."
+      echo "No argurment found. Use 'i' to install Docker, 'c' to create sample container, 'u' to execute image update and cleanup, 'l' to list containers/images, 'r' to remove Docker, 's' to start the service."
   fi
 
   if [ "$1" == "i" ]; then
@@ -28,10 +28,25 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # -*- Start the service -*-
     sudo service docker start
 
+    # -*- Manage Docker as a non-root user -*-
+    # If you don’t want to preface the docker command with sudo, create a Unix group called docker and add users to it. 
+    # When the Docker daemon starts, it creates a Unix socket accessible by members of the docker group.
+
+    sudo groupadd docker
+
+    sudo usermod -aG docker $USER
+
+    echo "---> Log out and log back in so that your group membership is re-evaluated."
+
     read -p "Docker was installed. Press any key to continue ..."
+    
+    # Continue to Post-installation steps for Linux - https://docs.docker.com/engine/install/linux-postinstall/
 
+fi
+
+if [ "$1" == "c" ]; then
+    
     # Verify that Docker Engine is installed correctly by running the hello-world image.
-
     echo "---> Create a container"
     # https://docs.docker.com/engine/reference/commandline/run/
     docker run --name hw1 hello-world
@@ -39,8 +54,6 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "---> Start an existing container"
     # https://docs.docker.com/engine/reference/commandline/start/
     docker start --attach --interactive hw1
-
-    # Continue to Post-installation steps for Linux - https://docs.docker.com/engine/install/linux-postinstall/
 
   fi
 
@@ -59,6 +72,8 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "---> Delete all images, containers, and volumes."
     sudo rm -rf /var/lib/docker
     sudo rm -rf /var/lib/containerd
+    echo "---> Delete(remove) the docker group from the system"
+    sudo groupdel docker
   fi
 
   if [ "$1" == "l" ]; then
