@@ -15,7 +15,7 @@ namespace SecurityConsole
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("No argurment found. Use 'C' for CaesarCipher, 'H' to show Input Text Hash, 'F' to show File Hash, 'E' for show Symmetric Encryption example.");
+                Console.WriteLine("No argurment found. Use 'C' for Caesar Cipher, 'H' to show Input Text Hash, 'F' to show File Hash, 'E' for show Symmetric Encryption example.");
             }
             else
             {
@@ -129,14 +129,14 @@ namespace SecurityConsole
         private static void ShowFileHash(Hash.ServiceProvider algorithm, string inputFilePath)
         {
             string hashForFile = Hash.GetHashFromFile(algorithm, inputFilePath);
-            Console.WriteLine("The {0} checksum of file: {1} is:\n{2}", algorithm, inputFilePath, hashForFile);
+            Console.WriteLine("The {0} hash value for the file: {1} is:\n{2}", algorithm, inputFilePath, hashForFile);
             Console.WriteLine("You can compare the output above with the following PowerShell command: \nGet-FileHash {0} -Algorithm {1} | Format-List", inputFilePath, algorithm);
             Console.WriteLine();
         }
 
         private static void ShowCaesarEncryption()
         {
-            Console.WriteLine("--*-- Caesar Encryption example --*--");
+            Console.WriteLine("--*-- Caesar Cipher example --*--");
             Console.WriteLine("Type a string to encrypt (or hit Enter to continue with default): ");
             string inputText = Console.ReadLine();
             if (inputText == "")
@@ -144,7 +144,7 @@ namespace SecurityConsole
                 inputText = plainText;
             }
 
-            Console.WriteLine("Enter your Key value (numberic value)");
+            Console.WriteLine("Enter the key value (numberic)");
             string key = Console.ReadLine();
             int intKey = 0;
             if (!Int32.TryParse(key, out intKey))
@@ -152,7 +152,7 @@ namespace SecurityConsole
                 intKey = -1;
             }
 
-            Console.WriteLine("Encrypted Data with Caesar cipher by {0} spaces", intKey);
+            Console.WriteLine("Encrypted text input with Caesar Cipher by {0} spaces:", intKey);
 
             string cipherText = CaesarCipher.Encipher(inputText, intKey);
             Console.WriteLine(cipherText);
