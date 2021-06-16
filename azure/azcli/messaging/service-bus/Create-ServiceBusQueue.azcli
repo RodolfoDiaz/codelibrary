@@ -24,9 +24,6 @@ set -e
 # 5- Get the primary connection string for the namespace.
 # 6- Create the application.
 
-# The following commands are available in PowerShell:
-# Get-Command -Module Az.ServiceBus
-
 # --------------- 1 --------------- 
 echo "---> Log in to Azure"
 # https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli

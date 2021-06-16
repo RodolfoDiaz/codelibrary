@@ -16,6 +16,8 @@ $ErrorActionPreference = "Stop"
 # 6- Enable Azure Disk Encryption.
 # 7- Connect to the VM.
 
+# The following commands are available in PowerShell:
+# Get-Command -Module Az.Compute | Out-GridView
 
 # --------------- 1 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green

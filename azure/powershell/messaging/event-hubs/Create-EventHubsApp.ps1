@@ -28,7 +28,7 @@ $ErrorActionPreference = "Stop"
 
 
 # The following commands are available in PowerShell:
-# Get-Command -Module Az.EventHub
+# Get-Command -Module Az.EventHub | Out-GridView
 
 # --------------- 1 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green

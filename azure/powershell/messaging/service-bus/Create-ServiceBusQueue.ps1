@@ -26,7 +26,7 @@ $ErrorActionPreference = "Stop"
 # 6- Create the application.
 
 # The following commands are available in PowerShell:
-# Get-Command -Module Az.ServiceBus
+# Get-Command -Module Az.ServiceBus | Out-GridView
 
 # --------------- 1 --------------- 
 Write-Host "---> Log in to Azure" -ForegroundColor Green
