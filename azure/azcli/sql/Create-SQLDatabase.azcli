@@ -124,7 +124,7 @@ az sql server vnet-rule create --resource-group "$paramResourceGroup" --name "$p
 
 # --------------- 8 --------------- 
 echo "---> Connect to the server at $VMIpAddress and installs SQL Server command-line tools"
-cat server-config.sh | ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
+cat mssql-tools.sh | ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
 # FOR PRODUCTION ENV. USE THE OFFICIAL TOOL: The Custom Script Extension downloads and runs scripts on Azure virtual machines.
 # This extension is useful for post-deployment configuration, software installation, or any other configuration/management task.
 # https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux

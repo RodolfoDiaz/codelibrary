@@ -1,0 +1,197 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# SQL Server on Linux - https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-overview?view=sql-server-ver15
+
+# Quickstart - Ubuntu Linux:
+# https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu?view=sql-server-ver15
+
+# The deployment process is:
+# 1- Use ssh-keygen to create an SSH key pair.
+# 2- Log in to Azure.
+# 3- Create a resource group.
+# 4- Create virtual network resources.
+# 5- Create the virtual machine.
+# 6- Connect to the VM and install/configure mssql
+
+
+# --------------- 1 --------------- 
+echo "---> Use ssh-keygen to create an SSH key pair."
+# An SSH key consists of a pair of files. One is the private key, which should never 
+# be shared with anyone. The other is the public key. The other file is a public key 
+# which allows you to log into the containers and VMs you provision. When you generate 
+# the keys, you will use ssh-keygen to store the keys in a safe location so you can bypass 
+# the login prompt when connecting to your instances.
+if [ ! -f ~/.ssh/id_rsa.pub ]; then
+  # https://www.ssh.com/ssh/keygen/
+  ssh-keygen -m PEM -t rsa -b 4096
+fi
+
+
+# --------------- 2 --------------- 
+echo "---> Log in to Azure"
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+az login --use-device-code
+# az account list
+
+echo "---> Verify registration of the required Azure resource providers"
+# https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/azure-services-resource-providers
+az provider register --namespace "Microsoft.Compute"
+az provider register --namespace "Microsoft.Storage"
+az provider register --namespace "Microsoft.Network"
+az provider register --namespace "Microsoft.KeyVault"
+
+
+# --------------- 3 --------------- 
+echo "---> Creating resource group"
+paramResourceGroup="rg-testapp1-shared-$RANDOM"
+paramLocation="westus"
+paramTags="Environment=Test Department=IT"
+
+rgExists="$(az group exists --name $paramResourceGroup)"
+if [ "$rgExists" == "false" ]; then
+  az group create --name "$paramResourceGroup" --location "$paramLocation" --tags $paramTags
+fi
+
+
+# --------------- 4 --------------- 
+echo "---> Create virtual network resources"
+# When you set up a virtual network, you specify the available address spaces, subnets, and security. 
+# If the VNet will be connected to other VNets, you must select address ranges that are not overlapping. 
+# This is the range of private addresses that the VMs and services in your network can use. 
+# You can use unroutable IP addresses such as 10.0.0.0/8, 172.16.0.0/12, or 192.168.0.0/16, or define your own range.
+
+# Create a virtual network and subnet
+# Segregate your network: you might assign 10.1.0.0 to VMs, 10.2.0.0 to back-end services, and 10.3.0.0 to SQL Server VMs.
+paramNetworkSubnetConfig="snet-shared-$paramLocation-001"
+paramVirtualNetwork="vnet-shared-$paramLocation-$RANDOM"
+paramSubnetPrefix="192.168.1.0/24"
+paramAddressPrefix="192.168.0.0/16"
+az network vnet create --resource-group "$paramResourceGroup" --name "$paramVirtualNetwork" \
+  --address-prefix "$paramAddressPrefix" --subnet-name "$paramNetworkSubnetConfig" \
+  --subnet-prefix "$paramSubnetPrefix" --location "$paramLocation" --tags $paramTags
+
+# Create a public IP address and specify a DNS name
+paramPublicIpAddress="pip-testapp1-dev-$paramLocation-$RANDOM"
+az network public-ip create \
+  --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" \
+  --allocation-method "Static" --idle-timeout 4 \
+  --location "$paramLocation" --tags $paramTags
+
+# Create a network security group.
+paramNetworkSecurityGroup="nsg-testapp1-$RANDOM"
+az network nsg create \
+  --resource-group "$paramResourceGroup" \
+  --name "$paramNetworkSecurityGroup" \
+  --location "$paramLocation" --tags $paramTags
+
+# Create network security group rules
+paramNSGRule1="nsg-sshallow-001"
+az network nsg rule create --resource-group "$paramResourceGroup" --nsg-name "$paramNetworkSecurityGroup" \
+  --name "$paramNSGRule1" --priority 1000 --source-address-prefixes "*" --source-port-ranges "*" \
+  --destination-address-prefix "*" --destination-port-ranges "22" \
+  --access "Allow" --protocol "Tcp" --direction "Inbound" --description "Allow SSH"
+
+# Port 1433 for TCP is needed to connect to the SQL database instance.
+paramNSGRule2="nsg-mssql-001"
+az network nsg rule create --resource-group "$paramResourceGroup" --nsg-name "$paramNetworkSecurityGroup" \
+  --name "$paramNSGRule2" --priority 1001 --source-address-prefixes "*" --source-port-ranges "*" \
+  --destination-address-prefix "*" --destination-port-ranges "1433" \
+  --access "Allow" --protocol "Tcp" --direction "Inbound" --description "Allow SQL Server Port 1433"
+
+# If you are using a named instance, open Port 1434 for UDP for SQL Server Browser service.
+# paramNSGRule2="nsg-mssql-002"
+# az network nsg rule create --resource-group "$paramResourceGroup" --nsg-name "$paramNetworkSecurityGroup" \
+#   --name "$paramNSGRule2" --priority 1002 --source-address-prefixes "*" --source-port-ranges "*" \
+#   --destination-address-prefix "*" --destination-port-ranges "1434" \
+#   --access "Allow" --protocol "Udp" --direction "Inbound" --description "Allow SQL Server Port 1434"
+
+
+# Create a virtual network card with the public IP address and network security group.
+paramNetworkInterface="nic-01-vm-shared-$RANDOM"
+az network nic create \
+  --resource-group "$paramResourceGroup" \
+  --name "$paramNetworkInterface" \
+  --vnet-name "$paramVirtualNetwork" \
+  --subnet "$paramNetworkSubnetConfig" \
+  --network-security-group "$paramNetworkSecurityGroup" \
+  --public-ip-address "$paramPublicIpAddress" \
+  --location "$paramLocation" --tags $paramTags
+
+
+# --------------- 5 --------------- 
+echo "---> Create virtual machine"
+# You should choose machine names that are meaningful and consistent, so you can easily identify what the VM does.
+# A good convention is to include the following information in the name: Environment (dev, prod, QA), 
+# Location (uw for US West, ue for US East), Instance (01, 02), Product or Service name and Role (sql, web, messaging)
+paramVMName="vmserver$RANDOM" # Linux VM names may only contain 1-64 letters, numbers, '.', and '-'.
+# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
+paramVMSize="Standard_D2S_V3" # Check available sizes: az vm list-sizes --location "$paramLocation"
+# Get Source image information: 
+# az vm image list-skus --location "westus" --offer "UbuntuServer" --publisher "Canonical" --output table
+# List popular images: az vm image list --output table - https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage
+paramPublisher="Canonical"
+paramOffer="0001-com-ubuntu-server-focal"
+paramSkus="20_04-lts-gen2"
+paramVersion="latest"
+# Authentication
+paramVMusername="azureuser"
+paramVMPassword="ChangeThisPassword@123"
+paramAuthenticationType="all" # {all, password, ssh}
+
+az vm create \
+  --resource-group "$paramResourceGroup" \
+  --name "$paramVMName" \
+  --computer-name "$paramVMName" \
+  --nics "$paramNetworkInterface" \
+  --admin-password "$paramVMPassword" \
+  --admin-username "$paramVMusername" \
+  --authentication-type "$paramAuthenticationType" \
+  --image "$paramPublisher:$paramOffer:$paramSkus:$paramVersion" \
+  --os-disk-name "osdisk-$paramVMName" \
+  --size "$paramVMSize" \
+  --location "$paramLocation" \
+  --tags $paramTags
+
+echo "---> Update SSH authentication key"
+# https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/vmaccess
+az vm user update \
+  --resource-group "$paramResourceGroup" \
+  --name "$paramVMName" \
+  --username "$paramVMusername" \
+  --ssh-key-value ~/.ssh/id_rsa.pub
+
+az vm show --resource-group "$paramResourceGroup" --name "$paramVMName"
+
+
+# --------------- 6 --------------- 
+echo "---> Connect to the VM and install/configure mssql"
+echo "---> Connect to Virtual Machine '$paramVMName'"
+echo "---> Username is: $paramVMusername"
+echo "---> Public IP address is: "
+# ALTERNATIVE METHOD: az vm list-ip-addresses --resource-group "$paramResourceGroup" --name "$paramVMName"
+az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv
+echo "---> GET PUBLIC IP ADDRESS:"
+echo "---> az network public-ip show --resource-group $paramResourceGroup --name $paramPublicIpAddress --query \"{address: ipAddress}\"" 
+VMIpAddress=$(az network public-ip show --resource-group "$paramResourceGroup" --name "$paramPublicIpAddress" --query "{address: ipAddress}" --output tsv)
+echo "---> Enter the following command: ssh $paramVMusername@$VMIpAddress -o StrictHostKeyChecking=no"
+
+echo "---> Connect to the server at $VMIpAddress and installs SQL Server command-line tools"
+cat setup-mssql.sh | ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no
+# FOR PRODUCTION ENV. USE THE OFFICIAL TOOL: The Custom Script Extension downloads and runs scripts on Azure virtual machines.
+# This extension is useful for post-deployment configuration, software installation, or any other configuration/management task.
+# https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux
+# https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows
+
+echo "---> Connect through SSH with the following command:"
+echo "ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no"
+
+echo "---> Connect to the Database server using SQL Server Management Studio (SSIS) at: ${VMIpAddress} with user 'sa' and the password configured in the script."
+
+# Maintenance commands
+# az vm show --resource-group "$paramResourceGroup" --name "$paramVMName"
+# az vm restart --resource-group "$paramResourceGroup" --name "$paramVMName"
+# az vm stop --resource-group "$paramResourceGroup" --name "$paramVMName"
+# az vm delete --resource-group "$paramResourceGroup" --name "$paramVMName"
