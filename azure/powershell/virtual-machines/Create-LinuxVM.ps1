@@ -176,6 +176,9 @@ $cred = New-Object System.Management.Automation.PSCredential ("$paramVMusername"
 # Get-AzVMImageSku -Location "westus" -PublisherName "OpenLogic" -Offer "CentOs"
 # List all Publishers: Get-AzVMImagePublisher -Location "westus" | Select PublisherName
 # List all offers for Publisher: Get-AzVMImageOffer -Location "westus" -PublisherName "SUSE" | Select Offer
+# Export the list to a CSV file:
+# $results = Get-AzVMImageSku -Location "westus" -PublisherName "Canonical" -Offer "UbuntuServer"
+# $results | Select-Object -Property Skus, Offer, PublisherName, Location, Id | Export-Csv -Path VMImageSkus.csv
 $paramPublisher = "Canonical"
 $paramOffer = "0001-com-ubuntu-server-focal"
 $paramSkus = "20_04-lts-gen2"
