@@ -1,6 +1,11 @@
 # Install Docker Engine on Ubuntu
 # https://docs.docker.com/engine/install/ubuntu/
 
+# Where docker volumes are located? https://docs.docker.com/storage/volumes/
+# Folder location in Linux: /var/lib/docker/volumes
+# Folder location in Docker Desktop (Windows):
+# \\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes\
+
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
   if [ "$1" == "" ]; then
