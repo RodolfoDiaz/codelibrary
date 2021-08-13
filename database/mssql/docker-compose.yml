@@ -5,7 +5,8 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker-compose down
 #    (use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to http://localhost:8080/ and connect to system 'MS SQL (beta)' with 'sa' user ID.
+# 3- Browse to http://localhost:8080/ and connect to system 'MS SQL (beta)' with 'sa' user ID or 
+#    connect using SSMS or Azure Data Studio to server 'localhost' - SQL Server Authentication with 'sa' user ID.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
@@ -17,8 +18,8 @@
 services:
   sqlserverdb:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    user: '0:0'
     container_name: mssql_container1
+    restart: always
     ports:
       # <Port Exposed> : <Server Port running inside the container>
       - ${DB_SRV_PORT}:1433
