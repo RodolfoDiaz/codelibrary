@@ -5,13 +5,13 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker-compose down
 #    (use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to: http://localhost:8080/ and add a new server in PgAdmin with Host name 'postgresdbsrv' or 
-#    browse to: http://localhost:8081/ and connect to system 'Postgres' with 'postgres' user ID.
+# 3- Browse to: http://localhost:8080/ and select Create - Server in PgAdmin, Host name "${DB_HOST_NAME}" or 
+#    browse to: http://localhost:8081/ and connect to system 'PostgreSQL' with "${DB_ROOT_USER}" user ID.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
 
-# Example taken from https://github.com/khezen/compose-postgres
+# https://www.postgresql.org/
 # https://hub.docker.com/_/postgres
 # https://hub.docker.com/r/dpage/pgadmin4/
 # https://hub.docker.com/_/adminer/
@@ -41,7 +41,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}  # TODO: change this to a secure password
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      # Configure authentication for SERVER mode or DESKTOP mode
+      #PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
        - pgAdminFiles:/var/lib/pgadmin
     ports:
