@@ -1,11 +1,11 @@
 # --- TO EXECUTE THIS FILE ---
-# 1- To create and start containers use the following command:
+# 1- Use the following command to create and start containers:
 #    docker-compose up
-#    (you can use the "-d" argument to run in "detached" mode).
+#    (use the "-d" argument to run in "detached" mode).
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker-compose down
-#    (you can use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to http://localhost:8080/ or http://localhost:8081/ and connect with either 'root' or 'testUser' user IDs.
+#    (use the "-v" argument to remove "volumes" created by docker-compose up).
+# 3- Browse to http://localhost:8080/ or http://localhost:8081/ and connect with either 'root' or '${DB_USER}' user IDs.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
@@ -14,7 +14,6 @@
 # https://hub.docker.com/_/mysql
 # https://hub.docker.com/r/phpmyadmin/phpmyadmin/
 # https://hub.docker.com/_/adminer/
-version: '3.9'
 
 services:
   mysqldb:
@@ -24,15 +23,15 @@ services:
     hostname: mysqldbsrv
     restart: always
     environment:
-      MYSQL_DATABASE: MyTestDB
-      MYSQL_USER: testUser
-      MYSQL_PASSWORD: userPwd1
-      MYSQL_ROOT_PASSWORD: rootPwd1 # TODO: change this to a secure password
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_USER_PW}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PW}" # TODO: change this to a secure password
     ports:
       # <Port Exposed> : <MySQL Port running inside the container>
-      - 3306:3306
+      - ${DB_SRV_PORT}:3306
     volumes:
-      - myTestData:/var/lib/mysql
+      - dbfiles:/var/lib/mysql
     networks:
       - docknet
   phpmyadmin:
@@ -44,7 +43,7 @@ services:
       PMA_HOST: mysqldb
       PMA_ARBITRARY: 1
     ports:
-      - 8080:80
+      - ${WEB_UI_1_PORT}:80
     networks:
       - docknet
   adminer:
@@ -57,12 +56,12 @@ services:
       ADMINER_DEFAULT_SERVER: mysqldb
       ADMINER_DESIGN: mvt
     ports:
-      - 8081:8080
+      - ${WEB_UI_2_PORT}:8080
     networks:
       - docknet
 # Names our volume
 volumes:
-  myTestData:
+  dbfiles:
 
 networks:
   docknet:

@@ -1,18 +1,17 @@
 # --- TO EXECUTE THIS FILE ---
-# 1- To create and start containers use the following command:
+# 1- Use the following command to create and start containers:
 #    docker-compose up
-#    (you can use the "-d" argument to run in "detached" mode).
+#    (use the "-d" argument to run in "detached" mode).
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker-compose down
-#    (you can use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to http://localhost:8081/ and connect with 'admin' user ID.
+#    (use the "-v" argument to remove "volumes" created by docker-compose up).
+# 3- Browse to http://localhost:8081/ and connect with '${DB_ROOT_USER}' user ID.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
 
 # https://hub.docker.com/_/mongo
 # https://hub.docker.com/_/mongo-express
-version: "3.9"
 
 services:
   mongodb:
@@ -21,17 +20,18 @@ services:
     container_name: mongodb_container1
     hostname: mongodbsrv
     ports:
-      - 27017:27017
+      # <Port Exposed> : <Port running inside the container>
+      - ${DB_SRV_PORT}:27017
     environment:
-      - MONGO_INITDB_DATABASE=test
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=adminPwd1 # TODO: change this to a secure password
+      - MONGO_INITDB_DATABASE="${DB_NAME}"
+      - MONGO_INITDB_ROOT_USERNAME="${DB_ROOT_USER}"
+      - MONGO_INITDB_ROOT_PASSWORD="${DB_ROOT_PW}" # TODO: change this to a secure password
     volumes:
       # seeding scripts
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d
       # named volumes
-      - dbTestData:/data/db
-      - dbConfigData:/data/configdb
+      - dbfiles:/data/db
+      - configdb:/data/configdb
     networks:
       - dbTestNetwork
 
@@ -40,12 +40,12 @@ services:
     restart: always
     container_name: mongoexpress_container1
     ports:
-      - 8081:8081
+      - ${WEB_UI_1_PORT}:8081
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongodb_container1
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=adminPwd1
-      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ADMINUSERNAME="${DB_ROOT_USER}"
+      - ME_CONFIG_MONGODB_ADMINPASSWORD="${DB_ROOT_PW}"
+      - ME_CONFIG_MONGODB_PORT=${DB_SRV_PORT}
     networks:
       - dbTestNetwork
     # links:
@@ -53,8 +53,8 @@ services:
 
 volumes:
   # default dir on Ubuntu: /var/lib/docker/volumes
-  dbTestData:
-  dbConfigData:
+  dbfiles:
+  configdb:
 
 networks:
   dbTestNetwork:

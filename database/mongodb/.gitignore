@@ -1,2 +1,3 @@
 data/
 mongod
+mongo-entrypoint
