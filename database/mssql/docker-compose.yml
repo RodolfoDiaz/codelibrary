@@ -1,0 +1,61 @@
+# --- TO EXECUTE THIS FILE ---
+# 1- Use the following command to create and start containers:
+#    docker-compose up
+#    (use the "-d" argument to run in "detached" mode).
+# 2- To stop and remove containers, networks, images, and volumes:
+#    docker-compose down
+#    (use the "-v" argument to remove "volumes" created by docker-compose up).
+# 3- Browse to http://localhost:8080/ and connect to system 'MS SQL (beta)' with 'sa' user ID.
+
+# https://docs.docker.com/compose/reference/
+# https://docs.docker.com/compose/overview/
+
+# https://hub.docker.com/_/microsoft-mssql-server
+# https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker
+# https://hub.docker.com/_/adminer/
+
+services:
+  sqlserverdb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: '0:0'
+    container_name: mssql_container1
+    ports:
+      # <Port Exposed> : <Server Port running inside the container>
+      - ${DB_SRV_PORT}:1433
+    environment:
+      ACCEPT_EULA: "${ACCEPT_EULA}"
+      SA_PASSWORD: "${DB_ROOT_PW}"
+      MSSQL_PID: "${MSSQL_EDITION}"
+    volumes:
+      # Persist your data (uncomment option 1 or 2)
+      # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-docker-container-configure
+      # 1- Mount a host directory as data volume:
+      # - ${DB_FOLDER}/sqldata:/var/opt/mssql/data
+      # - ${DB_FOLDER}/sqllog:/var/opt/mssql/log
+      # - ${DB_FOLDER}/secrets:/var/opt/mssql/secrets
+      # - ${DB_FOLDER}/sqlbackup:/var/opt/mssql/backup
+      # 2- Use data volume containers:
+      - sqlvolume:/var/opt/mssql
+    networks:
+      - docknet
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer_container1
+    hostname: adminer1
+    restart: always
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: mssql
+      ADMINER_DEFAULT_SERVER: sqlserverdb
+      ADMINER_DESIGN: mvt
+    ports:
+      - ${WEB_UI_1_PORT}:8080
+    networks:
+      - docknet
+
+volumes:
+  sqlvolume:
+
+networks:
+  docknet:
+    driver: bridge
