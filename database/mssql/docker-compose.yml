@@ -5,8 +5,8 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker-compose down
 #    (use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to http://localhost:8080/ and connect to system 'MS SQL (beta)' with 'sa' user ID or 
-#    connect using SSMS or Azure Data Studio to server 'localhost' - SQL Server Authentication with 'sa' user ID.
+# 3- Browse to http://localhost:8080/ and connect to system "MS SQL (beta)" with "sa" user ID or 
+#    connect using SSMS or Azure Data Studio to server "localhost" - SQL Server Authentication with "sa" user ID.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
@@ -15,6 +15,7 @@
 # https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker
 # https://hub.docker.com/_/adminer/
 
+version: "3.7"  # https://docs.docker.com/compose/compose-file/
 services:
   sqlserverdb:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -25,7 +26,7 @@ services:
       - ${DB_SRV_PORT}:1433
     environment:
       ACCEPT_EULA: "${ACCEPT_EULA}"
-      SA_PASSWORD: "${DB_ROOT_PW}"
+      SA_PASSWORD: "${DB_ROOT_PW}" # Reset the password stored in the .env file
       MSSQL_PID: "${MSSQL_EDITION}"
     volumes:
       # Persist your data (uncomment option 1 or 2)

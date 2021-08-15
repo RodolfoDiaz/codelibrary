@@ -6,7 +6,7 @@
 #    docker-compose down
 #    (use the "-v" argument to remove "volumes" created by docker-compose up).
 # 3- Browse to: http://localhost:8080/ and select Create - Server in PgAdmin, Host name "${DB_HOST_NAME}" or 
-#    browse to: http://localhost:8081/ and connect to system 'PostgreSQL' with "${DB_ROOT_USER}" user ID.
+#    browse to: http://localhost:8081/ and connect to system "PostgreSQL" with "${DB_ROOT_USER}" user ID.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
@@ -16,6 +16,7 @@
 # https://hub.docker.com/r/dpage/pgadmin4/
 # https://hub.docker.com/_/adminer/
 
+version: "3.7"  # https://docs.docker.com/compose/compose-file/
 services:
   postgresdb:
     container_name: postgres_container1
@@ -24,7 +25,7 @@ services:
     environment:
       POSTGRES_DB: "${DB_NAME}"
       POSTGRES_USER: "${DB_ROOT_USER}"
-      POSTGRES_PASSWORD: "${DB_ROOT_PW}"
+      POSTGRES_PASSWORD: "${DB_ROOT_PW}" # Reset the password stored in the .env file
       PGDATA: /var/lib/postgresql/data
     volumes:
        - dbfiles:/var/lib/postgresql/data
@@ -40,9 +41,9 @@ services:
     hostname: pgadmin_host1
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}  # TODO: change this to a secure password
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD} # Reset the password stored in the .env file
       # Configure authentication for SERVER mode or DESKTOP mode
-      #PGADMIN_CONFIG_SERVER_MODE: 'False'
+      #PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
        - pgAdminFiles:/var/lib/pgadmin
     ports:

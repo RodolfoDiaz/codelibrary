@@ -28,7 +28,7 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # -*- Install Docker Engine -*-
 
     sudo apt update
-    sudo apt install docker-ce docker-ce-cli containerd.io
+    sudo apt install docker-ce docker-ce-cli containerd.io docker-compose
 
     # -*- Start the service -*-
     sudo service docker start
@@ -73,7 +73,7 @@ if [ "$1" == "c" ]; then
     # sudo apt purge docker docker-engine docker.io containerd runc
 
     echo "---> Uninstall the Docker Engine, CLI, and Containerd packages."
-    sudo apt purge docker-ce docker-ce-cli containerd.io
+    sudo apt purge docker-ce docker-ce-cli containerd.io docker-compose
     echo "---> Delete all images, containers, and volumes."
     sudo rm -rf /var/lib/docker
     sudo rm -rf /var/lib/containerd

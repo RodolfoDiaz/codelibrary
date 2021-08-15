@@ -5,7 +5,7 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker-compose down
 #    (use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to http://localhost:8081/ and connect with '${DB_ROOT_USER}' user ID.
+# 3- Browse to http://localhost:8080/ and connect with "${DB_ROOT_USER}" user ID.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
@@ -13,6 +13,7 @@
 # https://hub.docker.com/_/mongo
 # https://hub.docker.com/_/mongo-express
 
+version: "3.7"  # https://docs.docker.com/compose/compose-file/
 services:
   mongodb:
     image: mongo:latest
@@ -25,7 +26,7 @@ services:
     environment:
       - MONGO_INITDB_DATABASE="${DB_NAME}"
       - MONGO_INITDB_ROOT_USERNAME="${DB_ROOT_USER}"
-      - MONGO_INITDB_ROOT_PASSWORD="${DB_ROOT_PW}" # TODO: change this to a secure password
+      - MONGO_INITDB_ROOT_PASSWORD="${DB_ROOT_PW}" # Reset the password stored in the .env file
     volumes:
       # seeding scripts
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d

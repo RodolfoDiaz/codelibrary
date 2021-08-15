@@ -5,7 +5,7 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker-compose down
 #    (use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to http://localhost:8080/ or http://localhost:8081/ and connect with either 'root' or '${DB_USER}' user IDs.
+# 3- Browse to http://localhost:8080/ or http://localhost:8081/ and connect with either "root" or "${DB_USER}" user IDs.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
@@ -15,6 +15,7 @@
 # https://hub.docker.com/r/phpmyadmin/phpmyadmin/
 # https://hub.docker.com/_/adminer/
 
+version: "3.7"  # https://docs.docker.com/compose/compose-file/
 services:
   mysqldb:
     image: mysql:latest
@@ -25,8 +26,8 @@ services:
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_USER: "${DB_USER}"
-      MYSQL_PASSWORD: "${DB_USER_PW}"
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PW}" # TODO: change this to a secure password
+      MYSQL_PASSWORD: "${DB_USER_PW}" # Reset the password stored in the .env file
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PW}" # Reset the password stored in the .env file
     ports:
       # <Port Exposed> : <MySQL Port running inside the container>
       - ${DB_SRV_PORT}:3306
