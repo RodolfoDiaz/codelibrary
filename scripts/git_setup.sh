@@ -9,12 +9,23 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
     sudo apt install git -y
+    
+    # Git Credential Manager Core - https://github.com/microsoft/Git-Credential-Manager-Core
+    # Install the latest .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
+    sudo apt install pass
+    wget "https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.567/gcmcore-linux_amd64.2.0.567.18224.deb" -O /tmp/gcmcore.deb   
+    sudo dpkg -i /tmp/gcmcore.deb
+    git-credential-manager-core configure
+    git config --global credential.credentialStore gpg
+    gpg --gen-key
+    #pass init <gpg-id>
+    
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     echo "Download Git for 64 bits Windows NT platform - https://git-scm.com/download/win"
     # Credential helper alleviates the need for you to continually enter your credentials when interacting with Github
-    # https://github.com/Microsoft/Git-Credential-Manager-for-Windows
+    # https://github.com/microsoft/Git-Credential-Manager-Core
 fi
 # Configuration settings file is located at ~/.gitconfig
 git config --global user.email "rodolfodc@hotmail.com"
