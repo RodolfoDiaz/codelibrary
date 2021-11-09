@@ -10,7 +10,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
     sudo apt install git -y
     
-    # Git Credential Manager Core - https://github.com/microsoft/Git-Credential-Manager-Core
+    # ---> Git Credential Manager Core for Linux - https://github.com/microsoft/Git-Credential-Manager-Core
     # Install the latest .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
     sudo apt install pass
     wget "https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.567/gcmcore-linux_amd64.2.0.567.18224.deb" -O /tmp/gcmcore.deb   
@@ -19,6 +19,9 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     git config --global credential.credentialStore gpg
     gpg --gen-key
     #pass init <gpg-id>
+
+    # ---> You can also try configuring GCM with Git on Windows Subsystem for Linux (WSL)
+    # https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git
     
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
