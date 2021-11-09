@@ -5,21 +5,21 @@ if [ "$(uname)" == "Darwin" ]; then
     brew install node
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Install Node.js using APT
-    # curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    # curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
     # sudo apt install -y nodejs
     
     # Install Node Version Manager - https://github.com/nvm-sh/nvm
     if ! [ -d ~/.nvm/ ]; then
         cd ~
-        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
     fi
 
     source ~/.nvm/nvm.sh
 
     # Install Node.js and select the latest LTS version as default
     nvm install --lts --latest-npm
-    nvm use --lts
     nvm set-colors cgYmW
+    nvm use --lts
 
     # Install Latest version:
     # nvm install node --reinstall-packages-from=node
