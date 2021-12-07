@@ -55,5 +55,5 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     #--- Reload your system’s environment variables:
     source /etc/environment
     #--- Verify the variable was set correctly:
-    echo $JAVA_HOME
+    echo "Your JAVA_HOME environment variable points to: $JAVA_HOME"
 fi
