@@ -35,6 +35,18 @@ git config --global user.email "rodolfodc@hotmail.com"
 git config --global user.name "RodolfoDiaz"
 git config --global core.editor "nano"
 
+# ---- Git Credentials Manager ----
+# https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage
+
+# Using this command will store your passwords unencrypted on disk, protected only by filesystem permissions. (NOT RECOMMENDED)
+# git config --global credential.helper store
+
+# This command caches credentials in memory for use by future Git programs.
+git config --global credential.helper 'cache --timeout=300'
+
+# Use separate credentials for different repositories on github.com
+git config --global credential.github.com.useHttpPath true
+
 # Force git to use https:// instead of git:// protocol, because git protocol is blocked by the some firewalls.
 # git config --global --add url.https://github.com.insteadof git://github.com
 # git config --global url."https://github.com/".insteadOf git@github.com:
