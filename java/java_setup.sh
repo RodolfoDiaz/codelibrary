@@ -35,17 +35,23 @@ if [ "$(uname)" == "Darwin" ]; then
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Java in Ubuntu Linux"
-    # First, update the package index.
-    sudo apt update && sudo apt upgrade
+    #--- First, update the package index.
+    sudo add-apt-repository ppa:openjdk-r/ppa
+    sudo apt update
+    #--- To install an specific version:
+    # sudo apt install openjdk-8-jdk
+    # sudo apt install openjdk-11-jdk
+    #--- The following commands install the default JRE and JDK in OpenJDK:
     sudo apt install default-jre -y
     java -version
     sudo apt install default-jdk -y
     javac -version
-    # Set Java Home Environment
-    # To set the variable for your system:
+    sudo apt-cache search openjdk
+    #--- Set Java Home Environment
+    #--- To set the variable for your system:
     echo "JAVA_HOME=$(which java)" | sudo tee -a /etc/environment
-    # Reload your system’s environment variables:
+    #--- Reload your system’s environment variables:
     source /etc/environment
-    # Verify the variable was set correctly:
+    #--- Verify the variable was set correctly:
     echo $JAVA_HOME
 fi
