@@ -39,14 +39,16 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     sudo add-apt-repository ppa:openjdk-r/ppa
     sudo apt update
     #--- To install an specific version:
+    # sudo apt install openjdk-8-jre
     # sudo apt install openjdk-8-jdk
+    #
+    # sudo apt install openjdk-11-jre
     # sudo apt install openjdk-11-jdk
-    #--- The following commands install the default JRE and JDK in OpenJDK:
+    #--- The following commands install the default JRE and JDK based on OpenJDK:
     sudo apt install default-jre -y
     java -version
     sudo apt install default-jdk -y
     javac -version
-    sudo apt-cache search openjdk
     #--- Set Java Home Environment
     #--- To set the variable for your system:
     echo "JAVA_HOME=$(which java)" | sudo tee -a /etc/environment
