@@ -6,14 +6,18 @@ if [ "$(uname)" == "Darwin" ]; then
     # This little one liner allows us to update Git and use the Homebrew installation instead of our Native OS’.
     brew install git
     brew upgrade git
+
+    # On Mac, you can use osxkeychain helper. Use the following command on your terminal:
+    git config --global credential.helper osxkeychain
+
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
     sudo apt install git -y
     
     # ---> Git Credential Manager Core for Linux - https://github.com/microsoft/Git-Credential-Manager-Core
-    # Install the latest .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
+    # Install the latest gcmcore-linux .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
     sudo apt install pass
-    wget "https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.567/gcmcore-linux_amd64.2.0.567.18224.deb" -O /tmp/gcmcore.deb   
+    wget "https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.567/gcmcore-linux_amd64.2.0.567.18224.deb" -O /tmp/gcmcore.deb
     sudo dpkg -i /tmp/gcmcore.deb
     git-credential-manager-core configure
     git config --global credential.credentialStore gpg
@@ -27,25 +31,24 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     echo "Download Git for 64 bits Windows NT platform - https://git-scm.com/download/win"
-    # Credential helper alleviates the need for you to continually enter your credentials when interacting with Github
+    # ---- Git Credentials Manager ----
     # https://github.com/microsoft/Git-Credential-Manager-Core
+    # https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage
+
+    # Using this command will store your passwords unencrypted on disk, protected only by filesystem permissions. (NOT RECOMMENDED)
+    # git config --global credential.helper store
+
+    # This command caches credentials in memory for use by future Git programs.  A pop-up message will prompt for credentials.
+    git config --global credential.helper 'cache --timeout=300'
+
+    # Use separate credentials for different repositories on github.com
+    git config --global credential.github.com.useHttpPath true
+
 fi
 # Configuration settings file is located at ~/.gitconfig
 git config --global user.email "rodolfodc@hotmail.com"
 git config --global user.name "RodolfoDiaz"
 git config --global core.editor "nano"
-
-# ---- Git Credentials Manager ----
-# https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage
-
-# Using this command will store your passwords unencrypted on disk, protected only by filesystem permissions. (NOT RECOMMENDED)
-# git config --global credential.helper store
-
-# This command caches credentials in memory for use by future Git programs.
-git config --global credential.helper 'cache --timeout=300'
-
-# Use separate credentials for different repositories on github.com
-git config --global credential.github.com.useHttpPath true
 
 # Force git to use https:// instead of git:// protocol, because git protocol is blocked by the some firewalls.
 # git config --global --add url.https://github.com.insteadof git://github.com
