@@ -38,8 +38,11 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     # Using this command will store your passwords unencrypted on disk, protected only by filesystem permissions. (NOT RECOMMENDED)
     # git config --global credential.helper store
 
+    # If you use wincred for credential.helper, git is using the standard Windows Credential Manager to store your credentials.
+    git config --global credential.helper wincred
+
     # This command caches credentials in memory (https://git-scm.com/docs/git-credential-cache).  A pop-up message will prompt for credentials.
-    git config --global credential.helper 'cache --timeout=3600'
+    # git config --global credential.helper 'cache --timeout=3600'
 
     # Use separate credentials for different repositories on github.com
     git config --global credential.github.com.useHttpPath true
