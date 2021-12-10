@@ -1,4 +1,5 @@
 # Install Git - https://git-scm.com
+# Git Credential Manager - https://github.com/microsoft/Git-Credential-Manager-Core
 if [ "$(uname)" == "Darwin" ]; then
     echo "Install Git in macOS"
     # You need to change the '~/.bash_profile' file, add the following line:
@@ -12,9 +13,10 @@ if [ "$(uname)" == "Darwin" ]; then
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "Install Git in Linux"
+    sudo add-apt-repository ppa:git-core/ppa -y
+    sudo apt-get update
     sudo apt install git -y
     
-    # ---> Git Credential Manager Core for Linux - https://github.com/microsoft/Git-Credential-Manager-Core
     # Install the latest gcmcore-linux .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
     sudo apt install pass
     wget "https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.567/gcmcore-linux_amd64.2.0.567.18224.deb" -O /tmp/gcmcore.deb
@@ -31,18 +33,17 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     echo "Download Git for 64 bits Windows NT platform - https://git-scm.com/download/win"
-    # ---- Git Credentials Manager ----
-    # https://github.com/microsoft/Git-Credential-Manager-Core
-    # https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage
+    # ---- Git install package for Windows already includes a copy of Git Credentials Manager ----
 
     # Using this command will store your passwords unencrypted on disk, protected only by filesystem permissions. (NOT RECOMMENDED)
     # git config --global credential.helper store
 
-    # This command caches credentials in memory for use by future Git programs.  A pop-up message will prompt for credentials.
-    git config --global credential.helper 'cache --timeout=300'
+    # This command caches credentials in memory (https://git-scm.com/docs/git-credential-cache).  A pop-up message will prompt for credentials.
+    git config --global credential.helper 'cache --timeout=3600'
 
     # Use separate credentials for different repositories on github.com
     git config --global credential.github.com.useHttpPath true
+    git config --global credential.https://dev.azure.com.useHttpPath true
 
 fi
 # Configuration settings file is located at ~/.gitconfig
