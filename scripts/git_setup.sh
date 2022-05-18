@@ -19,11 +19,15 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     
     # Install the latest gcmcore-linux .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
     sudo apt install pass
-    wget "https://github.com/microsoft/Git-Credential-Manager-Core/releases/download/v2.0.567/gcmcore-linux_amd64.2.0.567.18224.deb" -O /tmp/gcmcore.deb
+    wget "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.696/gcmcore-linux_amd64.2.0.696.deb" -O /tmp/gcmcore.deb
     sudo dpkg -i /tmp/gcmcore.deb
     git-credential-manager-core configure
     git config --global credential.credentialStore gpg
+    # The following command will ask for the user name and email address.
     gpg --gen-key
+    # Get the gpg-id value (created in previous step)
+    gpg --list-keys
+    # Initialize the Password Store
     #pass init <gpg-id>
 
     # ---> You can also try configuring GCM with Git on Windows Subsystem for Linux (WSL)
