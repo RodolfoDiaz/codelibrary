@@ -19,6 +19,6 @@
   "homepage": "https://github.com/RodolfoDiaz/codelibrary#readme",
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "http-server": "^0.11.1"
+    "http-server": "^14.1.0"
   }
 }
