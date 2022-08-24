@@ -6,6 +6,9 @@ if [ "$(uname)" != "Darwin" ]; then
   exit
 fi
 
+# Update MacOS with the latest updates
+softwareupdate --all --install --force
+
 if brew ls --versions > /dev/null; then
   echo "Homebrew is installed, updating..."
   brew update && brew upgrade && brew cleanup
