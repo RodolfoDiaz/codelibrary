@@ -84,7 +84,11 @@ recsum(5)
 
 Note how every recursive call has to complete before the JavaScript interpreter begins to actually do the work of calculating the sum.
 
-Here's a tail-recursive version of the same function:
+### Tail Recursive functions
+
+Tail recursion is defined as a recursive function in which the recursive call is the last statement that is executed by the function. So basically nothing is left to execute after the recursion call.
+
+Here's a tail-recursive version of the same function above:
 
 ```
 function tailrecsum(x, running_total = 0) {
@@ -110,7 +114,7 @@ tailrecsum(0, 15)
 
 In the tail-recursive case, with each evaluation of the recursive call, the running_total is updated.
 
-Note: The original answer used examples from Python. These have been changed to JavaScript, since Python interpreters don't support tail call optimization. However, while tail call optimization is part of the ECMAScript 2015 spec, most JavaScript interpreters don't support it.
+**Note**: However, while tail call optimization is part of the ECMAScript 2015 spec, most JavaScript interpreters don't support it.
 
 ## Example: Fibonacci
 
