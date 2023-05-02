@@ -11,7 +11,7 @@ paramServerPassword="ChangeThisPassword@123"
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 
 # Register the Microsoft SQL Server Ubuntu repository for SQL Server 2019:
-sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)"
 
 # Run the following commands to install SQL Server:
 sudo apt-get update

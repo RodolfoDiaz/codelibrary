@@ -9,7 +9,7 @@ fi
 if [ -n "$(uname -a | grep Ubuntu)" ]; then
   echo "---> Install sqlcmd and bcp the SQL Server command-line tools on Ubuntu Linux"
   curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-  curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+  curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
   sudo apt update
   sudo ACCEPT_EULA=Y apt install -y mssql-tools unixodbc-dev
   echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile

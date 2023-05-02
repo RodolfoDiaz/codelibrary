@@ -222,3 +222,11 @@ echo "ssh ${paramVMusername}@${VMIpAddress} -o StrictHostKeyChecking=no"
 # az vm restart --resource-group "$paramResourceGroup" --name "$paramVMName"
 # az vm stop --resource-group "$paramResourceGroup" --name "$paramVMName"
 # az vm delete --resource-group "$paramResourceGroup" --name "$paramVMName"
+
+# VM CUSTOMIZATION
+# After you deploy a Virtual Machine you typically need to make some changes before it's ready to use. This is something you can do manually.
+# The az vm create command is used to create a virtual machine in Azure using the Azure CLI. It provides a number of options, 
+# including the ability to specify Custom Script Extensions to be run on the virtual machine after deployment.
+# Tutorial - How to use cloud-init to customize a Linux virtual machine in Azure on first boot - https://learn.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-automate-vm-deployment
+# Use the Azure Custom Script Extension Version 2 with Linux virtual machines - https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux
+# cloud-init support for virtual machines in Azure - https://learn.microsoft.com/en-us/azure/virtual-machines/linux/using-cloud-init

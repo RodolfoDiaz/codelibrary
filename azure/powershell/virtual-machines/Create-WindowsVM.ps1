@@ -255,3 +255,11 @@ Write-Host "---> Use Microsoft Remote Desktop client. In Windows you can use the
 # Restart-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
 # Stop-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
 # Remove-AzVM -Name $vm.Name -ResourceGroup $vm.ResourceGroupName
+
+# VM CUSTOMIZATION
+# After you deploy a Virtual Machine you typically need to make some changes before it's ready to use. This is something you can do manually or you could use
+# Remote PowerShell to automate the configuration of your VM after deployment for example.
+# But also there's a third alternative available allowing you customize your VM: the Custom Script Extension.
+# You need to configure a SetupComplete.cmd batch file in the %windir%\setup\scripts directory
+# Add a Custom Script to Windows Setup - https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/add-a-custom-script-to-windows-setup
+# Custom Script Extension for Windows - https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows
