@@ -7,32 +7,42 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     # Install .NET in Linux
     # https://learn.microsoft.com/en-us/dotnet/core/install/linux
 
-    # Get Ubuntu version
-    declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi)
-
-    # Download Microsoft signing key and repository
-    wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-
-    # Install Microsoft signing key and repository
-    sudo dpkg -i packages-microsoft-prod.deb
-
-    # Clean up
-    rm packages-microsoft-prod.deb
-
-    # Update packages
+    sudo snap remove dotnet-sdk
+    sudo apt remove 'dotnet*'
+    sudo apt remove 'aspnetcore*'
+    sudo apt remove 'netstandard*'
+    sudo rm /etc/apt/sources.list.d/microsoft-prod.list
+    sudo rm /etc/apt/sources.list.d/microsoft-prod.list.save
     sudo apt update
+    sudo apt install dotnet7
+    dotnet --info
+
+    # Get Ubuntu version
+    # declare repo_version=$(if command -v lsb_release &> /dev/null; then lsb_release -r -s; else grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"'; fi)
+
+    # # Download Microsoft signing key and repository
+    # wget https://packages.microsoft.com/config/ubuntu/$repo_version/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+
+    # # Install Microsoft signing key and repository
+    # sudo dpkg -i packages-microsoft-prod.deb
+
+    # # Clean up
+    # rm packages-microsoft-prod.deb
+
+    # # Update packages
+    # sudo apt update
 
     # Install the SDK
-    sudo apt update; \
-      sudo apt install -y apt-transport-https && \
-      sudo apt update && \
-      sudo apt install -y dotnet-sdk-7.0
+    # sudo apt update; \
+    #   sudo apt install -y apt-transport-https && \
+    #   sudo apt update && \
+    #   sudo apt install -y dotnet-sdk-7.0
 
-    # Install the runtime
-    sudo apt update; \
-      sudo apt install -y apt-transport-https && \
-      sudo apt update && \
-      sudo apt install -y aspnetcore-runtime-7.0
+    # # Install the runtime
+    # sudo apt update; \
+    #   sudo apt install -y apt-transport-https && \
+    #   sudo apt update && \
+    #   sudo apt install -y aspnetcore-runtime-7.0
 
     # Alternative install for Continuous Integration (CI) scenarios
     # wget -q -O - https://dot.net/v1/dotnet-install.sh | bash -s -- --version 3.1.102
