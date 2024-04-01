@@ -147,3 +147,62 @@ There is no need to create a new user account, so all the settings associated wi
 4. Restart your PC.
 
 The procedure quoted above was provided by Microsoft ([here](https://support.microsoft.com/en-gb/help/2454362/renaming-a-user-account-does-not-automatically-change-the-profile-path)) in relation to a perceived issue with Windows 7, and continues to work in Windows 10.
+
+## How to check Wi-Fi signal strength on Windows 11
+
+
+[More Reference at this link](https://www.windowscentral.com/software-apps/windows-11/how-to-check-wi-fi-signal-strength-on-windows-11)
+
+### Option 1:
+
+To determine the signal quality of your Wi-Fi connection from the Taskbar, use these steps:
+
+1. Click the network icon in the Taskbar.
+2. Click the "Manage Wi-Fi connections" button.
+3. Confirm the number of bars in the wireless icon for the active connection to determine the strength. 
+4. In the icon, one solid bar indicates a weak signal, two bars mean the signal is acceptable, and three and four bars represent the best signal you can get.
+
+### Option 2:
+To check the Wi-Fi signal strength from the Settings app, use these steps:
+
+1. Open Settings.
+2. Click on Network & internet.
+3. Click the Wi-Fi page on the right side.
+4. Check the number of bars in the wireless icon for the active connection to determine how strong the signal is.
+5. After you complete the steps, the wireless icon will give you an indication of the signal quality on Windows 11.
+
+### Option 3:
+To determine the signal quality of a wireless connection, use these steps:
+
+1. Open Control Panel.
+2. Click on Network and Internet.
+3. Click on Network and Sharing Center.
+4. The icon for "connections" will indicate the signal quality under the "View your active networks" section.
+5. (Optional) Click the connection name to check the signal strength and other information.
+6. Once you complete the steps, the legacy Control Panel will reveal the connection signal quality of your computer.
+
+### Option 4:
+
+To find out the Wi-Fi signal strength through PowerShell, use these steps:
+
+1. Open Start.
+2. Search for PowerShell and click the top result to open the app.
+3. Type the following command to check the signal strength and press Enter: 
+    ```
+    (netsh wlan show interfaces) -Match '^\s+Signal' -Replace '^\s+Signal\s+:\s+',''
+    ```
+4. Confirm the signal quality output. (The percentage goes from 0 to 100, where 100 percent indicates excellent signal quality.)
+5. After you complete the steps, the connection is reliable if you see a signal quality between 80 and 100 percent. If the signal is above 70 percent, it's still good for light web browsing. Anything below 60 percent of the signal is weak.
+
+### Option 5:
+
+To confirm the Wi-Fi signal strength from the Command Prompt, use these steps:
+
+1. Open Start.
+2. Search for Command Prompt and click the top result to open the app.
+3. Type the following command to view the Wi-Fi signal strength and press Enter: 
+    ```
+    netsh wlan show interfaces
+    ```
+4. Confirm the signal quality in the "Signal" details. (If the output number equals or exceeds 80, the signal's strength is good.)
+5. Once you complete the steps, Command Prompt will reveal the quality of the signal quality.
