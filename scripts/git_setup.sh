@@ -17,22 +17,22 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     sudo apt-get update
     sudo apt install git -y
     
-    # GPG is pre-installed on most Linux distributions, though you can run the following command to install it.
-    sudo apt install gpg
-    # Install pass (the standard unix password manager) - https://www.passwordstore.org/ 
-    sudo apt install pass
-    # Install the latest gcmcore-linux .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
-    wget "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.696/gcmcore-linux_amd64.2.0.696.deb" -O /tmp/gcmcore.deb
-    sudo dpkg -i /tmp/gcmcore.deb
-    git-credential-manager-core configure
-    git config --global credential.credentialStore gpg
-    # The following command will ask for the user name and email address.
-    gpg --gen-key
-    # Get the gpg-id value (created in previous step)
-    gpg --list-keys
-    keyVal=$(gpg --list-keys | awk '/sub/{if (length($2) > 0) print $2}'); echo "${keyVal##*/}"
-    # Initialize the Password Store
-    pass init $keyVal
+    # # GPG is pre-installed on most Linux distributions, though you can run the following command to install it.
+    # sudo apt install gpg
+    # # Install pass (the standard unix password manager) - https://www.passwordstore.org/ 
+    # sudo apt install pass
+    # # Install the latest gcmcore-linux .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
+    # wget "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.696/gcmcore-linux_amd64.2.0.696.deb" -O /tmp/gcmcore.deb
+    # sudo dpkg -i /tmp/gcmcore.deb
+    # git-credential-manager-core configure
+    # git config --global credential.credentialStore gpg
+    # # The following command will ask for the user name and email address.
+    # gpg --gen-key
+    # # Get the gpg-id value (created in previous step)
+    # gpg --list-keys
+    # keyVal=$(gpg --list-keys | awk '/sub/{if (length($2) > 0) print $2}'); echo "${keyVal##*/}"
+    # # Initialize the Password Store
+    # pass init $keyVal
 
     # ---> You can also try configuring GCM with Git on Windows Subsystem for Linux (WSL)
     # https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git
