@@ -14,7 +14,7 @@ if [ "$(uname)" == "Darwin" ]; then
         # Installing Packages - https://packaging.python.org/tutorials/installing-packages/
         pip3 install --upgrade pip setuptools wheel --user
         echo "Python 3 - Upgrade all outdated packages (to list them: pip3 list --outdated)"
-        pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U
+        pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U
 
         # -- Global Packages --
         pip3 install pylint
@@ -23,7 +23,7 @@ if [ "$(uname)" == "Darwin" ]; then
         pip3 install virtualenv
         # python3 -m virtualenv my_venv_py3
         #
-        # CONFIGURATION - VSCODE: 
+        # CONFIGURATION - VSCODE:
         # settings.json
         # {
         #    "python.pythonPath": "python3",
@@ -52,10 +52,12 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         # -- For Ubuntu Linux
         sudo apt autoremove
         sudo apt update
-        sudo apt install software-properties-common
-        sudo add-apt-repository ppa:deadsnakes/ppa
-        #sudo apt install python3-pip
-        sudo apt install python3.9
+        sudo apt install software-properties-common -y
+        sudo add-apt-repository ppa:deadsnakes/ppa -y
+        sudo apt install python3-pip -y
+
+        # Install Python 3.9 (or any other version) from deadsnakes PPA
+        #sudo apt install python3.9
 
         # Create symbolic link to python3
         # cd /usr/bin/
