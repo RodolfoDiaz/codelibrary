@@ -30,8 +30,8 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         # Install pre-requisite packages.
         sudo apt install -y wget apt-transport-https
         # Download the Microsoft repository GPG keys
-        # wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
-        wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
+        # wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
+        wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb
         # Register the Microsoft repository GPG keys
         sudo dpkg -i packages-microsoft-prod.deb
         # Update the list of products
@@ -40,13 +40,14 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         sudo add-apt-repository universe
         # Install PowerShell
         sudo apt install -y powershell
-        echo "Start PowerShell"
+        rm packages-microsoft-prod.deb
+        echo "Starting PowerShell executable pwsh"
         pwsh
     fi
 
     if [ "$1" == "u" ]; then
         echo "Uninstalling PowerShell on Linux"
-        sudo apt remove powershell
+        sudo apt remove powershell -y
     fi
 
 fi
