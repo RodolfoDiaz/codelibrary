@@ -9,7 +9,13 @@ if ($PSVersionTable.PSEdition -eq 'Desktop' -and (Get-Module -Name AzureRM -List
     Write-Warning -Message ('Az module not installed. Having both the AzureRM and ' +
       'Az modules installed at the same time is not supported.')
 } else {
-    Install-Module -Name Az -AllowClobber -Scope CurrentUser
+    if ($IsWindows) {
+        Get-ExecutionPolicy -List
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+    }
+    Install-Module -Name Az -Repository PSGallery -Force
+    Get-Module -Name Az -ListAvailable
 }
 Write-Host "---> Your PowerShell Modules path is: " -ForegroundColor Green
 $env:PSModulePath
+Write-Host "---> To update Azure PowerShell modules use the following command: Update-Module -Name Az -Force" -ForegroundColor Green
