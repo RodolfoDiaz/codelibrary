@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MathApp.Tests/MathApp.Tests.csproj" />
+  <Project Path="MathApp/MathApp.csproj" />
+</Solution>
