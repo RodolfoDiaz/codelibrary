@@ -1,5 +1,5 @@
-echo "----- Run the Console Application -----"
+echo ">----- Run the Console Application -----<"
 dotnet run --project MathApp
 
-echo "----- Running Unit Tests... -----"
-dotnet test
+echo ">----- Run Unit Test cases... -----<"
+dotnet test --list-tests
