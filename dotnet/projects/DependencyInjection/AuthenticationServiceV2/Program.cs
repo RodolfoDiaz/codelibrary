@@ -14,7 +14,7 @@ public class Program
         // Swap out ANY of these 3 implementations without changing AuthenticationService:
 
         // Case 1: File Logging
-         services.AddSingleton<IAuditLogger>(new FileAuditLogger("audit.log"));
+        services.AddSingleton<IAuditLogger>(new FileAuditLogger("audit.log"));
 
         // Case 2: On-Premise SQL Database Logging
         // services.AddSingleton<IAuditLogger>(new SqlDatabaseAuditLogger("Server=localhost;Database=AuditDB;..."));
@@ -26,6 +26,14 @@ public class Program
         var serviceProvider = services.BuildServiceProvider();
         var authService = serviceProvider.GetRequiredService<AuthenticationService>();
 
-        authService.Authenticate(args[0], args[1]);
+        bool isValid = args.Length > 0 && authService.Authenticate(args[0], args[1]);
+        if (isValid)
+        {
+            Console.WriteLine("Authentication successful.");
+        }
+        else
+        {
+            Console.WriteLine("Authentication failed.");
+        }
     }
 }
