@@ -61,7 +61,7 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
 
 fi
 # Configuration settings file is located at ~/.gitconfig
-git config --global user.email "rodiazca@outlook.com"
+git config --global user.email "{ID}+{username}@users.noreply.github.com"
 git config --global user.name "RodolfoDiaz"
 git config --global core.editor "nano"
 
