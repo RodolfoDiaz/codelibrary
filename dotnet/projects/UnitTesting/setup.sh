@@ -17,3 +17,13 @@ dotnet add MathApp.Tests/MathApp.Tests.csproj reference MathApp/MathApp.csproj
 
 # Add a .gitignore file to the solution
 dotnet new gitignore
+
+# Update NuGet packages for both projects
+# https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet
+
+cd MathApp
+dotnet package update
+
+cd ..
+cd MathApp.Tests
+dotnet package update
