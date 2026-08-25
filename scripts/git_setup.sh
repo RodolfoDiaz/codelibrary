@@ -16,10 +16,10 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     sudo add-apt-repository ppa:git-core/ppa -y
     sudo apt-get update
     sudo apt install git -y
-    
+
     # # GPG is pre-installed on most Linux distributions, though you can run the following command to install it.
     # sudo apt install gpg
-    # # Install pass (the standard unix password manager) - https://www.passwordstore.org/ 
+    # # Install pass (the standard unix password manager) - https://www.passwordstore.org/
     # sudo apt install pass
     # # Install the latest gcmcore-linux .deb package (https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest)
     # wget "https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.696/gcmcore-linux_amd64.2.0.696.deb" -O /tmp/gcmcore.deb
@@ -36,11 +36,14 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
     # ---> You can also try configuring GCM with Git on Windows Subsystem for Linux (WSL)
     # https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git
-    
+
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
     echo "Download Git for 32 bits Windows NT platform - https://git-scm.com/download/win"
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
     echo "Download Git for 64 bits Windows NT platform - https://git-scm.com/download/win"
+
+    winget install --id Git.Git -e --source winget
+
     # ---- Git install package for Windows already includes a copy of Git Credentials Manager ----
 
     # Using this command will store your passwords unencrypted on disk, protected only by filesystem permissions. (NOT RECOMMENDED)
@@ -58,7 +61,7 @@ elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
 
 fi
 # Configuration settings file is located at ~/.gitconfig
-git config --global user.email "rodolfodc@hotmail.com"
+git config --global user.email "rodiazca@outlook.com"
 git config --global user.name "RodolfoDiaz"
 git config --global core.editor "nano"
 
@@ -94,7 +97,7 @@ if [ "$1" == "new" ]; then
     git init
     git remote add origin https://github.com/[your-git-org]/[new-git-repo].git
     git pull origin master
-    echo "My new repository test file" >> test.txt;
+    echo "My new repository test file" >> test.txt
     touch setup.sh
     git add .
     git commit -m "Initial commit"
