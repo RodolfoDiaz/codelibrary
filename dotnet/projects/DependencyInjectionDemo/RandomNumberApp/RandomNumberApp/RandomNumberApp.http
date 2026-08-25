@@ -1,0 +1,4 @@
+@RandomNumberApp_HostAddress = https://localhost:7126
+
+GET {{RandomNumberApp_HostAddress}}/api/randomnumber
+Accept: application/json
