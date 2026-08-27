@@ -1,6 +1,6 @@
 # --- TO EXECUTE THIS FILE ---
 # 1- Use the following command to create and start containers:
-#    docker compose up
+#    docker compose up -d
 #    (use the "-d" argument to run in "detached" mode).
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker compose down
@@ -49,8 +49,8 @@ services:
     hostname: adminer1
     restart: always
     environment:
-      ADMINER_DEFAULT_DB_DRIVER: mssql
-      ADMINER_DEFAULT_SERVER: sqlserverdb
+      ADMINER_DEFAULT_DRIVER: mssql
+      ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
       ADMINER_DESIGN: mvt
     ports:
       - ${WEB_UI_1_PORT}:8080
