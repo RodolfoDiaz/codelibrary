@@ -9,32 +9,51 @@
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
   if [ "$1" == "" ]; then
-      echo "No argurment found. Use 'i' to install Docker, 'c' to create sample container, 'u' to execute image update and cleanup, 'l' to list containers/images, 'r' to remove Docker, 's' to start the service."
+    echo "No argurment found. Use 'i' to install Docker, 'c' to create sample container, 'u' to execute image update and cleanup, 'l' to list containers/images, 'r' to remove Docker, 's' to start the service."
   fi
 
   if [ "$1" == "i" ]; then
+
+    # Install Docker Engine on Ubuntu - https://docs.docker.com/engine/install/ubuntu/
+
+    # Uninstall old versions
+    sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc docker-buildx podman-docker containerd runc | cut -f1)
+
     # -*- Set up the repository -*-
 
-    ## Update the apt package index and install packages to allow apt to use a repository over HTTPS.
+    # Add Docker's official GPG key:
     sudo apt update
-    sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release
+    sudo apt install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-    ## Add Docker’s official GPG key.
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-    ##  Set up the stable repository. 
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-    # -*- Install Docker Engine -*-
+    # Add the repository to Apt sources:
+    sudo tee /etc/apt/sources.list.d/docker.sources << EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
 
     sudo apt update
-    sudo apt install docker-ce docker-ce-cli containerd.io docker-compose
 
-    # -*- Start the service -*-
-    sudo service docker start
+    # -*- Install the Docker packages -*-
+
+    sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+    # -*- After installation, verify that Docker is running -*-
+
+    sudo systemctl status docker
+
+    sudo systemctl start docker
+
+    # Continue to Post-installation steps for Linux - https://docs.docker.com/engine/install/linux-postinstall/
 
     # -*- Manage Docker as a non-root user -*-
-    # If you don’t want to preface the docker command with sudo, create a Unix group called docker and add users to it. 
+    # If you don’t want to preface the docker command with sudo, create a Unix group called docker and add users to it.
     # When the Docker daemon starts, it creates a Unix socket accessible by members of the docker group.
 
     sudo groupadd docker
@@ -44,13 +63,14 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "---> Log out and log back in so that your group membership is re-evaluated."
 
     read -p "Docker was installed. Press any key to continue ..."
-    
-    # Continue to Post-installation steps for Linux - https://docs.docker.com/engine/install/linux-postinstall/
 
-fi
+    # Verify that the installation is successful by running the hello-world image:
+    # docker run hello-world
 
-if [ "$1" == "c" ]; then
-    
+  fi
+
+  if [ "$1" == "c" ]; then
+
     # Verify that Docker Engine is installed correctly by running the hello-world image.
     echo "---> Create a container"
     # https://docs.docker.com/engine/reference/commandline/run/
@@ -64,8 +84,8 @@ if [ "$1" == "c" ]; then
 
   if [ "$1" == "s" ]; then
     # Start the service
-    sudo service docker start
-    sudo service docker status
+    service docker start
+    service docker status
   fi
 
   if [ "$1" == "r" ]; then
@@ -92,9 +112,9 @@ if [ "$1" == "c" ]; then
   fi
 
   if [ "$1" == "u" ]; then
-    
+
     echo "---> Update all docker images"
-    docker images | awk '!/REPOSITORY/ {print $1}' | xargs -L1 docker pull
+    docker images --format "{{.Repository}}:{{.Tag}}" | xargs -L1 docker pull
 
     echo "---> Show all the dangling images (untagged images)"
     docker images -f "dangling=true" -q
@@ -110,6 +130,6 @@ if [ "$1" == "c" ]; then
     # docker system prune -a
   fi
 
-else 
+else
   echo 'This script is only for Linux.'
 fi
