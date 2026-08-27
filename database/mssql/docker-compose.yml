@@ -1,11 +1,11 @@
 # --- TO EXECUTE THIS FILE ---
 # 1- Use the following command to create and start containers:
-#    docker-compose up
+#    docker compose up
 #    (use the "-d" argument to run in "detached" mode).
 # 2- To stop and remove containers, networks, images, and volumes:
-#    docker-compose down
-#    (use the "-v" argument to remove "volumes" created by docker-compose up).
-# 3- Browse to http://localhost:8080/ and connect to system "MS SQL (beta)" with "sa" user ID or 
+#    docker compose down
+#    (use the "-v" argument to remove "volumes" created by "docker compose up").
+# 3- Browse to http://localhost:8080/ and connect to system "MS SQL (beta)" with "sa" user ID or
 #    connect using SSMS or Azure Data Studio to server "localhost" - SQL Server Authentication with "sa" user ID.
 
 # https://docs.docker.com/compose/reference/
@@ -15,10 +15,12 @@
 # https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker
 # https://hub.docker.com/_/adminer/
 
-version: "3.7"  # https://docs.docker.com/compose/compose-file/
+name: mssql
+# https://docs.docker.com/compose/compose-file/
+
 services:
   sqlserverdb:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: mcr.microsoft.com/mssql/server:2025-latest
     container_name: mssql_container1
     restart: always
     ports:
