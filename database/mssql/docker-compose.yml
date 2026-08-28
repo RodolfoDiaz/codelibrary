@@ -52,7 +52,8 @@ services:
     environment:
       ADMINER_DEFAULT_DRIVER: mssql
       ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
-      ADMINER_DESIGN: mvt
+      ADMINER_DESIGN: lucas-sandery
+      ADMINER_PLUGINS: tables-filter dump-json
     ports:
       - ${WEB_UI_1_PORT}:8080
     networks:

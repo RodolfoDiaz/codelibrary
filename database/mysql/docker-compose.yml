@@ -15,13 +15,15 @@
 # https://hub.docker.com/r/phpmyadmin/phpmyadmin/
 # https://hub.docker.com/_/adminer/
 
-version: "3.7"  # https://docs.docker.com/compose/compose-file/
+name: mysql
+# https://docs.docker.com/compose/compose-file/
+
 services:
   mysqldb:
     image: mysql:latest
     container_name: mysql_container1
     command: --default-authentication-plugin=mysql_native_password
-    hostname: mysqldbsrv
+    hostname: "${DB_HOST_NAME}"
     restart: always
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
@@ -54,8 +56,9 @@ services:
     restart: always
     environment:
       ADMINER_DEFAULT_DB_DRIVER: mysql
-      ADMINER_DEFAULT_SERVER: mysqldb
-      ADMINER_DESIGN: mvt
+      ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
+      ADMINER_DESIGN: lucas-sandery
+      ADMINER_PLUGINS: tables-filter dump-json
     ports:
       - ${WEB_UI_2_PORT}:8080
     networks:

@@ -15,13 +15,15 @@
 # https://hub.docker.com/r/phpmyadmin/phpmyadmin/
 # https://hub.docker.com/_/adminer/
 
-version: "3.7"  # https://docs.docker.com/compose/compose-file/
+name: mariadb
+# https://docs.docker.com/compose/compose-file/
+
 services:
   mariadb:
     image: mariadb:latest
     container_name: mariadb_container1
     command: --default-authentication-plugin=mariadb_native_password
-    hostname: mariadbsrv
+    hostname: "${DB_HOST_NAME}"
     restart: always
     environment:
       MARIADB_DATABASE: "${DB_NAME}"
@@ -54,8 +56,9 @@ services:
     restart: always
     environment:
       ADMINER_DEFAULT_DB_DRIVER: mysql
-      ADMINER_DEFAULT_SERVER: mariadb
-      ADMINER_DESIGN: mvt
+      ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
+      ADMINER_DESIGN: lucas-sandery
+      ADMINER_PLUGINS: tables-filter dump-json
     ports:
       - ${WEB_UI_2_PORT}:8080
     networks:
