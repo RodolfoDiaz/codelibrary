@@ -26,11 +26,14 @@ services:
     restart: always
     ports:
       # <Port Exposed> : <Server Port running inside the container>
-      - ${DB_SRV_PORT}:1433
+      - ${MSSQL_TCP_PORT}:1433
     environment:
       ACCEPT_EULA: "${ACCEPT_EULA}"
-      SA_PASSWORD: "${DB_ROOT_PW}" # Reset the password stored in the .env file
-      MSSQL_PID: "${MSSQL_EDITION}"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}" # Reset the password stored in the .env file
+      MSSQL_PID: "${MSSQL_PID}"
+      MSSQL_DB: "${MSSQL_DB}" # Optional: Specify a database name to create on startup
+      MSSQL_USER: "${MSSQL_USER}" # Optional: Specify a user name to create on startup
+      MSSQL_PASSWORD: "${MSSQL_PASSWORD}" # Optional: Specify a password for the user created on startup
     volumes:
       # Persist your data (uncomment option 1 or 2)
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-docker-container-configure
@@ -53,7 +56,7 @@ services:
       ADMINER_DEFAULT_DRIVER: mssql
       ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
       ADMINER_DESIGN: lucas-sandery
-      ADMINER_PLUGINS: tables-filter dump-json
+      ADMINER_PLUGINS: dark-switcher designs row-numbers
     ports:
       - ${WEB_UI_1_PORT}:8080
     networks:
