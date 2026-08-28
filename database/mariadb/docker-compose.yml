@@ -57,8 +57,8 @@ services:
     environment:
       ADMINER_DEFAULT_DB_DRIVER: mysql
       ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
-      ADMINER_DESIGN: lucas-sandery
-      ADMINER_PLUGINS: tables-filter dump-json
+      ADMINER_DESIGN: adminer-dark
+      ADMINER_PLUGINS: dark-switcher dump-json dump-xml
     ports:
       - ${WEB_UI_2_PORT}:8080
     networks:

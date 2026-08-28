@@ -21,6 +21,7 @@ name: mssql
 services:
   sqlserverdb:
     image: mcr.microsoft.com/mssql/server:2025-latest
+    user: root # Needed if you want to persist your data in a host directory (see volumes section below)
     container_name: mssql_container1
     hostname: "${DB_HOST_NAME}"
     restart: always
@@ -53,10 +54,10 @@ services:
     hostname: adminer1
     restart: always
     environment:
-      ADMINER_DEFAULT_DRIVER: mssql
+      ADMINER_DEFAULT_DB_DRIVER: mssql
       ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
-      ADMINER_DESIGN: lucas-sandery
-      ADMINER_PLUGINS: dark-switcher designs row-numbers
+      ADMINER_DESIGN: adminer-dark
+      ADMINER_PLUGINS: dark-switcher dump-json dump-xml
     ports:
       - ${WEB_UI_1_PORT}:8080
     networks:

@@ -13,7 +13,9 @@
 # https://hub.docker.com/_/mongo
 # https://hub.docker.com/_/mongo-express
 
-version: "3.7"  # https://docs.docker.com/compose/compose-file/
+name: mongodb
+# https://docs.docker.com/compose/compose-file/
+
 services:
   mongodb:
     image: mongo:latest
