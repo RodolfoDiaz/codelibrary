@@ -9,10 +9,10 @@
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
   if [ "$1" == "" ]; then
-    echo "No argurment found. Use 'i' to install Docker, 'c' to create sample container, 'u' to execute image update and cleanup, 'l' to list containers/images, 'r' to remove Docker, 's' to start the service."
+    echo "No argurment found. Use 'install' to install Docker, 'create' to create sample container, 'update' to execute image update and cleanup, 'list' to list containers/images, 'remove_all' to remove all containers, volumes and images, 'uninstall' to remove Docker, 'start' to start the service."
   fi
 
-  if [ "$1" == "i" ]; then
+  if [ "$1" == "install" ]; then
 
     # Install Docker Engine on Ubuntu - https://docs.docker.com/engine/install/ubuntu/
 
@@ -69,7 +69,7 @@ EOF
 
   fi
 
-  if [ "$1" == "c" ]; then
+  if [ "$1" == "create" ]; then
 
     # Verify that Docker Engine is installed correctly by running the hello-world image.
     echo "---> Create a container"
@@ -82,13 +82,33 @@ EOF
 
   fi
 
-  if [ "$1" == "s" ]; then
+  if [ "$1" == "start" ]; then
     # Start the service
     service docker start
     service docker status
   fi
 
-  if [ "$1" == "r" ]; then
+  if [ "$1" == "remove_all" ]; then
+
+    echo "---> Stop all running containers"
+    docker stop $(docker ps -a -q)
+
+    echo "---> Remove all stopped containers"
+    docker container prune -f
+
+    echo "---> Remove all unused images"
+    docker image prune -a
+
+    echo "---> Remove all local volumes not used by at least one container."
+    docker volume prune --all --force
+
+    echo "---> Remove all unused networks not used by at least one container."
+    # [LEGACY METHOD] docker rmi $(docker images -f "dangling=true" -q)
+    docker system prune --all --force
+
+  fi
+
+  if [ "$1" == "uninstall" ]; then
     # Older versions of Docker were called docker, docker.io, or docker-engine. If these are installed, uninstall them:
     # sudo apt purge docker docker-engine docker.io containerd runc
 
@@ -101,7 +121,7 @@ EOF
     sudo groupdel docker
   fi
 
-  if [ "$1" == "l" ]; then
+  if [ "$1" == "list" ]; then
 
     echo "---> See a list of all containers, even the ones not running"
     docker ps -a
@@ -109,9 +129,15 @@ EOF
     echo "---> Show all images on this machine"
     docker images -a
 
+    echo "---> Show all volumes on this machine"
+    docker volume ls
+
+    echo "---> Show all networks on this machine"
+    docker network ls
+
   fi
 
-  if [ "$1" == "u" ]; then
+  if [ "$1" == "update" ]; then
 
     echo "---> Update all docker images"
     docker images --format "{{.Repository}}:{{.Tag}}" | xargs -L1 docker pull
@@ -119,15 +145,6 @@ EOF
     echo "---> Show all the dangling images (untagged images)"
     docker images -f "dangling=true" -q
 
-    echo "---> Remove all unused (dangling) images"
-    # [LEGACY METHOD] docker rmi $(docker images -f "dangling=true" -q)
-    docker system prune --force
-
-    echo "---> Remove all local volumes not used by at least one container."
-    docker volume prune --force
-
-    #echo "---> Remove all stopped containers, unused networks, all images, all build cache."
-    # docker system prune -a
   fi
 
 else
