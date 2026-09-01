@@ -21,10 +21,9 @@ name: mssql
 services:
   sqlserverdb:
     image: mcr.microsoft.com/mssql/server:2025-latest
-    user: root # Needed if you want to persist your data in a host directory (see volumes section below)
-    container_name: mssql_container1
+    # user: root # Needed ONLY if you want to persist your data in a host directory (see volumes section below)
     hostname: "${DB_HOST_NAME}"
-    restart: always
+    restart: unless-stopped
     ports:
       # <Port Exposed> : <Server Port running inside the container>
       - ${MSSQL_TCP_PORT}:1433
@@ -38,34 +37,63 @@ services:
     volumes:
       # Persist your data (uncomment option 1 or 2)
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-docker-container-configure
-      # 1- Mount a host directory as data volume:
+      # 1- Mounting a Docker Named Volume (non-root user is required):
+      - database_files:/var/opt/mssql
+      # 2- Host Bind Mount to the container's internal data directory (root user access is required):
       # - ${DB_FOLDER}/sqldata:/var/opt/mssql/data
       # - ${DB_FOLDER}/sqllog:/var/opt/mssql/log
       # - ${DB_FOLDER}/secrets:/var/opt/mssql/secrets
       # - ${DB_FOLDER}/sqlbackup:/var/opt/mssql/backup
-      # 2- Use data volume containers:
-      - sqlvolume:/var/opt/mssql
     networks:
       - docknet
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools18/bin/sqlcmd",
+          "-S",
+          "localhost",
+          "-U",
+          "sa",
+          "-P",
+          "${MSSQL_SA_PASSWORD}",
+          "-Q",
+          "SELECT 1",
+          "-C",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   adminer:
     image: adminer:latest
-    container_name: adminer_container1
     hostname: adminer1
-    restart: always
+    restart: unless-stopped
     environment:
       ADMINER_DEFAULT_DB_DRIVER: mssql
-      ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
+      ADMINER_DEFAULT_SERVER: sqlserverdb
       ADMINER_DESIGN: mvt
       ADMINER_PLUGINS: dump-json dump-xml
     ports:
       - ${WEB_UI_1_PORT}:8080
     networks:
       - docknet
+    depends_on:
+      sqlserverdb:
+        condition: service_healthy
 
 volumes:
-  sqlvolume:
+  database_files:
+    driver: local
 
 networks:
   docknet:
     driver: bridge
+
+## View Current Health Status
+# docker ps --filter "name=sqlserverdb"
+## Inspect Healthcheck Detailed Logs and Exit Codes
+# docker inspect --format='{{json .State.Health}}' mssql-sqlserverdb-1 | jq
+## View Overall Container Logs
+# docker compose logs -f sqlserverdb

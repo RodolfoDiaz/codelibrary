@@ -21,7 +21,6 @@ name: mariadb
 services:
   mariadb:
     image: mariadb:latest
-    container_name: mariadb_container1
     command: --default-authentication-plugin=mariadb_native_password
     hostname: "${DB_HOST_NAME}"
     restart: always
@@ -39,7 +38,6 @@ services:
       - docknet
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: myAdmin_container1
     hostname: phpMyAdminHost1
     restart: always
     environment:
@@ -51,7 +49,6 @@ services:
       - docknet
   adminer:
     image: adminer:latest
-    container_name: adminer_container1
     hostname: adminerHost1
     restart: always
     environment:

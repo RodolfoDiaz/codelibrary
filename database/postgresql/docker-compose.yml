@@ -21,7 +21,6 @@ name: postgresql
 
 services:
   postgresdb:
-    container_name: postgres_container1
     image: postgres:latest
     hostname: "${DB_HOST_NAME}"
     environment:
@@ -41,10 +40,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: pgadmin_container1
     hostname: pgadmin_host1
     environment:
       PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
@@ -64,7 +63,6 @@ services:
 
   adminer:
     image: adminer:latest
-    container_name: adminer_container1
     hostname: adminer1
     restart: always
     environment:

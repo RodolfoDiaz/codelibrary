@@ -19,7 +19,6 @@ name: mongodb
 services:
   mongodb:
     image: mongo:latest
-    container_name: mongodb_container1
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USER}
@@ -28,11 +27,22 @@ services:
       # <Port Exposed> : <Port running inside the container>
       - ${DB_SRV_PORT}:27017
     volumes:
-      - mongo_data:/data/db
-
+      - database_files:/data/db
+    healthcheck:
+      test: >
+        mongosh --quiet
+        -u $$MONGO_INITDB_ROOT_USERNAME
+        -p $$MONGO_INITDB_ROOT_PASSWORD
+        --authenticationDatabase admin
+        --eval "db.adminCommand('ping')"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - docknet
   mongo-express:
     image: mongo-express:latest
-    container_name: mongo-express
     restart: always
     ports:
       - "${WEB_UI_1_PORT}:8081"
@@ -43,8 +53,15 @@ services:
       ME_CONFIG_BASICAUTH_USERNAME: ${DB_ROOT_USER}
       ME_CONFIG_BASICAUTH_PASSWORD: ${ADMIN_SECRET_KEY:?error} # Get this password from an environment variable
       ME_CONFIG_MONGODB_PORT: ${DB_SRV_PORT}
+    networks:
+      - docknet
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
 
 volumes:
-  mongo_data:
+  database_files:
+
+networks:
+  docknet:
+    driver: bridge
