@@ -6,7 +6,7 @@
 #    docker compose down
 #    (use the "-v" argument to remove "volumes" created by "docker compose up").
 # 3- Browse to http://localhost:8080/ and connect to system "MS SQL (beta)" with "sa" user ID or
-#    connect using SSMS or Azure Data Studio to server "localhost" - SQL Server Authentication with "sa" user ID.
+#    connect using SQL Server Explorer with server name "127.0.0.1,1433", SQL Server Authentication with "sa" user ID.
 
 # https://docs.docker.com/compose/reference/
 # https://docs.docker.com/compose/overview/
@@ -30,11 +30,11 @@ services:
       - ${MSSQL_TCP_PORT}:1433
     environment:
       ACCEPT_EULA: "${ACCEPT_EULA}"
-      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}" # Reset the password stored in the .env file
+      MSSQL_SA_PASSWORD: "${ADMIN_SECRET_KEY:?error}"
       MSSQL_PID: "${MSSQL_PID}"
       MSSQL_DB: "${MSSQL_DB}" # Optional: Specify a database name to create on startup
       MSSQL_USER: "${MSSQL_USER}" # Optional: Specify a user name to create on startup
-      MSSQL_PASSWORD: "${MSSQL_PASSWORD}" # Optional: Specify a password for the user created on startup
+      MSSQL_PASSWORD: "${USER_SECRET_KEY:?error}"
     volumes:
       # Persist your data (uncomment option 1 or 2)
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-docker-container-configure
@@ -56,8 +56,8 @@ services:
     environment:
       ADMINER_DEFAULT_DB_DRIVER: mssql
       ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
-      ADMINER_DESIGN: adminer-dark
-      ADMINER_PLUGINS: dark-switcher dump-json dump-xml
+      ADMINER_DESIGN: mvt
+      ADMINER_PLUGINS: dump-json dump-xml
     ports:
       - ${WEB_UI_1_PORT}:8080
     networks:
