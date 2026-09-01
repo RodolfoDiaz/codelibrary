@@ -30,11 +30,11 @@ services:
       - ${MSSQL_TCP_PORT}:1433
     environment:
       ACCEPT_EULA: "${ACCEPT_EULA}"
-      MSSQL_SA_PASSWORD: "${ADMIN_SECRET_KEY:?error}"
+      MSSQL_SA_PASSWORD: "${ADMIN_SECRET_KEY:?error}" # Get this password from an environment variable
       MSSQL_PID: "${MSSQL_PID}"
       MSSQL_DB: "${MSSQL_DB}" # Optional: Specify a database name to create on startup
       MSSQL_USER: "${MSSQL_USER}" # Optional: Specify a user name to create on startup
-      MSSQL_PASSWORD: "${USER_SECRET_KEY:?error}"
+      MSSQL_PASSWORD: "${USER_SECRET_KEY:?error}" # Get this password from an environment variable
     volumes:
       # Persist your data (uncomment option 1 or 2)
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-docker-container-configure
