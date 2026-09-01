@@ -1,10 +1,10 @@
 # --- TO EXECUTE THIS FILE ---
 # 1- Use the following command to create and start containers:
-#    docker-compose up
+#    docker compose up
 #    (use the "-d" argument to run in "detached" mode).
 # 2- To stop and remove containers, networks, images, and volumes:
-#    docker-compose down
-#    (use the "-v" argument to remove "volumes" created by docker-compose up).
+#    docker compose down
+#    (use the "-v" argument to remove "volumes" created by docker compose up).
 # 3- Browse to http://localhost:8080/ or http://localhost:8081/ and connect with either "root" or "${DB_USER}" user IDs.
 
 # https://docs.docker.com/compose/reference/
@@ -22,21 +22,18 @@ services:
   mysqldb:
     image: mysql:latest
     container_name: mysql_container1
-    command: --default-authentication-plugin=mysql_native_password
     hostname: "${DB_HOST_NAME}"
     restart: always
     environment:
-      MYSQL_DATABASE: "${DB_NAME}"
-      MYSQL_USER: "${DB_USER}"
-      MYSQL_PASSWORD: "${DB_USER_PW}" # Reset the password stored in the .env file
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PW}" # Reset the password stored in the .env file
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${USER_SECRET_KEY:?error}" # Get this password from an environment variable
+      MYSQL_ROOT_PASSWORD: "${ADMIN_SECRET_KEY:?error}" # Get this password from an environment variable
     ports:
       # <Port Exposed> : <MySQL Port running inside the container>
       - ${DB_SRV_PORT}:3306
     volumes:
-      - dbfiles:/var/lib/mysql
-    networks:
-      - docknet
+      - mysqldb_data:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: myAdmin_container1
@@ -47,8 +44,8 @@ services:
       PMA_ARBITRARY: 1
     ports:
       - ${WEB_UI_1_PORT}:80
-    networks:
-      - docknet
+    depends_on:
+      - mysqldb
   adminer:
     image: adminer:latest
     container_name: adminer_container1
@@ -57,16 +54,12 @@ services:
     environment:
       ADMINER_DEFAULT_DB_DRIVER: mysql
       ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
-      ADMINER_DESIGN: adminer-dark
-      ADMINER_PLUGINS: dark-switcher dump-json dump-xml
+      ADMINER_DESIGN: mvt
+      ADMINER_PLUGINS: dump-json dump-xml
     ports:
       - ${WEB_UI_2_PORT}:8080
-    networks:
-      - docknet
+    depends_on:
+      - mysqldb
 # Names our volume
 volumes:
-  dbfiles:
-
-networks:
-  docknet:
-    driver: bridge
+  mysqldb_data:
