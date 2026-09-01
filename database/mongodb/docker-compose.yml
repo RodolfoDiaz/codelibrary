@@ -1,10 +1,10 @@
 # --- TO EXECUTE THIS FILE ---
 # 1- Use the following command to create and start containers:
-#    docker-compose up
+#    docker compose up
 #    (use the "-d" argument to run in "detached" mode).
 # 2- To stop and remove containers, networks, images, and volumes:
-#    docker-compose down
-#    (use the "-v" argument to remove "volumes" created by docker-compose up).
+#    docker compose down
+#    (use the "-v" argument to remove "volumes" created by docker compose up).
 # 3- Browse to http://localhost:8080/ and connect with "${DB_ROOT_USER}" user ID.
 
 # https://docs.docker.com/compose/reference/
@@ -19,46 +19,32 @@ name: mongodb
 services:
   mongodb:
     image: mongo:latest
-    restart: always
     container_name: mongodb_container1
-    hostname: mongodbsrv
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${ADMIN_SECRET_KEY:?error} # Get this password from an environment variable
     ports:
       # <Port Exposed> : <Port running inside the container>
       - ${DB_SRV_PORT}:27017
-    environment:
-      - MONGO_INITDB_DATABASE="${DB_NAME}"
-      - MONGO_INITDB_ROOT_USERNAME="${DB_ROOT_USER}"
-      - MONGO_INITDB_ROOT_PASSWORD="${DB_ROOT_PW}" # Reset the password stored in the .env file
     volumes:
-      # seeding scripts
-      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
-      # named volumes
-      - dbfiles:/data/db
-      - configdb:/data/configdb
-    networks:
-      - dbTestNetwork
+      - mongo_data:/data/db
 
   mongo-express:
     image: mongo-express:latest
+    container_name: mongo-express
     restart: always
-    container_name: mongoexpress_container1
     ports:
-      - ${WEB_UI_1_PORT}:8081
+      - "${WEB_UI_1_PORT}:8081"
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb_container1
-      - ME_CONFIG_MONGODB_ADMINUSERNAME="${DB_ROOT_USER}"
-      - ME_CONFIG_MONGODB_ADMINPASSWORD="${DB_ROOT_PW}"
-      - ME_CONFIG_MONGODB_PORT=${DB_SRV_PORT}
-    networks:
-      - dbTestNetwork
-    # links:
-    #   - "mongodb"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_ROOT_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ADMIN_SECRET_KEY:?error} # Get this password from an environment variable
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: ${DB_ROOT_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ADMIN_SECRET_KEY:?error} # Get this password from an environment variable
+      ME_CONFIG_MONGODB_PORT: ${DB_SRV_PORT}
+    depends_on:
+      - mongodb
 
 volumes:
-  # default dir on Ubuntu: /var/lib/docker/volumes
-  dbfiles:
-  configdb:
-
-networks:
-  dbTestNetwork:
-    driver: bridge
+  mongo_data:
