@@ -33,10 +33,19 @@ services:
       # <Port Exposed> : <MySQL Port running inside the container>
       - ${DB_SRV_PORT}:3306
     volumes:
-      - mysqldb_data:/var/lib/mysql
+      - database_files:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -u root -p${ADMIN_SECRET_KEY} || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: myAdmin_container1
+    container_name: phpMyAdmin_container1
     hostname: myAdmin1
     restart: always
     environment:
@@ -45,7 +54,8 @@ services:
     ports:
       - ${WEB_UI_1_PORT}:80
     depends_on:
-      - mysqldb
+      mysqldb:
+        condition: service_healthy
   adminer:
     image: adminer:latest
     container_name: adminer_container1
@@ -59,7 +69,8 @@ services:
     ports:
       - ${WEB_UI_2_PORT}:8080
     depends_on:
-      - mysqldb
+      mysqldb:
+        condition: service_healthy
 # Names our volume
 volumes:
-  mysqldb_data:
+  database_files:

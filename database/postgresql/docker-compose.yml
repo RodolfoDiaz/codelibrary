@@ -36,6 +36,11 @@ services:
     networks:
       - docknet
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_ROOT_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -53,6 +58,9 @@ services:
     networks:
       - docknet
     restart: always
+    depends_on:
+      postgresdb:
+        condition: service_healthy
 
   adminer:
     image: adminer:latest
@@ -68,6 +76,9 @@ services:
       - ${WEB_UI_2_PORT}:8080
     networks:
       - docknet
+    depends_on:
+      postgresdb:
+        condition: service_healthy
 
 networks:
   docknet:
