@@ -13,18 +13,36 @@ namespace SecurityConsole
 
         static void Main(string[] args)
         {
-            if (args.Length == 0)
+            string argument = args.Length == 0 ? "" : args[0].ToString().ToUpper();
+            if (string.IsNullOrWhiteSpace(argument))
             {
-                Console.WriteLine("No argurment found. Use 'C' for Caesar Cipher, 'H' to show Input Text Hash, 'F' to show File Hash, 'E' for show Symmetric Encryption example.");
+                Console.WriteLine("--*-- Test Console for the Cryptography/Encoding Class Library --*--");
+                Console.WriteLine("Enter a character with a valid option: " + Environment.NewLine +
+                    "'B' - Base64 Encode Decode " + Environment.NewLine +
+                    "'C' - Caesar Cipher " + Environment.NewLine +
+                    "'H' - Input Text Hash " + Environment.NewLine +
+                    "'F' - File Hash " + Environment.NewLine +
+                    "'E' - Symmetric Encryption");
+                
+                Console.Write("> ");
+                argument = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(argument))
+                {
+                    Console.WriteLine("No argument provided. Exiting.");
+                    return;
+                }
+                else { argument = argument.ToUpper();
+                }
             }
-            else
+
+            if (!string.IsNullOrWhiteSpace(argument))
             {
-                string argument = args[0].ToString().ToUpper();
                 if (argument == "C")
                 {
                     ShowCaesarEncryption();
                 }
-                else if (argument == "H" || argument == "E")
+                else if (argument == "H" || argument == "E" || argument == "B")
                 {
                     Console.Write("Enter a text (or hit Enter to continue with default): ");
                     string inputText = Console.ReadLine();
@@ -37,9 +55,13 @@ namespace SecurityConsole
                     {
                         HashTest(inputText);
                     }
-                    else
+                    else if (argument == "E")
                     {
                         SymmetricEncryptionTest(inputText);
+                    }
+                    else if (argument == "B")
+                    {
+                        Base64Test(inputText);
                     }
                 }
                 else if (argument == "F")
@@ -160,6 +182,26 @@ namespace SecurityConsole
 
             string t = CaesarCipher.Decipher(cipherText, intKey);
             Console.WriteLine(t);
+        }
+
+        private static void Base64Test(string inputText)
+        {
+            Console.WriteLine("--*-- Base64 Text Encoding Decoding --*--");
+            string encodedText = Base64Encoding.Encode(inputText);
+            string decodedText = Base64Encoding.Decode(encodedText);
+            Console.WriteLine("Encoded Text:{0}", encodedText);
+            Console.WriteLine("Decoded Text:{0}", decodedText);
+
+            if (File.Exists(filePath))
+            {
+                Console.WriteLine("");
+                Console.WriteLine("--*-- Base64 File Encoding Decoding --*--");
+                string encodedFile = Base64Encoding.EncodeFileToBase64(filePath);
+                string decodedFile = Base64Encoding.Decode(encodedFile);
+                Console.WriteLine("Encoded File {0}:" + Environment.NewLine + "{1}", filePath, encodedFile);
+                Console.WriteLine("");
+                Console.WriteLine("Decoded File {0}:" + Environment.NewLine + "{1}", filePath, decodedFile);
+            }
         }
     }
 }
