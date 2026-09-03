@@ -91,6 +91,7 @@ namespace SecurityConsole
         {
             Console.WriteLine("--*-- Symmetric Encryption example --*--");
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.AES, inputText);
+            ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.ChaCha20Poly1305, inputText);
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.DES, inputText);
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.RC2, inputText);
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.TripleDES, inputText);

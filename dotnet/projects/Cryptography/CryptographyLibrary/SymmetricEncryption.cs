@@ -18,6 +18,11 @@ namespace CryptographyLibrary
             /// <see cref="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes"/>
             AES,
             /// <summary>
+            /// ChaCha20-Poly1305 is a stream cipher and message authentication code combination that is designed to be fast and secure.
+            /// </summary>
+            /// <see cref="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.chacha20poly1305"/>
+            ChaCha20Poly1305,
+            /// <summary>
             /// DES symmetric encryption algorithm. Use DES only for compatibility with legacy applications and data.
             /// </summary>
             /// <see cref="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.des"/>
@@ -44,9 +49,16 @@ namespace CryptographyLibrary
         /// <returns>Encrypted text</returns>
         public static string Encrypt(ServiceProvider algorithm, string plainText, string password, string salt)
         {
-            using (SymmetricAlgorithm symmetricAlgorithm = CreateAlgorithm(algorithm))
+            if (algorithm == ServiceProvider.ChaCha20Poly1305)
             {
-                return CipherUtility.Encrypt(symmetricAlgorithm, plainText, password, salt);
+                return ChaCha20Poly1305Crypto.Encrypt(plainText, password);
+            }
+            else
+            {
+                using (SymmetricAlgorithm symmetricAlgorithm = CreateAlgorithm(algorithm))
+                {
+                    return CipherUtility.Encrypt(symmetricAlgorithm, plainText, password, salt);
+                }
             }
         }
 
@@ -60,9 +72,17 @@ namespace CryptographyLibrary
         /// <returns>Decrypted text (plain text)</returns>
         public static string Decrypt(ServiceProvider algorithm, string encryptedText, string password, string salt)
         {
-            using (SymmetricAlgorithm symmetricAlgorithm = CreateAlgorithm(algorithm))
+            if (algorithm == ServiceProvider.ChaCha20Poly1305)
             {
-                return CipherUtility.Decrypt(symmetricAlgorithm, encryptedText, password, salt);
+                return ChaCha20Poly1305Crypto.Decrypt(encryptedText, password);
+            }
+            else
+            {
+                using (SymmetricAlgorithm symmetricAlgorithm = CreateAlgorithm(algorithm))
+                {
+                    return CipherUtility.Decrypt(symmetricAlgorithm, encryptedText, password, salt);
+                }
+
             }
         }
 
