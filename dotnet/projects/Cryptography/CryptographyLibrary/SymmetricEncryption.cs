@@ -1,4 +1,5 @@
-﻿using CryptographyLibrary.Lib;
+using CryptographyLibrary.Lib;
+using System;
 using System.Security.Cryptography;
 
 namespace CryptographyLibrary
@@ -48,20 +49,9 @@ namespace CryptographyLibrary
         /// <returns>Encrypted text</returns>
         public static string Encrypt(ServiceProvider algorithm, string plainText, string password, string salt)
         {
-            switch (algorithm)
+            using (SymmetricAlgorithm symmetricAlgorithm = CreateAlgorithm(algorithm))
             {
-                case ServiceProvider.AES:
-                    return CipherUtility.Encrypt<AesManaged>(plainText, password, salt);
-                case ServiceProvider.DES:
-                    return CipherUtility.Encrypt<DESCryptoServiceProvider>(plainText, password, salt);
-                case ServiceProvider.RC2:
-                    return CipherUtility.Encrypt<RC2CryptoServiceProvider>(plainText, password, salt);
-                case ServiceProvider.Rijndael:
-                    return CipherUtility.Encrypt<RijndaelManaged>(plainText, password, salt);
-                case ServiceProvider.TripleDES:
-                    return CipherUtility.Encrypt<TripleDESCryptoServiceProvider>(plainText, password, salt);
-                default:
-                    return null;
+                return CipherUtility.Encrypt(symmetricAlgorithm, plainText, password, salt);
             }
         }
 
@@ -75,21 +65,26 @@ namespace CryptographyLibrary
         /// <returns>Decrypted text (plain text)</returns>
         public static string Decrypt(ServiceProvider algorithm, string encryptedText, string password, string salt)
         {
-            switch (algorithm)
+            using (SymmetricAlgorithm symmetricAlgorithm = CreateAlgorithm(algorithm))
             {
-                case ServiceProvider.AES:
-                    return CipherUtility.Decrypt<AesManaged>(encryptedText, password, salt);
-                case ServiceProvider.DES:
-                    return CipherUtility.Decrypt<DESCryptoServiceProvider>(encryptedText, password, salt);
-                case ServiceProvider.RC2:
-                    return CipherUtility.Decrypt<RC2CryptoServiceProvider>(encryptedText, password, salt);
-                case ServiceProvider.Rijndael:
-                    return CipherUtility.Decrypt<RijndaelManaged>(encryptedText, password, salt);
-                case ServiceProvider.TripleDES:
-                    return CipherUtility.Decrypt<TripleDESCryptoServiceProvider>(encryptedText, password, salt);
-                default:
-                    return null;
+                return CipherUtility.Decrypt(symmetricAlgorithm, encryptedText, password, salt);
             }
+        }
+
+        /// <summary>
+        /// Create a symmetric algorithm instance using the factory pattern
+        /// </summary>
+        private static SymmetricAlgorithm CreateAlgorithm(ServiceProvider algorithm)
+        {
+            return algorithm switch
+            {
+                ServiceProvider.AES => Aes.Create(),
+                ServiceProvider.DES => DES.Create(),
+                ServiceProvider.RC2 => RC2.Create(),
+                ServiceProvider.Rijndael => Rijndael.Create(),
+                ServiceProvider.TripleDES => TripleDES.Create(),
+                _ => throw new ArgumentException("Unknown algorithm", nameof(algorithm))
+            };
         }
     }
 }

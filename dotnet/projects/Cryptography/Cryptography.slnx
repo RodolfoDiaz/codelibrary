@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CryptographyLibrary/CryptographyLibrary.csproj" />
+  <Project Path="SecurityConsole/SecurityConsole.csproj">
+    <BuildDependency Project="CryptographyLibrary/CryptographyLibrary.csproj" />
+  </Project>
+</Solution>

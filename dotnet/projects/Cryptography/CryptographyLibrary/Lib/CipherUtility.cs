@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Security.Cryptography;
 using System.IO;
@@ -7,15 +7,13 @@ namespace CryptographyLibrary.Lib
 {
     static class CipherUtility
     {
-        public static string Encrypt<T>(string value, string password, string salt)
-             where T : SymmetricAlgorithm, new()
+        private const int PBKDF2_ITERATIONS = 10000;
+
+        public static string Encrypt(SymmetricAlgorithm algorithm, string value, string password, string salt)
         {
-            DeriveBytes rgb = new Rfc2898DeriveBytes(password, Encoding.Unicode.GetBytes(salt));
-
-            SymmetricAlgorithm algorithm = new T();
-
-            byte[] rgbKey = rgb.GetBytes(algorithm.KeySize >> 3);
-            byte[] rgbIV = rgb.GetBytes(algorithm.BlockSize >> 3);
+            byte[] saltBytes = Encoding.Unicode.GetBytes(salt);
+            byte[] rgbKey = Rfc2898DeriveBytes.Pbkdf2(password, saltBytes, PBKDF2_ITERATIONS, HashAlgorithmName.SHA256, algorithm.KeySize >> 3);
+            byte[] rgbIV = Rfc2898DeriveBytes.Pbkdf2(password, saltBytes, PBKDF2_ITERATIONS, HashAlgorithmName.SHA256, algorithm.BlockSize >> 3);
 
             ICryptoTransform transform = algorithm.CreateEncryptor(rgbKey, rgbIV);
 
@@ -33,15 +31,11 @@ namespace CryptographyLibrary.Lib
             }
         }
 
-        public static string Decrypt<T>(string text, string password, string salt)
-           where T : SymmetricAlgorithm, new()
+        public static string Decrypt(SymmetricAlgorithm algorithm, string text, string password, string salt)
         {
-            DeriveBytes rgb = new Rfc2898DeriveBytes(password, Encoding.Unicode.GetBytes(salt));
-
-            SymmetricAlgorithm algorithm = new T();
-
-            byte[] rgbKey = rgb.GetBytes(algorithm.KeySize >> 3);
-            byte[] rgbIV = rgb.GetBytes(algorithm.BlockSize >> 3);
+            byte[] saltBytes = Encoding.Unicode.GetBytes(salt);
+            byte[] rgbKey = Rfc2898DeriveBytes.Pbkdf2(password, saltBytes, PBKDF2_ITERATIONS, HashAlgorithmName.SHA256, algorithm.KeySize >> 3);
+            byte[] rgbIV = Rfc2898DeriveBytes.Pbkdf2(password, saltBytes, PBKDF2_ITERATIONS, HashAlgorithmName.SHA256, algorithm.BlockSize >> 3);
 
             ICryptoTransform transform = algorithm.CreateDecryptor(rgbKey, rgbIV);
 

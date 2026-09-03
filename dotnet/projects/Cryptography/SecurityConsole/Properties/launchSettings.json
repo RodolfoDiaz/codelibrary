@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SecurityConsole": {
+      "commandName": "Project",
+      "commandLineArgs": ""
+    }
+  }
+}
