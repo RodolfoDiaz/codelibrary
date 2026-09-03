@@ -93,7 +93,6 @@ namespace SecurityConsole
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.AES, inputText);
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.DES, inputText);
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.RC2, inputText);
-            ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.Rijndael, inputText);
             ShowSymmetricEncryption(SymmetricEncryption.ServiceProvider.TripleDES, inputText);
         }
 

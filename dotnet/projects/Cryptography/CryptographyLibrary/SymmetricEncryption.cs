@@ -28,11 +28,6 @@ namespace CryptographyLibrary
             /// <see cref="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.rc2"/>
             RC2,
             /// <summary>
-            /// Rijndael symmetric encryption algorithm.
-            /// </summary>
-            /// <see cref="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.rijndael"/>
-            Rijndael,
-            /// <summary>
             /// Triple DES (Data Encryption Standard). Use TripleDES only for compatibility with legacy applications and data.
             /// </summary>
             /// <see cref="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.tripledes"/>
@@ -81,7 +76,6 @@ namespace CryptographyLibrary
                 ServiceProvider.AES => Aes.Create(),
                 ServiceProvider.DES => DES.Create(),
                 ServiceProvider.RC2 => RC2.Create(),
-                ServiceProvider.Rijndael => Rijndael.Create(),
                 ServiceProvider.TripleDES => TripleDES.Create(),
                 _ => throw new ArgumentException("Unknown algorithm", nameof(algorithm))
             };

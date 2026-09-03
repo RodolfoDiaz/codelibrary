@@ -7,7 +7,7 @@ namespace CryptographyLibrary.Lib
 {
     static class CipherUtility
     {
-        private const int PBKDF2_ITERATIONS = 10000;
+        private const int PBKDF2_ITERATIONS = 10000; // Modern OWASP/NIST recommendation baseline is 600,000 iterations (PROD). For testing, we can use a lower value like 10,000 iterations.
 
         public static string Encrypt(SymmetricAlgorithm algorithm, string value, string password, string salt)
         {
