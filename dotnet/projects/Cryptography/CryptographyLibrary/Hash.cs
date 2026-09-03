@@ -49,20 +49,30 @@ namespace CryptographyLibrary
 
         public static string GetHash(ServiceProvider algorithm, byte[] inputBytes)
         {
-            switch (algorithm)
+            using (HashAlgorithm hashAlgorithm = algorithm switch
             {
-                case ServiceProvider.MD5:
-                    return HashUtility.GetHash<MD5CryptoServiceProvider>(inputBytes);
-                case ServiceProvider.SHA1:
-                    return HashUtility.GetHash<SHA1CryptoServiceProvider>(inputBytes);
-                case ServiceProvider.SHA256:
-                    return HashUtility.GetHash<SHA256CryptoServiceProvider>(inputBytes);
-                case ServiceProvider.SHA384:
-                    return HashUtility.GetHash<SHA384CryptoServiceProvider>(inputBytes);
-                case ServiceProvider.SHA512:
-                    return HashUtility.GetHash<SHA512CryptoServiceProvider>(inputBytes);
-                default:
-                    return null;
+                ServiceProvider.MD5 => MD5.Create(),
+                ServiceProvider.SHA1 => SHA1.Create(),
+                ServiceProvider.SHA256 => SHA256.Create(),
+                ServiceProvider.SHA384 => SHA384.Create(),
+                ServiceProvider.SHA512 => SHA512.Create(),
+                _ => throw new ArgumentException("Unknown hash algorithm", nameof(algorithm))
+            })
+            {
+                byte[] data = hashAlgorithm.ComputeHash(inputBytes);
+
+                // Create a new StringBuilder to collect the bytes and create a string.
+                StringBuilder sBuilder = new StringBuilder();
+
+                // Loop through each byte of the hashed data 
+                // and format each one as a hexadecimal string.
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sBuilder.Append(data[i].ToString("X2"));
+                }
+
+                // Return the hexadecimal string.
+                return sBuilder.ToString();
             }
         }
 

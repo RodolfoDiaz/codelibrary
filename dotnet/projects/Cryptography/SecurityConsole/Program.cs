@@ -50,16 +50,14 @@ namespace SecurityConsole
                     {
                         inputFilePath = filePath;
                     }
+
+                    if (File.Exists(inputFilePath))
+                    {
+                        FileHashTest(inputFilePath);
+                    }
                     else
                     {
-                        if (File.Exists(inputFilePath))
-                        {
-                            FileHashTest(inputFilePath); 
-                        }
-                        else
-                        {
-                            Console.Write("File not found!");
-                        }
+                        Console.Write("File not found!");
                     }
                 }
                 else
