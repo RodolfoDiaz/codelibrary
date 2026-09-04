@@ -1,4 +1,4 @@
-# This file runs the web application created under $AppName folder in a Docker container.
+# This file copies the web application created under $AppName folder in a Docker container.
 # See Dockerfile for details on how the image is built.
 
 New-Variable -Name "AppName" -Visibility Public -Value "myWebApp"
