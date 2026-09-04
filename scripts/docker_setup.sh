@@ -9,12 +9,25 @@
 if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
   if [ "$1" == "" ]; then
-    echo "No argurment found. Use 'install' to install Docker, 'create' to create sample container, 'update' to execute image update and cleanup, 'list' to list containers/images, 'remove_all' to remove all containers, volumes and images, 'uninstall' to remove Docker, 'start' to start the service."
+    echo "No argurment found. Call this script with one of the following arguments: 
+    'install' to install Docker Engine. 
+    'create' to create sample container. 
+    'update' to execute image update and cleanup.
+    'list' to list containers/images.
+    'remove_all' to remove all containers and associated volumes, networks and images.
+    'uninstall' to remove Docker from this machine.
+    'status' to check the Docker service status."
   fi
 
   if [ "$1" == "install" ]; then
 
-    # Install Docker Engine on Ubuntu - https://docs.docker.com/engine/install/ubuntu/
+    echo "Install Docker Engine on Ubuntu - https://docs.docker.com/engine/install/ubuntu/"
+
+    read -p "Are you sure you want to proceed? (Y/N): " answer
+    if [ "${answer,,}" != "y" ]; then
+      echo "Operation cancelled."
+      exit 1
+    fi
 
     # Uninstall old versions
     sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc docker-buildx podman-docker containerd runc | cut -f1)
@@ -44,9 +57,7 @@ EOF
 
     sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-    # -*- After installation, verify that Docker is running -*-
-
-    sudo systemctl status docker
+    # -*- After installation, start the Docker service -*-
 
     sudo systemctl start docker
 
@@ -82,22 +93,38 @@ EOF
 
   fi
 
-  if [ "$1" == "start" ]; then
-    # Start the service
-    service docker start
-    service docker status
+  if [ "$1" == "status" ]; then
+    systemctl is-active --quiet docker || systemctl start docker
+    echo "---> Docker service is..."
+    systemctl is-active docker
+
+    read -t 5 -p "Do you want to see full status info? (Y/N) [Default: n]: " answer
+    if [ "${answer,,}" == "y" ]; then
+      systemctl status docker
+      exit 0
+    else
+      echo "Skipping full status info."
+    fi
+
   fi
 
   if [ "$1" == "remove_all" ]; then
+
+    echo "---> Remove all containers, images, volumes and networks"
+    read -p "Are you sure you want to proceed? (Y/N): " answer
+    if [ "${answer,,}" != "y" ]; then
+      echo "Operation cancelled."
+      exit 1
+    fi
 
     echo "---> Stop all running containers"
     docker stop $(docker ps -a -q)
 
     echo "---> Remove all stopped containers"
-    docker container prune -f
+    docker container prune --force
 
     echo "---> Remove all unused images"
-    docker image prune -a
+    docker image prune ---all --force
 
     echo "---> Remove all local volumes not used by at least one container."
     docker volume prune --all --force
@@ -109,6 +136,13 @@ EOF
   fi
 
   if [ "$1" == "uninstall" ]; then
+    echo "---> Uninstall Docker Engine, CLI, and Containerd packages."
+    read -p "Are you sure you want to proceed? (Y/N): " answer
+    if [ "${answer,,}" != "y" ]; then
+      echo "Operation cancelled."
+      exit 1
+    fi
+
     # Older versions of Docker were called docker, docker.io, or docker-engine. If these are installed, uninstall them:
     # sudo apt purge docker docker-engine docker.io containerd runc
 
@@ -139,7 +173,7 @@ EOF
 
   if [ "$1" == "update" ]; then
 
-    echo "---> Update all docker images"
+    echo "---> Update all locally cached Docker images to their latest versions by pulling them again from their respective remote registries"
     docker images --format "{{.Repository}}:{{.Tag}}" | xargs -L1 docker pull
 
     echo "---> Show all the dangling images (untagged images)"
