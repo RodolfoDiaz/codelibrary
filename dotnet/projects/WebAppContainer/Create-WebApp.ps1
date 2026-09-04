@@ -1,8 +1,9 @@
+# This file creates a new ASP.NET Core web application and builds it.
 # .NET CLI code sample
 # https://docs.microsoft.com/en-us/dotnet/core/tools/
 
 New-Variable -Name "AppName" -Visibility Public -Value "myWebApp"
-if ( Test-Path -Path $AppName -PathType Container ) { Remove-Item -path $AppName -Recurse –force }
+if ( Test-Path -Path $AppName -PathType Container ) { Remove-Item -path $AppName -Recurse -force }
 Write-Host "---> Create a new Web Application" -ForegroundColor Green
 # https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new
 dotnet new webapp -o $AppName --no-https
