@@ -5,10 +5,7 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker compose down
 #    (use the "-v" argument to remove "volumes" created by docker compose up).
-# 3- Browse to http://localhost:8080/ or http://localhost:8081/ and connect with either "root" or "${DB_USER}" user IDs.
-
-# https://docs.docker.com/compose/reference/
-# https://docs.docker.com/compose/overview/
+# 3- Browse to http://localhost:8090/ or http://localhost:8091/ and connect with either "root" or "${DB_USER}" user IDs.
 
 # https://mariadb.com/
 # https://hub.docker.com/_/mariadb
@@ -16,14 +13,12 @@
 # https://hub.docker.com/_/adminer/
 
 name: mariadb
-# https://docs.docker.com/compose/compose-file/
 
 services:
   mariadb:
     image: mariadb:latest
-    command: --default-authentication-plugin=mariadb_native_password
     hostname: "${DB_HOST_NAME}"
-    restart: always
+    restart: unless-stopped
     environment:
       MARIADB_DATABASE: "${DB_NAME}"
       MARIADB_USER: "${DB_USER}"
@@ -33,20 +28,8 @@ services:
       # <Port Exposed> : <MariaDB Port running inside the container>
       - ${DB_SRV_PORT}:3306
     volumes:
-      - dbfiles:/var/lib/mysql
-    networks:
-      - docknet
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    hostname: phpMyAdminHost1
-    restart: always
-    environment:
-      PMA_HOST: mariadb
-      PMA_ARBITRARY: 1
-    ports:
-      - ${WEB_UI_1_PORT}:80
-    networks:
-      - docknet
+      - database_files:/var/lib/mysql
+
   adminer:
     image: adminer:latest
     hostname: adminerHost1
@@ -57,13 +40,18 @@ services:
       ADMINER_DESIGN: mvt
       ADMINER_PLUGINS: dump-json dump-xml
     ports:
-      - ${WEB_UI_2_PORT}:8080
-    networks:
-      - docknet
+      - ${WEB_UI_1_PORT}:8080
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    hostname: phpMyAdminHost1
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_ARBITRARY: 1
+    ports:
+      - ${WEB_UI_2_PORT}:80
+
 # Names our volume
 volumes:
-  dbfiles:
-
-networks:
-  docknet:
-    driver: bridge
+  database_files:
