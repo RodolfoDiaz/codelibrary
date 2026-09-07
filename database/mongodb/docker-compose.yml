@@ -5,21 +5,17 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker compose down
 #    (use the "-v" argument to remove "volumes" created by docker compose up).
-# 3- Browse to http://localhost:8080/ and connect with "${DB_ROOT_USER}" user ID.
-
-# https://docs.docker.com/compose/reference/
-# https://docs.docker.com/compose/overview/
+# 3- Browse the DB management tool at http://localhost:8091/ and connect with "${DB_ROOT_USER}" user ID.
 
 # https://hub.docker.com/_/mongo
 # https://hub.docker.com/_/mongo-express
 
 name: mongodb
-# https://docs.docker.com/compose/compose-file/
 
 services:
   mongodb:
     image: mongo:latest
-    restart: always
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${ADMIN_SECRET_KEY:?error} # Get this password from an environment variable
@@ -38,12 +34,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 15s
+      start_period: 30s
     networks:
       - docknet
   mongo-express:
     image: mongo-express:latest
-    restart: always
+    restart: unless-stopped
     ports:
       - "${WEB_UI_1_PORT}:8081"
     environment:

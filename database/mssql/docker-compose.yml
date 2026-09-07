@@ -5,8 +5,8 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker compose down
 #    (use the "-v" argument to remove "volumes" created by "docker compose up").
-# 3- Browse to Adminer tool at http://localhost:8080/?mssql= and connect with "sa" credentials or
-#    connect using SQL Server Explorer with server name "127.0.0.1,1433" and SQL Server Authentication with "sa" user ID.
+# 3- Browse the DB management tool at http://localhost:8090/?mssql= and connect with "sa" or "${DB_USER}" user credentials
+#    or connect using SQL Server Explorer with server name "127.0.0.1,1433" and SQL Server Authentication.
 
 # https://hub.docker.com/_/microsoft-mssql-server
 # https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker

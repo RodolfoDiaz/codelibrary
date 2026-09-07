@@ -5,12 +5,13 @@
 # 2- To stop and remove containers, networks, images, and volumes:
 #    docker compose down
 #    (use the "-v" argument to remove "volumes" created by docker compose up).
-# 3- Browse to http://localhost:8090/ or http://localhost:8091/ and connect with either "root" or "${DB_USER}" user IDs.
+# 3- Browse the DB management tool at http://localhost:8090/ or use http://localhost:8091/
+#    to connect to the server with either "root" or "${DB_USER}" user IDs.
 
 # https://mariadb.com/
 # https://hub.docker.com/_/mariadb
-# https://hub.docker.com/r/phpmyadmin/phpmyadmin/
 # https://hub.docker.com/_/adminer/
+# https://hub.docker.com/r/phpmyadmin/phpmyadmin/
 
 name: mariadb
 
@@ -49,7 +50,7 @@ services:
   adminer:
     image: adminer:latest
     hostname: adminerHost1
-    restart: always
+    restart: unless-stopped
     environment:
       ADMINER_DEFAULT_DB_DRIVER: mysql
       ADMINER_DEFAULT_SERVER: "${DB_HOST_NAME}"
@@ -63,8 +64,9 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    hostname: phpMyAdminHost1
-    restart: always
+    # Setting a fully qualified domain name (FQDN) as the container's hostname forces Apache to read a valid hostname at startup
+    hostname: phpMyAdminHost1.local
+    restart: unless-stopped
     environment:
       PMA_HOST: mariadb
       PMA_ARBITRARY: 1
