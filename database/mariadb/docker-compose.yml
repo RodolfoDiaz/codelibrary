@@ -29,6 +29,22 @@ services:
       - ${DB_SRV_PORT}:3306
     volumes:
       - database_files:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mariadb-admin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${ADMIN_SECRET_KEY}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   adminer:
     image: adminer:latest
@@ -41,6 +57,9 @@ services:
       ADMINER_PLUGINS: dump-json dump-xml
     ports:
       - ${WEB_UI_1_PORT}:8080
+    depends_on:
+      mariadb:
+        condition: service_healthy
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -51,6 +70,9 @@ services:
       PMA_ARBITRARY: 1
     ports:
       - ${WEB_UI_2_PORT}:80
+    depends_on:
+      mariadb:
+        condition: service_healthy
 
 # Names our volume
 volumes:
