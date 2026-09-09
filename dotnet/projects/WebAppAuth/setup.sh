@@ -39,31 +39,34 @@ dotnet add $WebAppName/$WebAppName.csproj reference $DemoClassLibName/$DemoClass
 # Add a .gitignore file to the solution
 dotnet new gitignore
 
-echo "*/wwwroot/lib/" >> .gitignore
+# Exclude wwwroot/lib from source control using .gitignore because it contains
+# third-party client-side libraries that can be restored.
+# Why? Bloat reduction, Separation of concerns and Restorability.
+echo "**/wwwroot/lib/" >> .gitignore
 
-# Update Nuget packages
+echo "Update Nuget packages for all projects"
 dotnet package update --project $WebAppName
 dotnet package update --project $DemoClassLibName
 
-echo "Removing the existing wwwroot/lib directory if it exists..."
-rm -rf $WebAppName/wwwroot/lib
-
-echo "We will replace it with the libraries installed via LibMan"
 # 1. Install the LibMan CLI globally (if you haven't already)
 dotnet tool install --global Microsoft.Web.LibraryManager.Cli
 
+echo "Removing the wwwroot/lib directory created by default by the 'dotnet new webapp' tool."
+echo "We will replace client side libraries with those installed via LibMan"
+rm -rf $WebAppName/wwwroot/lib
+
 # 2. Initialize LibMan in your project root (creates libman.json)
-libman init --default-provider cdnjs
-
-mv libman.json $WebAppName
-
 cd $WebAppName
+echo "Initializing LibMan in the project root..."
+libman init --default-provider cdnjs
 
 # 3. Install required libraries using LibMan
 libman install bootstrap@5.3.8 --provider cdnjs --destination wwwroot/lib/bootstrap/dist
 libman install jquery@3.7.1 --provider cdnjs --destination wwwroot/lib/jquery/dist
 libman install jquery-validate@1.22.1 --provider cdnjs --destination wwwroot/lib/jquery-validate/dist
 libman install jquery-validation-unobtrusive@4.0.0 --provider cdnjs --destination wwwroot/lib/jquery-validation-unobtrusive/dist
+
+# libman restore
 
 # Run the Web Application project
 dotnet run --launch-profile https
