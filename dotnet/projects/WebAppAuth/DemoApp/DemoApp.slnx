@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="DemoClassLib/DemoClassLib.csproj" />
-  <Project Path="DemoWebApp/DemoWebApp.csproj" />
-</Solution>

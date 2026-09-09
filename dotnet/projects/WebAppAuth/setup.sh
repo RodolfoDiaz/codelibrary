@@ -1,4 +1,4 @@
-MyAppName="DemoApp"
+MyAppName="MyDemoApp"
 WebAppName="DemoWebApp"
 DemoClassLibName="DemoClassLib"
 
@@ -24,6 +24,7 @@ dotnet new sln
 
 # Create a new ASP.NET Core Web Application project
 dotnet new webapp --auth Individual -o $WebAppName
+dotnet add package Microsoft.Web.LibraryManager.Build --project $WebAppName
 
 # Create a new Class Library project
 dotnet new classlib -o $DemoClassLibName
@@ -38,9 +39,30 @@ dotnet add $WebAppName/$WebAppName.csproj reference $DemoClassLibName/$DemoClass
 # Add a .gitignore file to the solution
 dotnet new gitignore
 
+echo "*/wwwroot/lib/" >> .gitignore
+
 # Update Nuget packages
 dotnet package update --project $WebAppName
 dotnet package update --project $DemoClassLibName
+
+echo "Removing the existing wwwroot/lib directory if it exists..."
+rm -rf $WebAppName/wwwroot/lib
+
+echo "We will replace it with the libraries installed via LibMan"
+# 1. Install the LibMan CLI globally (if you haven't already)
+dotnet tool install --global Microsoft.Web.LibraryManager.Cli
+
+# 2. Initialize LibMan in your project root (creates libman.json)
+libman init --default-provider cdnjs
+
+# 3. Install required libraries using LibMan
+libman install bootstrap@5.3.8 --provider cdnjs --destination lib/bootstrap/dist
+libman install jquery@3.7.1 --provider cdnjs --destination lib/jquery/dist
+libman install jquery-validate@1.22.1 --provider cdnjs --destination lib/jquery-validate/dist
+libman install jquery-validation-unobtrusive@4.0.0 --provider cdnjs --destination lib/jquery-validation-unobtrusive/dist
+
+mv libman.json $WebAppName
+mv lib/ $WebAppName/wwwroot/
 
 # Run the Web Application project
 dotnet run --project $WebAppName --launch-profile https
