@@ -480,6 +480,4 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
-
-# Ignore wwwroot/lib directory for libraries installed via LibMan
-**/wwwroot/lib/
+*/wwwroot/lib/

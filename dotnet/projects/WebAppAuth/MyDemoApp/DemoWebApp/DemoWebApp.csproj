@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-DemoWebApp-12cc6ff5-9803-4c07-8397-538bad808652</UserSecretsId>
+    <UserSecretsId>aspnet-DemoWebApp-72ee01d3-e1f1-4b6f-9735-2a569effabff</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
