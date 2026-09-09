@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
-set -e
+# ==============================================================================
+# Script: configure-dev-certs.sh
+# Description:
+#   Automates the generation, trust, and environment configuration for .NET Core
+#   HTTPS development certificates on WSL (Windows Subsystem for Linux).
+#
+# Key Actions:
+#   1. Cleans existing HTTPS development certificates.
+#   2. Generates a fresh PFX certificate and marks it trusted within .NET.
+#   3. Exports the public certificate into Windows Temp and imports it into the
+#      Windows Current User Trusted Root Certification Authority using certutil.exe.
+#   4. Persists required environment variables (SSL_CERT_DIR, ASPNETCORE Kestrel settings)
+#      to ~/.bashrc and exports them for the active session.
+# ==============================================================================
 
-echo "SSL_CERT_DIR is equal to: ${SSL_CERT_DIR}"
+set -euo pipefail
 
-# Add Certificate Path to Environment Variables
-if [ -z "${SSL_CERT_DIR:-}" ]; then
-    echo 'export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:/usr/lib/ssl/certs"' >> ~/.bashrc
-    source ~/.bashrc
-fi
+echo "=== Current SSL_CERT_DIR value: ${SSL_CERT_DIR:-Not Set} ==="
 
 echo "=== 1. Cleaning old .NET HTTPS development certificates ==="
 dotnet dev-certs https --clean
@@ -65,17 +74,14 @@ echo "========================================================="
 
 echo ""
 echo "Checking for the existence of the certificate in the trust store..."
-ll ~/.aspnet/dev-certs/
+ls -la "$HOME/.aspnet/dev-certs/"
 dotnet dev-certs https --trust --check
 
 # By default, the "dotnet dev-certs https" command generates and installs the certificate
 # strictly at the Current User level (certmgr.msc), not the machine level (certlm.msc).
 
-# To find them, you must press Win + R, type certmgr.msc (Current User Certificate Manager),
-# and click Enter, then look in the following folders:
-# * Personal - Certificates: You will find a certificate with the Issued To / Issued By name set to
-#   localhost. Under the Friendly Name column, it will be labeled ASP.NET Core HTTPS development certificate.
-
-# * Trusted Root Certification Authorities - Certificates: If you previously ran dotnet dev-certs https --trust,
-#   a copy of that same localhost certificate will also be mirrored here so your web browsers trust it.
-#   Columns "Issued To" and "Issued By" columns will be set to localhost for the certificate created here.
+# To find them, press Win + R, type certmgr.msc (Current User Certificate Manager),
+# and look in:
+# * Personal - Certificates: Certificate with Issued To / Issued By set to "localhost"
+#   and Friendly Name set to "ASP.NET Core HTTPS development certificate".
+# * Trusted Root Certification Authorities - Certificates: The mirrored "localhost" certificate.
