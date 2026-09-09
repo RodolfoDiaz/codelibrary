@@ -157,27 +157,51 @@ EOF
 
   if [ "$1" == "list" ]; then
 
-    echo "---> See a list of all containers, even the ones not running"
-    docker ps -a
+    echo "---> List of Docker Containers, even the ones not running"
+    # Containers are active runtime instances of your image.
+    docker ps --all
+    echo ""
 
-    echo "---> Show all images on this machine"
-    docker images -a
+    echo "---> List of Docker Images, even the ones not tagged."
+    # Images are the read-only blueprints used to build containers.
+    docker images --all
+    echo ""
 
-    echo "---> Show all volumes on this machine"
+    echo "---> List of dangling Docker images (untagged images)."
+    docker images -f "dangling=true" -q
+    echo ""
+
+    echo "---> List of Docker Volumes."
+    # Volumes are used for persistent data storage independent of the container lifecycle.
     docker volume ls
+    echo ""
 
-    echo "---> Show all networks on this machine"
+    echo "---> List of Docker Networks."
+    # Networks manage communication channels between containers or the outside world.
     docker network ls
+    echo ""
+    # To check specific information about a Docker network using its network ID
+    # docker network inspect <network_id>
 
+    echo "--->  Docker diagnostics information: disk space usage by all of your Docker components."
+    # Displays a breakdown of space usage by all Docker assets combined (Images, Containers, Local Volumes, and Build Cache).
+    docker system df
+    echo ""
+
+    read -t 5 -p "Do you want to see more Docker System Info? (Y/N) [Default: n]: " answer
+    if [ "${answer,,}" == "y" ]; then
+      docker system info
+      exit 0
+    else
+      echo "Skipping system info."
+    fi
   fi
 
   if [ "$1" == "update" ]; then
 
-    echo "---> Update all locally cached Docker images to their latest versions by pulling them again from their respective remote registries"
+    echo ""
+    echo "---> Automatically update all of your existing local Docker images to their latest versions."
     docker images --format "{{.Repository}}:{{.Tag}}" | xargs -L1 docker pull
-
-    echo "---> Show all the dangling images (untagged images)"
-    docker images -f "dangling=true" -q
 
   fi
 
