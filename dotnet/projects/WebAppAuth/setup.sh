@@ -55,14 +55,15 @@ dotnet tool install --global Microsoft.Web.LibraryManager.Cli
 # 2. Initialize LibMan in your project root (creates libman.json)
 libman init --default-provider cdnjs
 
-# 3. Install required libraries using LibMan
-libman install bootstrap@5.3.8 --provider cdnjs --destination lib/bootstrap/dist
-libman install jquery@3.7.1 --provider cdnjs --destination lib/jquery/dist
-libman install jquery-validate@1.22.1 --provider cdnjs --destination lib/jquery-validate/dist
-libman install jquery-validation-unobtrusive@4.0.0 --provider cdnjs --destination lib/jquery-validation-unobtrusive/dist
-
 mv libman.json $WebAppName
-mv lib/ $WebAppName/wwwroot/
+
+# 3. Install required libraries using LibMan
+libman install bootstrap@5.3.8 --provider cdnjs --destination wwwroot/lib/bootstrap/dist
+libman install jquery@3.7.1 --provider cdnjs --destination wwwroot/lib/jquery/dist
+libman install jquery-validate@1.22.1 --provider cdnjs --destination wwwroot/lib/jquery-validate/dist
+libman install jquery-validation-unobtrusive@4.0.0 --provider cdnjs --destination wwwroot/lib/jquery-validation-unobtrusive/dist
+
+cd $WebAppName
 
 # Run the Web Application project
 dotnet run --project $WebAppName --launch-profile https
