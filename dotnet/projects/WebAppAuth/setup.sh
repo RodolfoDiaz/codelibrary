@@ -3,80 +3,85 @@
 # ==============================================================================
 # Script Name : setup_dotnet_solution.sh
 # Description : Automates the setup of a .NET Web Application solution with an
-#               associated Class Library. It creates the solution layout,
-#               configures project references, updates NuGet dependencies,
-#               manages .gitignore, and installs client-side assets via LibMan.
+#               associated Class Library. Creates the solution layout, configures
+#               project references, manages .gitignore, and optionally installs
+#               client-side assets via LibMan.
 # ==============================================================================
 
 MyAppName="MyDemoApp"
 WebAppName="DemoWebApp"
 DemoClassLibName="DemoClassLib"
 
-# 1. Check if the directory exists
+# Check if the target directory already exists
 if [ -d "$MyAppName" ]; then
     echo "The directory '$MyAppName' already exists."
 
-    # 2. Ask the user whether to remove it
     read -t 5 -p "Do you want to remove it and continue? (Y/N) [Default: n]: " answer
-    if [ "${answer,,}" == "y" ]; then
-        echo "Removing directory..."
+    answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
+    if [ "$answer" == "y" ]; then
+        echo "Removing existing directory..."
         rm -rf "$MyAppName"
     else
-        # 3. Exit the script if the user chooses not to remove the directory
         echo "Operation cancelled."
         exit 1
     fi
 fi
 
-# Create solution directory and solution file
+# Create solution layout
 mkdir "$MyAppName" && cd "$MyAppName" || exit 1
 dotnet new sln
 
-# Create a new ASP.NET Core Web Application project
+# Create projects
 dotnet new webapp --auth Individual -o "$WebAppName"
-dotnet add package Microsoft.Web.LibraryManager.Build --project "$WebAppName"
-
-# Create a new Class Library project
 dotnet new classlib -o "$DemoClassLibName"
 
-# Add projects to the solution
+# Configure solution and project references
 dotnet sln add "$WebAppName/$WebAppName.csproj"
 dotnet sln add "$DemoClassLibName/$DemoClassLibName.csproj"
-
-# Add a reference from Class Library project to Web Application project
 dotnet add "$WebAppName/$WebAppName.csproj" reference "$DemoClassLibName/$DemoClassLibName.csproj"
 
-# Add a .gitignore file to the solution
+# Configure source control exclusions
 dotnet new gitignore
-
-# Exclude wwwroot/lib from source control using .gitignore because it contains
-# third-party client-side libraries that can be restored.
-# Why? Bloat reduction, Separation of concerns and Restorability.
+# Exclude client libraries from source control to prevent repo bloat; these assets are automatically restorable via LibMan.
 echo "**/wwwroot/lib/" >> .gitignore
 
-echo "Update Nuget packages for all projects"
+echo "Update NuGet packages for all projects"
 dotnet package update --project "$WebAppName"
 dotnet package update --project "$DemoClassLibName"
 
-# Install the LibMan CLI globally (if not already installed)
-dotnet tool install --global Microsoft.Web.LibraryManager.Cli
+echo ""
+# Optional client-side asset setup via LibMan
+read -t 5 -p "Would you like to automatically load third-party libraries using Microsoft LibMan? (Y/N) [Default: y]: " answer
+answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
 
-echo "Removing the wwwroot/lib directory created by default by the 'dotnet new webapp' tool."
-rm -rf "$WebAppName/wwwroot/lib"
+# Use 'y' as the default if $answer is empty or 'y'
+if [ -z "$answer" ] || [ "$answer" == "y" ]; then
+    # Install the Microsoft LibraryManager (LibMan) global CLI tool.
+    dotnet tool install --global Microsoft.Web.LibraryManager.Cli
 
-# Navigate into the Web App directory to run LibMan commands
-cd "$WebAppName" || exit 1
+    # Add the LibMan MSBuild integration package to the web application project file
+    dotnet add package Microsoft.Web.LibraryManager.Build --project "$WebAppName"
 
-echo "Initializing LibMan in the project root..."
-libman init --default-provider cdnjs
+    echo "Clearing default template client libraries..."
+    rm -rf "$WebAppName/wwwroot/lib"
 
-# Install required client-side libraries using LibMan
-libman install bootstrap@5.3.8 --provider cdnjs --destination wwwroot/lib/bootstrap/dist
-libman install jquery@3.7.1 --provider cdnjs --destination wwwroot/lib/jquery/dist
-libman install jquery-validate@1.22.1 --provider cdnjs --destination wwwroot/lib/jquery-validate/dist
-libman install jquery-validation-unobtrusive@4.0.0 --provider cdnjs --destination wwwroot/lib/jquery-validation-unobtrusive/dist
+    # Navigate into the Web App directory to run LibMan commands
+    cd "$WebAppName" || exit 1
 
-cd ..
+    echo "Initializing LibMan..."
+    libman init --default-provider cdnjs
 
-# Run the Web Application project
+    libman install bootstrap@5.3.8 --provider cdnjs --destination wwwroot/lib/bootstrap/dist
+    libman install jquery@3.7.1 --provider cdnjs --destination wwwroot/lib/jquery/dist
+    libman install jquery-validate@1.22.1 --provider cdnjs --destination wwwroot/lib/jquery-validation/dist
+    libman install jquery-validation-unobtrusive@4.0.0 --provider cdnjs --destination wwwroot/lib/jquery-validation-unobtrusive/dist
+
+    cd ..
+else
+    echo ""
+    echo "----> Skipping LibMan configuration."
+    echo "----> Using library files generated by 'dotnet new webapp' command at: $WebAppName/wwwroot/lib"
+fi
+
+# Build and execute the web application
 dotnet run --project "$WebAppName" --launch-profile https

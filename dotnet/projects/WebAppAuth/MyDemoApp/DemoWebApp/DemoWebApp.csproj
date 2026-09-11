@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-DemoWebApp-af005e0f-eef8-4d98-ad0d-b1d04bcb2c26</UserSecretsId>
+    <UserSecretsId>aspnet-DemoWebApp-73d315f6-41fd-43c4-8cd7-74d55f7ffa80</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,10 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.114" />
   </ItemGroup>
 
