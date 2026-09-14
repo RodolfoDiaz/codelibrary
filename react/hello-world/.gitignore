@@ -39,5 +39,6 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# The sample application created should not be pushed into the repo
-**/hello-world-app
+# The sample applications created should not be pushed into the repo
+**/hello-world-js-app
+**/hello-world-ts-app
