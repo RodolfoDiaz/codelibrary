@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-5">
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <div class="card shadow-sm p-4">
+            <h1 class="display-4 text-primary">Welcome, @ViewData["UserName"]!</h1>
+            <p class="lead">You have successfully logged in.</p>
+            <hr />
+            <p><strong>Email:</strong> @ViewData["UserEmail"]</p>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" class="mt-3">
+                <button type="submit" class="btn btn-danger">Log Out</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">
+            <p>You are not logged in.</p>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary me-2">Log In</a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-secondary">Register</a>
+        </div>
+    }
+</div>

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="AuthDemoApp.Core/AuthDemoApp.Core.csproj" />
+  <Project Path="AuthDemoApp.Test/AuthDemoApp.Test.csproj" />
+  <Project Path="AuthDemoApp.Web/AuthDemoApp.Web.csproj" />
+</Solution>
