@@ -1,41 +1,94 @@
-if [ "$(expr substr $(uname -s) 1 5)" != "Linux" ]; then
-  echo 'This script is only for Linux.'
-  exit
+#!/usr/bin/env bash
+
+# Shell safety settings: exit on unhandled errors, unbound variables, and pipe failures
+set -euo pipefail
+
+# Ensure the script runs strictly on Linux
+if [[ "$(uname -s)" != "Linux" ]]; then
+  echo "[ERROR] This script is supported only on Linux distributions." >&2
+  exit 1
 fi
 
-if [ "$1" == "" ]; then
-    echo "No argurment found. Use 'i' to install common packages, 'u' to update/upgrade all, 'l' to list installed packages, 'r' to autoremove unused packages, 's' to search."
-elif [ "$1" == "u" ]; then
-  # Update/upgrade the system by installing/upgrading packages
-  sudo apt update -y
-  sudo apt upgrade -y
-elif [ "$1" == "i" ]; then
-  # Install common packages
-  sudo apt install build-essential
-  sudo apt install zip unzip -y
-  sudo apt install unrar -y
-elif [ "$1" == "l" ]; then
-  # List Installed Packages
-  if [ "$2" == "" ] ||  [ "$2" == "i" ]; then
-    echo "---> List Packages installed"
-    apt list --installed
-  elif [ "$2" == "u" ]; then
-  echo "---> List Packages upgradeable"
-    apt list --upgradeable
-  fi
-elif [ "$1" == "s" ]; then
-  # Search for packages installed with a pattern
-  if [ "$2" == "" ]; then
-    echo "No search pattern found. Enter a command name, for example: ./linux_config.sh s zip"
-    exit
-  fi
-  echo "---> List packages installed (dpkg)"
-  dpkg --list *$2* | grep --invert-match none
-  # echo "---> List packages installed (apt list)"
-  # apt list --installed | grep $2
-elif [ "$1" == "r" ]; then
-  # Remove automatically all unused packages
-  sudo apt autoremove -y
-  # Removing all residual config packages in Ubuntu:
-  sudo apt remove --purge `dpkg -l | grep '^rc' | awk '{print $2}'`
-fi
+SCRIPT_NAME="$(basename "$0")"
+COMMAND="${1:-}"
+PARAM="${2:-}"
+
+# Display usage instructions
+show_usage() {
+  cat << EOF
+Usage: $SCRIPT_NAME <command> [option]
+
+Commands:
+  install, i             Install core development utilities and archive tools.
+  update, u              Update repository indexes and upgrade all system packages.
+  list, l [installed|u]  List packages. Use 'installed' (or 'i', default) or 'upgradeable' (or 'u').
+  autoremove, r          Autoremove unused packages and purge residual configuration files.
+  search, s <pattern>    Search installed packages using a pattern.
+EOF
+}
+
+case "$COMMAND" in
+  "update" | "u")
+    echo "[INFO] Updating package lists and upgrading system packages..."
+    sudo apt update -y
+    sudo apt upgrade -y
+    ;;
+
+  "install" | "i")
+    echo "[INFO] Installing standard system utilities..."
+    sudo apt update -y
+    sudo apt install -y build-essential zip unzip unrar
+    ;;
+
+  "list" | "l")
+    case "$PARAM" in
+      "" | "installed" | "i")
+        echo "[INFO] Listing installed packages..."
+        apt list --installed
+        ;;
+      "upgradeable" | "u")
+        echo "[INFO] Listing upgradeable packages..."
+        apt list --upgradeable
+        ;;
+      *)
+        echo "[ERROR] Invalid option '$PARAM' for listing. Use 'installed' (i) or 'upgradeable' (u)." >&2
+        exit 1
+        ;;
+    esac
+    ;;
+
+  "search" | "s")
+    if [[ -z "$PARAM" ]]; then
+      echo "[ERROR] Missing search pattern." >&2
+      echo "Example: $SCRIPT_NAME search zip" >&2
+      exit 1
+    fi
+    echo "[INFO] Searching installed packages matching pattern: '$PARAM'"
+    dpkg-query -l "*${PARAM}*" | grep -v '^un' || echo "[INFO] No matching packages found."
+    ;;
+
+  "autoremove" | "remove" | "r")
+    echo "[INFO] Removing unused packages and purging residual configuration..."
+    sudo apt autoremove -y
+
+    # Purge remaining configuration files ('rc' state) cleanly
+    REMOVED_CONFIGS=$(dpkg -l | awk '/^rc/ {print $2}')
+    if [[ -n "$REMOVED_CONFIGS" ]]; then
+      echo "$REMOVED_CONFIGS" | xargs -r sudo apt-get purge -y
+    else
+      echo "[INFO] No residual configuration files found."
+    fi
+    ;;
+
+  "")
+    echo "[ERROR] No command specified." >&2
+    show_usage
+    exit 1
+    ;;
+
+  *)
+    echo "[ERROR] Unrecognized command '$COMMAND'." >&2
+    show_usage
+    exit 1
+    ;;
+esac

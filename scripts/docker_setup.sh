@@ -1,48 +1,75 @@
-# Install Docker Engine on Ubuntu
-# https://docs.docker.com/engine/install/ubuntu/
+#!/usr/bin/env bash
 
-# Where docker volumes are located? https://docs.docker.com/storage/volumes/
-# Folder location in Linux: /var/lib/docker/volumes
-# Folder location in Docker Desktop (Windows):
-# \\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes\
+# ==============================================================================
+# Docker Engine Management Script for Ubuntu
+# Documentation: https://docs.docker.com/engine/install/ubuntu/
+# Data Path (Linux): /var/lib/docker/
+# ==============================================================================
 
-if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+# Shell safety settings: exit on unhandled errors, unbound variables, and pipe failures
+set -euo pipefail
 
-  if [ "$1" == "" ]; then
-    echo "No argurment found. Call this script with one of the following arguments: 
-    'install' to install Docker Engine. 
-    'create' to create sample container. 
-    'update' to execute image update and cleanup.
-    'list' to list containers/images.
-    'remove_all' to remove all containers and associated volumes, networks and images.
-    'uninstall' to remove Docker from this machine.
-    'status' to check the Docker service status."
-  fi
+# Prevent running as root directly (script uses sudo where needed)
+if [ "$(id -u)" -eq 0 ]; then
+  echo "[ERROR] Do not run this script as root directly. Run as a regular user with sudo privileges." >&2
+  exit 1
+fi
 
-  if [ "$1" == "install" ]; then
+# Ensure target platform is Linux
+if [ "$(uname -s)" != "Linux" ]; then
+  echo "[ERROR] This script is intended only for Linux systems." >&2
+  exit 1
+fi
 
-    echo "Install Docker Engine on Ubuntu - https://docs.docker.com/engine/install/ubuntu/"
+# Helper function for user confirmations
+confirm_action() {
+  local prompt_message="${1:-Are you sure you want to proceed?}"
+  read -r -p "${prompt_message} [y/N]: " answer
+  case "${answer,,}" in
+    y | yes) return 0 ;;
+    *)
+      echo "[INFO] Operation cancelled by user."
+      exit 0
+      ;;
+  esac
+}
 
-    read -p "Are you sure you want to proceed? (Y/N): " answer
-    if [ "${answer,,}" != "y" ]; then
-      echo "Operation cancelled."
-      exit 1
-    fi
+# Print usage instructions
+show_usage() {
+  cat << EOF
+Usage: $(basename "$0") <command>
 
-    # Uninstall old versions
-    sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc docker-buildx podman-docker containerd runc | cut -f1)
+Available commands:
+  install      Install Docker Engine and configure official repositories
+  create       Create and run a sample verification container
+  status       Display the current operational status of the Docker service
+  list         Display detailed inventory (containers, images, volumes, networks, disk usage)
+  update       Pull the latest tags for all local Docker images
+  remove_all   Stop and remove all containers, unused images, volumes, and networks
+  uninstall    Completely purge Docker Engine, packages, and residual state data
+EOF
+}
 
-    # -*- Set up the repository -*-
+# Main command handling
+COMMAND="${1:-}"
 
-    # Add Docker's official GPG key:
-    sudo apt update
-    sudo apt install ca-certificates curl
+case "${COMMAND}" in
+  install)
+    echo "[INFO] Starting Docker Engine installation for Ubuntu..."
+    confirm_action "Proceed with Docker Engine installation?"
+
+    echo "[INFO] Removing conflicting legacy packages..."
+    sudo apt-get remove -y docker.io docker-compose docker-compose-v2 docker-doc docker-buildx podman-docker containerd runc 2> /dev/null || true
+
+    echo "[INFO] Setting up Docker APT repository and GPG key..."
+    sudo apt-get update
+    sudo apt-get install -y ca-certificates curl gnupg
+
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
     sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-    # Add the repository to Apt sources:
-    sudo tee /etc/apt/sources.list.d/docker.sources << EOF
+    sudo tee /etc/apt/sources.list.d/docker.sources > /dev/null << EOF
 Types: deb
 URIs: https://download.docker.com/linux/ubuntu
 Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
@@ -51,160 +78,126 @@ Architectures: $(dpkg --print-architecture)
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 
-    sudo apt update
+    echo "[INFO] Installing Docker Engine, CLI, Containerd, and modern plugins..."
+    sudo apt-get update
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-    # -*- Install the Docker packages -*-
+    echo "[INFO] Enabling and starting Docker service..."
+    sudo systemctl enable --now docker
 
-    sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    echo "[INFO] Managing Docker permissions for non-root execution..."
+    if ! getent group docker > /dev/null; then
+      sudo groupadd docker
+    fi
+    sudo usermod -aG docker "$USER"
 
-    # -*- After installation, start the Docker service -*-
+    echo ""
+    echo "[SUCCESS] Docker Engine installed successfully."
+    echo "[NOTICE] Group membership updated. Log out and back in (or run 'newgrp docker') to apply changes without sudo."
+    ;;
 
-    sudo systemctl start docker
-
-    # Continue to Post-installation steps for Linux - https://docs.docker.com/engine/install/linux-postinstall/
-
-    # -*- Manage Docker as a non-root user -*-
-    # If you don’t want to preface the docker command with sudo, create a Unix group called docker and add users to it.
-    # When the Docker daemon starts, it creates a Unix socket accessible by members of the docker group.
-
-    sudo groupadd docker
-
-    sudo usermod -aG docker $USER
-
-    echo "---> Log out and log back in so that your group membership is re-evaluated."
-
-    read -p "Docker was installed. Press any key to continue ..."
-
-    # Verify that the installation is successful by running the hello-world image:
-    # docker run hello-world
-
-  fi
-
-  if [ "$1" == "create" ]; then
-
-    # Verify that Docker Engine is installed correctly by running the hello-world image.
-    echo "---> Create a container"
-    # https://docs.docker.com/engine/reference/commandline/run/
+  create)
+    echo "[INFO] Deploying test container..."
     docker run --name hw1 hello-world
 
-    echo "---> Start an existing container"
-    # https://docs.docker.com/engine/reference/commandline/start/
+    echo "[INFO] Interactively attaching to existing container 'hw1'..."
     docker start --attach --interactive hw1
+    ;;
 
-  fi
-
-  if [ "$1" == "status" ]; then
-    systemctl is-active --quiet docker || systemctl start docker
-    echo "---> Docker service is..."
-    systemctl is-active docker
-
-    read -t 5 -p "Do you want to see full status info? (Y/N) [Default: n]: " answer
-    if [ "${answer,,}" == "y" ]; then
-      systemctl status docker
-      exit 0
+  status)
+    echo "[INFO] Checking Docker service status..."
+    if systemctl is-active --quiet docker; then
+      echo "[STATUS] Docker daemon is running."
     else
-      echo "Skipping full status info."
+      echo "[STATUS] Docker daemon is inactive. Starting service..."
+      sudo systemctl start docker
     fi
 
-  fi
+    read -r -t 5 -p "Display detailed systemctl status output? [y/N]: " answer || true
+    if [[ "${answer,,}" =~ ^(y|yes)$ ]]; then
+      systemctl status docker
+    else
+      echo "[INFO] Skipped full status output."
+    fi
+    ;;
 
-  if [ "$1" == "remove_all" ]; then
+  list)
+    echo "=== Active and Stopped Containers ==="
+    docker ps --all
 
-    echo "---> Remove all containers, images, volumes and networks"
-    read -p "Are you sure you want to proceed? (Y/N): " answer
-    if [ "${answer,,}" != "y" ]; then
-      echo "Operation cancelled."
-      exit 1
+    echo -e "\n=== Local Docker Images ==="
+    docker images --all
+
+    echo -e "\n=== Dangling (Untagged) Images ==="
+    docker images --filter "dangling=true"
+
+    echo -e "\n=== Managed Volumes ==="
+    docker volume ls
+
+    echo -e "\n=== Configured Networks ==="
+    docker network ls
+
+    echo -e "\n=== Disk Space Consumption ==="
+    docker system df
+
+    echo ""
+    read -r -t 5 -p "Display detailed Docker system information? [y/N]: " answer || true
+    if [[ "${answer,,}" =~ ^(y|yes)$ ]]; then
+      docker system info
+    else
+      echo "[INFO] Skipped system info."
+    fi
+    ;;
+
+  update)
+    echo "[INFO] Updating all local Docker images to their latest tags..."
+    images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "<none>")
+    if [ -n "$images" ]; then
+      echo "$images" | xargs -L1 docker pull
+      echo "[SUCCESS] Local images successfully updated."
+    else
+      echo "[INFO] No local images found to update."
+    fi
+    ;;
+
+  remove_all)
+    echo "[WARNING] This action stops and destroys ALL containers, images, volumes, and networks."
+    confirm_action "Are you sure you want to wipe all local Docker assets?"
+
+    echo "[INFO] Stopping active containers..."
+    containers=$(docker ps -q)
+    if [ -n "$containers" ]; then
+      docker stop $containers
     fi
 
-    echo "---> Stop all running containers"
-    docker stop $(docker ps -a -q)
+    echo "[INFO] Performing full system prune (containers, images, volumes, networks)..."
+    docker system prune --all --volumes --force
+    echo "[SUCCESS] All non-essential Docker assets purged."
+    ;;
 
-    echo "---> Remove all stopped containers"
-    docker container prune --force
+  uninstall)
+    echo "[WARNING] This action completely removes Docker Engine, configurations, and state files."
+    confirm_action "Are you sure you want to uninstall Docker?"
 
-    echo "---> Remove all unused images"
-    docker image prune ---all --force
+    echo "[INFO] Purging Docker packages..."
+    sudo apt-get purge -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
 
-    echo "---> Remove all local volumes not used by at least one container."
-    docker volume prune --all --force
-
-    echo "---> Remove all unused networks not used by at least one container."
-    # [LEGACY METHOD] docker rmi $(docker images -f "dangling=true" -q)
-    docker system prune --all --force
-
-  fi
-
-  if [ "$1" == "uninstall" ]; then
-    echo "---> Uninstall Docker Engine, CLI, and Containerd packages."
-    read -p "Are you sure you want to proceed? (Y/N): " answer
-    if [ "${answer,,}" != "y" ]; then
-      echo "Operation cancelled."
-      exit 1
-    fi
-
-    # Older versions of Docker were called docker, docker.io, or docker-engine. If these are installed, uninstall them:
-    # sudo apt purge docker docker-engine docker.io containerd runc
-
-    echo "---> Uninstall the Docker Engine, CLI, and Containerd packages."
-    sudo apt purge docker-ce docker-ce-cli containerd.io docker-compose
-    echo "---> Delete all images, containers, and volumes."
+    echo "[INFO] Removing residual Docker configurations and state directories..."
     sudo rm -rf /var/lib/docker
     sudo rm -rf /var/lib/containerd
-    echo "---> Delete(remove) the docker group from the system"
-    sudo groupdel docker
-  fi
+    sudo rm -f /etc/apt/sources.list.d/docker.sources
+    sudo rm -f /etc/apt/keyrings/docker.asc
 
-  if [ "$1" == "list" ]; then
-
-    echo "---> List of Docker Containers, even the ones not running"
-    # Containers are active runtime instances of your image.
-    docker ps --all
-    echo ""
-
-    echo "---> List of Docker Images, even the ones not tagged."
-    # Images are the read-only blueprints used to build containers.
-    docker images --all
-    echo ""
-
-    echo "---> List of dangling Docker images (untagged images)."
-    docker images -f "dangling=true" -q
-    echo ""
-
-    echo "---> List of Docker Volumes."
-    # Volumes are used for persistent data storage independent of the container lifecycle.
-    docker volume ls
-    echo ""
-
-    echo "---> List of Docker Networks."
-    # Networks manage communication channels between containers or the outside world.
-    docker network ls
-    echo ""
-    # To check specific information about a Docker network using its network ID
-    # docker network inspect <network_id>
-
-    echo "--->  Docker diagnostics information: disk space usage by all of your Docker components."
-    # Displays a breakdown of space usage by all Docker assets combined (Images, Containers, Local Volumes, and Build Cache).
-    docker system df
-    echo ""
-
-    read -t 5 -p "Do you want to see more Docker System Info? (Y/N) [Default: n]: " answer
-    if [ "${answer,,}" == "y" ]; then
-      docker system info
-      exit 0
-    else
-      echo "Skipping system info."
+    if getent group docker > /dev/null; then
+      echo "[INFO] Removing 'docker' group..."
+      sudo groupdel docker
     fi
-  fi
 
-  if [ "$1" == "update" ]; then
+    echo "[SUCCESS] Docker successfully uninstalled from the system."
+    ;;
 
-    echo ""
-    echo "---> Automatically update all of your existing local Docker images to their latest versions."
-    docker images --format "{{.Repository}}:{{.Tag}}" | xargs -L1 docker pull
-
-  fi
-
-else
-  echo 'This script is only for Linux.'
-fi
+  *)
+    show_usage
+    exit 1
+    ;;
+esac
