@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Compiled output
+dist/
+build/
+*.js
+*.d.ts
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs and environment files
+npm-debug.log*
+.env
+.DS_Store
