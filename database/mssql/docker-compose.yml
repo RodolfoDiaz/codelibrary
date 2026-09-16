@@ -29,10 +29,6 @@ services:
       MSSQL_PID: "${MSSQL_PID:-Developer}"
       # Prevents SQL Server from exceeding memory limits assigned to the container
       MSSQL_MEMORY_LIMIT_MB: "2048"
-      # Automatically set up a custom database and a standard user account when the container first starts.
-      MSSQL_DB: "${MSSQL_DB}"
-      MSSQL_USER: "${MSSQL_USER}"
-      MSSQL_PASSWORD: "${USER_SECRET_KEY:?Error: USER_SECRET_KEY environment variable is required.}"
     deploy:
       resources:
         limits:

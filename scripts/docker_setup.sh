@@ -37,9 +37,11 @@ confirm_action() {
 # Print usage instructions
 show_usage() {
   cat << EOF
+Docker CLI Wrapper Utility (docker_setup.sh)
+
 Usage: $(basename "$0") <command>
 
-Available commands:
+The following commands are available:
   install      Install Docker Engine and configure official repositories
   create       Create and run a sample verification container
   status       Display the current operational status of the Docker service
@@ -47,6 +49,7 @@ Available commands:
   update       Pull the latest tags for all local Docker images
   remove_all   Stop and remove all containers, unused images, volumes, and networks
   uninstall    Completely purge Docker Engine, packages, and residual state data
+
 EOF
 }
 
@@ -155,6 +158,21 @@ EOF
     if [ -n "$images" ]; then
       echo "$images" | xargs -L1 docker pull
       echo "[SUCCESS] Local images successfully updated."
+
+      echo ""
+      # Find dangling images older than 24 hours to match the prune filter
+      dangling_images=$(docker images -f "dangling=true" -f "until=24h" -q)
+
+      if [ -n "$dangling_images" ]; then
+        echo "---> Dangling images found (older than 24h):"
+        echo "$dangling_images"
+        echo ""
+        echo "---> Pruning dangling images older than 24 hours..."
+        docker image prune --filter "until=24h" -f
+      else
+        echo "[INFO] No dangling or unused images found (older than 24h). Skipping prune."
+      fi
+
     else
       echo "[INFO] No local images found to update."
     fi
