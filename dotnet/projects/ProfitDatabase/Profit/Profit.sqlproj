@@ -1,0 +1,512 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Profit</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{f7aff5de-89a3-4d06-bb2a-0f0954a3cd22}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql170DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Profit</RootNamespace>
+    <AssemblyName>Profit</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <AnsiNulls>False</AnsiNulls>
+    <QuotedIdentifier>False</QuotedIdentifier>
+    <IsLedgerOn>False</IsLedgerOn>
+    <QueryStoreCaptureMode>Auto</QueryStoreCaptureMode>
+    <QueryStoreDesiredState>ReadWrite</QueryStoreDesiredState>
+    <QueryStoreFlushInterval>900</QueryStoreFlushInterval>
+    <QueryStoreStatsInterval>60</QueryStoreStatsInterval>
+    <QueryStoreMaxPlansPerQuery>200</QueryStoreMaxPlansPerQuery>
+    <QueryStoreStaleQueryThreshold>30</QueryStoreStaleQueryThreshold>
+    <QueryStoreMaxStorageSize>1000</QueryStoreMaxStorageSize>
+    <DbScopedConfigLegacyCardinalityEstimation>Off</DbScopedConfigLegacyCardinalityEstimation>
+    <DbScopedConfigMaxDOP>0</DbScopedConfigMaxDOP>
+    <DbScopedConfigParameterSniffing>On</DbScopedConfigParameterSniffing>
+    <DbScopedConfigOptimizerHotfixes>Off</DbScopedConfigOptimizerHotfixes>
+    <DelayedDurability>DISABLED</DelayedDurability>
+    <AutoCreateStatisticsIncremental>False</AutoCreateStatisticsIncremental>
+    <MemoryOptimizedElevateToSnapshot>False</MemoryOptimizedElevateToSnapshot>
+    <Containment>None</Containment>
+    <IsNestedTriggersOn>True</IsNestedTriggersOn>
+    <IsTransformNoiseWordsOn>False</IsTransformNoiseWordsOn>
+    <TwoDigitYearCutoff>2049</TwoDigitYearCutoff>
+    <NonTransactedFileStreamAccess>OFF</NonTransactedFileStreamAccess>
+    <TargetRecoveryTimePeriod>60</TargetRecoveryTimePeriod>
+    <TargetRecoveryTimeUnit>SECONDS</TargetRecoveryTimeUnit>
+    <IsChangeTrackingOn>False</IsChangeTrackingOn>
+    <IsChangeTrackingAutoCleanupOn>True</IsChangeTrackingAutoCleanupOn>
+    <ChangeTrackingRetentionPeriod>2</ChangeTrackingRetentionPeriod>
+    <ChangeTrackingRetentionUnit>Days</ChangeTrackingRetentionUnit>
+    <IsEncryptionOn>False</IsEncryptionOn>
+    <IsBrokerPriorityHonored>False</IsBrokerPriorityHonored>
+    <Trustworthy>False</Trustworthy>
+    <AutoUpdateStatisticsAsynchronously>False</AutoUpdateStatisticsAsynchronously>
+    <PageVerify>CHECKSUM</PageVerify>
+    <ServiceBrokerOption>EnableBroker</ServiceBrokerOption>
+    <DateCorrelationOptimizationOn>False</DateCorrelationOptimizationOn>
+    <Parameterization>SIMPLE</Parameterization>
+    <AllowSnapshotIsolation>False</AllowSnapshotIsolation>
+    <ReadCommittedSnapshot>False</ReadCommittedSnapshot>
+    <VardecimalStorageFormatOn>True</VardecimalStorageFormatOn>
+    <SupplementalLoggingOn>False</SupplementalLoggingOn>
+    <CompatibilityMode>170</CompatibilityMode>
+    <AnsiNullDefault>False</AnsiNullDefault>
+    <AnsiPadding>False</AnsiPadding>
+    <AnsiWarnings>False</AnsiWarnings>
+    <ArithAbort>False</ArithAbort>
+    <ConcatNullYieldsNull>False</ConcatNullYieldsNull>
+    <NumericRoundAbort>False</NumericRoundAbort>
+    <RecursiveTriggersEnabled>False</RecursiveTriggersEnabled>
+    <DatabaseChaining>False</DatabaseChaining>
+    <DatabaseState>ONLINE</DatabaseState>
+    <CloseCursorOnCommitEnabled>False</CloseCursorOnCommitEnabled>
+    <DefaultCursor>GLOBAL</DefaultCursor>
+    <AutoClose>False</AutoClose>
+    <AutoCreateStatistics>True</AutoCreateStatistics>
+    <AutoShrink>False</AutoShrink>
+    <AutoUpdateStatistics>True</AutoUpdateStatistics>
+    <TornPageDetection>False</TornPageDetection>
+    <DatabaseAccess>MULTI_USER</DatabaseAccess>
+    <Recovery>FULL</Recovery>
+    <EnableFullTextSearch>True</EnableFullTextSearch>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <OptimizedLocking>False</OptimizedLocking>
+    <AcceleratedDatabaseRecovery>False</AcceleratedDatabaseRecovery>
+    <DataRetentionEnabled>False</DataRetentionEnabled>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="Security\" />
+    <Folder Include="dbo\Stored Procedures\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Country.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\State.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Company.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ClientDocType.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Department.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\DocumentStatus.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\EmployeeProfile.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ExchangeRate.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\MoneyType.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\PaymentType.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ProductType.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ProviderDocType.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\UserInfo.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Warehouse.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Employee.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Client.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ClientContact.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ClientDocDetail.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ClientDocument.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ClientPayment.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Commission.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Product.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\Provider.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ProviderContact.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ProviderDocument.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Tables\ProviderPayment.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_PaymentType.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ProductType.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ProviderDocType.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_UserInfo.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Warehouse.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Employee.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Client.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ClientContact.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ClientDocDetail.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ClientDocument.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ClientPayment.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Commission.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Product.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Provider.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ProviderContact.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ProviderDocument.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ProviderPayment.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Country.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_State.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Company.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ClientDocType.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_Department.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_DocumentStatus.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_EmployeeProfile.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_ExchangeRate.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Views\profit_vw_MoneyType.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="Security\profit_role_datadelete.sql" />
+    <Build Include="Security\profit_role_datainsert.sql" />
+    <Build Include="Security\profit_role_dataupdate.sql" />
+    <Build Include="Security\profit_role_fullaccess.sql" />
+    <Build Include="Security\profit_role_datareader.sql" />
+    <Build Include="Security\ProfitUser.sql" />
+    <Build Include="Security\ProfitUser_1.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Country_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Country_Insert.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Country_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Country_Update.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_State_Delete.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_State_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_State_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_State_Update.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Company_Delete.sql">
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Company_Insert.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Company_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Company_Update.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocType_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocType_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocType_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocType_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Department_Delete.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Department_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Department_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Department_Update.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_DocumentStatus_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_DocumentStatus_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_DocumentStatus_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_DocumentStatus_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_EmployeeProfile_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_EmployeeProfile_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_EmployeeProfile_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_EmployeeProfile_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ExchangeRate_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ExchangeRate_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ExchangeRate_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ExchangeRate_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_GetExchangeRate.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_MoneyType_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_MoneyType_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_MoneyType_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_MoneyType_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_PaymentType_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_PaymentType_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_PaymentType_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_PaymentType_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProductType_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProductType_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProductType_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProductType_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocType_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocType_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocType_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocType_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_UserInfo_Delete.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_UserInfo_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_UserInfo_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_UserInfo_Update.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Warehouse_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Warehouse_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Warehouse_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Warehouse_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Employee_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Employee_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Employee_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Employee_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientContact_Delete.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientContact_Insert.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientContact_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientContact_Update.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocDetail_Delete.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocDetail_Insert.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocDetail_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocDetail_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocument_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocument_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocument_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientDocument_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientPayment_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientPayment_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientPayment_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ClientPayment_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Client_Delete.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Client_Insert.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Client_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Client_Update.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_Commission_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Commission_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Commission_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Commission_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Product_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Product_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Product_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Product_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderContact_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderContact_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderContact_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderContact_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocument_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocument_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocument_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderDocument_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderPayment_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderPayment_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderPayment_Read.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\profit_sp_ProviderPayment_Update.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Provider_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Provider_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Provider_Read.sql" />
+    <Build Include="dbo\Stored Procedures\profit_sp_Provider_Update.sql" />
+    <Build Include="Security\profit_role_datadelete_1.sql" />
+    <Build Include="Security\profit_role_datainsert_1.sql" />
+    <Build Include="Security\profit_role_datareader_1.sql" />
+    <Build Include="Security\profit_role_dataupdate_1.sql" />
+    <Build Include="Security\profit_role_fullaccess_1.sql" />
+    <Build Include="Security\Permissions.sql" />
+  </ItemGroup>
+</Project>
