@@ -1,5 +1,5 @@
 ﻿CREATE ROLE [profit_role_datareader]
-    AUTHORIZATION [ProfitUser];
+    AUTHORIZATION [dbo];
 
 
 GO

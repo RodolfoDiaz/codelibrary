@@ -1,5 +1,5 @@
 ﻿CREATE ROLE [profit_role_dataupdate]
-    AUTHORIZATION [ProfitUser];
+    AUTHORIZATION [dbo];
 
 
 GO

@@ -1,3 +1,5 @@
+-- EXECUTE THIS SCRIPT AS SYSTEM ADMINISTRATOR (SA)
+
 IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'Profit')
 	DROP DATABASE [Profit]
 GO
@@ -683,11 +685,17 @@ BEGIN
 		select @logindb = N'Profit'
 	if @loginlang is null or (not exists (select * from master.dbo.syslanguages where name = @loginlang) and @loginlang <> N'us_english')
 		select @loginlang = @@language
-	exec sp_addlogin N'ProfitUser', null, @logindb, @loginlang
+	
+	--  For security reasons, never hardcode passwords directly in this file.
+	DECLARE @password NVARCHAR(50)
+	-- Set the value to the variable, but do not commit/push this change!
+	--SELECT @password = ''
+	
+	exec sp_addlogin N'ProfitUser', @password, @logindb, @loginlang
 END
 GO
 if not exists (select * from dbo.sysusers where name = N'Profit' and uid < 16382)
-	EXEC sp_grantdbaccess N'ProfitUser', N'ProfitUser'
+	CREATE USER [ProfitUser] FOR LOGIN [ProfitUser]
 GO
 if not exists (select * from dbo.sysusers where name = N'profit_role_datadelete' and uid > 16399)
 	EXEC sp_addrole N'profit_role_datadelete'

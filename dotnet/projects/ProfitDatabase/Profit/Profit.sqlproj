@@ -332,7 +332,6 @@
     <Build Include="Security\profit_role_datareader.sql" />
     <Build Include="Security\ProfitUser.sql" />
     <Build Include="Security\ProfitUser_1.sql" />
-    <Build Include="Security\RoleMemberships.sql" />
     <Build Include="dbo\Stored Procedures\profit_sp_Country_Delete.sql" />
     <Build Include="dbo\Stored Procedures\profit_sp_Country_Insert.sql">
       <QuotedIdentifier>On</QuotedIdentifier>
