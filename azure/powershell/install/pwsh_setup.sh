@@ -1,53 +1,79 @@
-# Install PowerShell
-# https://docs.microsoft.com/en-us/powershell/scripting/overview
-if [ "$1" == "" ]; then
-    echo "No argurment found.  Use 'i' to install or 'u' to uninstall."
+#!/usr/bin/env bash
+
+# Install or Uninstall PowerShell across macOS, Linux (Ubuntu/Debian), and Windows
+# Documentation: https://learn.microsoft.com/powershell/scripting/overview
+
+ACTION="$1"
+
+if [ -z "$ACTION" ]; then
+    echo "Usage: $0 [i|u]"
+    echo "  i : Install / Upgrade PowerShell"
+    echo "  u : Uninstall PowerShell"
+    exit 1
 fi
 
-if [ "$(uname)" == "Darwin" ]; then
-    if [ "$1" == "i" ]; then
-        echo "Installing PowerShell on macOS"
-        # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-macos
-        brew install --cask powershell
-        # When new versions of PowerShell are released, update Homebrew's formulae and upgrade PowerShell:
-        brew update
-        brew upgrade powershell --cask
-        echo "Start PowerShell"
-        pwsh
-    fi
+OS_TYPE="$(uname -s)"
 
-    if [ "$1" == "u" ]; then
-        echo "Uninstalling PowerShell on macOS"
-        brew uninstall --cask powershell
-    fi
+case "$OS_TYPE" in
+    Darwin*)
+        # macOS Installation
+        # https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-macos
+        if [ "$ACTION" == "i" ]; then
+            echo "Installing / Upgrading PowerShell on macOS..."
+            brew install --cask powershell
+            echo "PowerShell installed successfully. Launching 'pwsh'..."
+            pwsh
+        elif [ "$ACTION" == "u" ]; then
+            echo "Uninstalling PowerShell on macOS..."
+            brew uninstall --cask powershell
+        fi
+        ;;
 
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    if [ "$1" == "i" ]; then
-        echo "Installing PowerShell on Linux"
-        # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux
-        # Update the list of packages
-        sudo apt update
-        # Install pre-requisite packages.
-        sudo apt install -y wget apt-transport-https
-        # Download the Microsoft repository GPG keys
-        # wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
-        wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb
-        # Register the Microsoft repository GPG keys
-        sudo dpkg -i packages-microsoft-prod.deb
-        # Update the list of products
-        sudo apt update
-        # Enable the "universe" repositories
-        sudo add-apt-repository universe
-        # Install PowerShell
-        sudo apt install -y powershell
-        rm packages-microsoft-prod.deb
-        echo "Starting PowerShell executable pwsh"
-        pwsh
-    fi
+    Linux*)
+        # Linux (Ubuntu/Debian) Installation
+        # https://learn.microsoft.com/powershell/scripting/install/install-ubuntu
+        if [ "$ACTION" == "i" ]; then
+            echo "Installing PowerShell on Linux..."
 
-    if [ "$1" == "u" ]; then
-        echo "Uninstalling PowerShell on Linux"
-        sudo apt remove powershell -y
-    fi
+            # Update package index and install prerequisites
+            sudo apt update
+            sudo apt install -y wget apt-transport-https software-properties-common
 
-fi
+            # Download and register Microsoft repository GPG keys (Ubuntu 24.04 LTS)
+            DEB_PKG="packages-microsoft-prod.deb"
+            wget -q "https://packages.microsoft.com/config/ubuntu/24.04/${DEB_PKG}"
+            sudo dpkg -i "$DEB_PKG"
+            rm -f "$DEB_PKG"
+
+            # Enable universe repository and install PowerShell
+            sudo add-apt-repository universe -y
+            sudo apt update
+            sudo apt install -y powershell
+
+            echo "PowerShell installed successfully. Launching 'pwsh'..."
+            pwsh
+        elif [ "$ACTION" == "u" ]; then
+            echo "Uninstalling PowerShell on Linux..."
+            sudo apt remove -y powershell
+            sudo apt autoremove -y
+        fi
+        ;;
+
+    MINGW* | MSYS* | CYGWIN*)
+        # Windows via Git Bash / MSYS2
+        # https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows
+        if [ "$ACTION" == "i" ]; then
+            echo "Installing PowerShell on Windows 11 via winget..."
+            winget install --id Microsoft.PowerShell --source winget --accept-package-agreements --accept-source-agreements
+            echo "PowerShell installed successfully."
+        elif [ "$ACTION" == "u" ]; then
+            echo "Uninstalling PowerShell on Windows 11 via winget..."
+            winget uninstall --id Microsoft.PowerShell
+        fi
+        ;;
+
+    *)
+        echo "Unsupported Operating System: $OS_TYPE"
+        exit 1
+        ;;
+esac
