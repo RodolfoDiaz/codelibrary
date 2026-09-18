@@ -11,7 +11,7 @@
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand font-monospace fw-bold" asp-controller="Account" asp-action="Login">AuthDemoApp</a>
+            <a class="navbar-brand font-monospace fw-bold" asp-controller="Home" asp-action="Index">AuthDemoApp</a>
             <div class="navbar-collapse collapse">
                 <ul class="navbar-nav ms-auto">
                     @if (User.Identity?.IsAuthenticated ?? false)
