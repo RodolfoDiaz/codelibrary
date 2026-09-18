@@ -23,7 +23,7 @@ public class AuthenticationServiceTests
                 FirstName = "Jane",
                 LastName = "Doe",
                 Email = "jane.doe@example.com",
-                Password = _passwordHasher.HashPassword("SecureP@ss123")
+                PasswordHash = _passwordHasher.HashPassword("SecureP@ss123")
             }
         };
 

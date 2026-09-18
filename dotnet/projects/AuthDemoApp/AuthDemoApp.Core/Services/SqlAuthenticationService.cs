@@ -18,9 +18,9 @@ public class SqlAuthenticationService : IAuthService
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<User?> AuthenticateAsync(string email, string password)
+    public async Task<User?> AuthenticateAsync(string email, string rawPassword)
     {
-        const string query = "SELECT ID, FirstName, LastName, Email, Password FROM [User] WHERE Email = @Email";
+        const string query = "SELECT ID, FirstName, LastName, Email, PasswordHash FROM [User] WHERE Email = @Email";
 
         using var connection = new SqlConnection(_connectionString);
         using var command = new SqlCommand(query, connection);
@@ -32,7 +32,7 @@ public class SqlAuthenticationService : IAuthService
         if (!await reader.ReadAsync()) return null;
 
         string storedHash = reader.GetString(4);
-        if (!_passwordHasher.VerifyPassword(password, storedHash)) return null;
+        if (!_passwordHasher.VerifyPassword(rawPassword, storedHash)) return null;
 
         return new User
         {
@@ -40,7 +40,7 @@ public class SqlAuthenticationService : IAuthService
             FirstName = reader.GetString(1),
             LastName = reader.GetString(2),
             Email = reader.GetString(3),
-            Password = storedHash
+            PasswordHash = storedHash
         };
     }
 
@@ -50,15 +50,15 @@ public class SqlAuthenticationService : IAuthService
 
         string hashedPassword = _passwordHasher.HashPassword(rawPassword);
         const string query = @"
-            INSERT INTO [User] (FirstName, LastName, Email, Password) 
-            VALUES (@FirstName, @LastName, @Email, @Password)";
+            INSERT INTO [User] (FirstName, LastName, Email, PasswordHash) 
+            VALUES (@FirstName, @LastName, @Email, @PasswordHash)";
 
         using var connection = new SqlConnection(_connectionString);
         using var command = new SqlCommand(query, connection);
         command.Parameters.AddWithValue("@FirstName", user.FirstName);
         command.Parameters.AddWithValue("@LastName", user.LastName);
         command.Parameters.AddWithValue("@Email", user.Email);
-        command.Parameters.AddWithValue("@Password", hashedPassword);
+        command.Parameters.AddWithValue("@PasswordHash", hashedPassword);
 
         await connection.OpenAsync();
         int rows = await command.ExecuteNonQueryAsync();

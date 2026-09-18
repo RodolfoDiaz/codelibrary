@@ -11,12 +11,12 @@ public interface IPasswordHasher
 ///
 /// Password hashing uses PBKDF2 with HMAC-SHA256 and a secure random 
 /// salt to ensure passwords are never stored in plain text.
-/// 
+/// https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
 public class PasswordHasher : IPasswordHasher
 {
     private const int SaltSize = 16;
     private const int KeySize = 32;
-    private const int Iterations = 100_000;
+    private const int Iterations = 100_000;  // Modern OWASP/NIST recommendation baseline is 600,000 iterations (PROD). For testing, we can use a lower value like 100,000 iterations.
     private static readonly HashAlgorithmName Algorithm = HashAlgorithmName.SHA256;
 
     public string HashPassword(string password)

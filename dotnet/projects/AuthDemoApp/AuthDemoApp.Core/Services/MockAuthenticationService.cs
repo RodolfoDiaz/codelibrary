@@ -16,12 +16,12 @@ public class MockAuthenticationService : IAuthService
         _users = seedUsers?.ToList() ?? new List<User>();
     }
 
-    public Task<User?> AuthenticateAsync(string email, string password)
+    public Task<User?> AuthenticateAsync(string email, string rawPassword)
     {
         var user = _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         if (user == null) return Task.FromResult<User?>(null);
 
-        bool isValid = _passwordHasher.VerifyPassword(password, user.Password);
+        bool isValid = _passwordHasher.VerifyPassword(rawPassword, user.PasswordHash);
         return Task.FromResult(isValid ? user : null);
     }
 
@@ -31,7 +31,7 @@ public class MockAuthenticationService : IAuthService
             return Task.FromResult(false);
 
         user.Id = _users.Count + 1;
-        user.Password = _passwordHasher.HashPassword(rawPassword);
+        user.PasswordHash = _passwordHasher.HashPassword(rawPassword);
         _users.Add(user);
 
         return Task.FromResult(true);
