@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [ProfitApp]
+    WITH PASSWORD = N'n+VcrjbD6mKkjG8rc_cclscemsFT7_&#$!~<gE!gbc#1htqr', SID = 0x2F58C7BB31BE7048BE682BBC3736CCFB, DEFAULT_DATABASE = [Profit], DEFAULT_LANGUAGE = [us_english];
+

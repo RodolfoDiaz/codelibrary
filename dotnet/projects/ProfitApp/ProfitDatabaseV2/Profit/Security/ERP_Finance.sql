@@ -1,0 +1,3 @@
+﻿CREATE ROLE [ERP_Finance]
+    AUTHORIZATION [dbo];
+

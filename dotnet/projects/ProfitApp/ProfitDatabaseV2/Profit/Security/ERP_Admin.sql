@@ -1,0 +1,3 @@
+﻿CREATE ROLE [ERP_Admin]
+    AUTHORIZATION [dbo];
+

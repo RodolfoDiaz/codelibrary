@@ -1,0 +1,28 @@
+﻿CREATE SCHEMA [CRM]
+    AUTHORIZATION [dbo];
+
+
+GO
+GRANT SELECT
+    ON SCHEMA::[CRM] TO [ERP_ReadOnly];
+
+
+GO
+GRANT INSERT
+    ON SCHEMA::[CRM] TO [ERP_Sales];
+
+
+GO
+GRANT SELECT
+    ON SCHEMA::[CRM] TO [ERP_Sales];
+
+
+GO
+GRANT UPDATE
+    ON SCHEMA::[CRM] TO [ERP_Sales];
+
+
+GO
+GRANT SELECT
+    ON SCHEMA::[CRM] TO [ERP_Finance];
+

@@ -1,0 +1,7 @@
+﻿CREATE ROLE [ERP_ReadOnly]
+    AUTHORIZATION [dbo];
+
+
+GO
+ALTER ROLE [ERP_ReadOnly] ADD MEMBER [ProfitApp];
+
