@@ -160,17 +160,17 @@ EOF
       echo "[SUCCESS] Local images successfully updated."
 
       echo ""
-      # Find dangling images older than 24 hours to match the prune filter
-      dangling_images=$(docker images -f "dangling=true" -f "until=24h" -q)
+      # Find dangling images
+      dangling_images=$(docker images -f "dangling=true" -q)
 
       if [ -n "$dangling_images" ]; then
-        echo "---> Dangling images found (older than 24h):"
+        echo "---> Dangling images found:"
         echo "$dangling_images"
         echo ""
-        echo "---> Pruning dangling images older than 24 hours..."
-        docker image prune --filter "until=24h" -f
+        echo "---> Pruning dangling images..."
+        docker image prune -f
       else
-        echo "[INFO] No dangling or unused images found (older than 24h). Skipping prune."
+        echo "[INFO] No dangling or unused images found. Skipping prune."
       fi
 
     else
