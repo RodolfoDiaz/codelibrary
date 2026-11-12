@@ -1,245 +1,298 @@
-# Linux Debian/Ubuntu basic configuration commands
+# Linux Debian/Ubuntu Basic Configuration Commands
 
 ## Check Linux Version
 
 To [check Linux Version](https://linuxize.com/post/how-to-check-linux-version/) you can use:
 
-Using lsb_release command:
+Using `lsb_release` command (requires the `lsb-release` package):
 
-    lsb_release -a
+```bash
+lsb_release -a
+```
 
-Using /etc/os-release file:
+Using `/etc/os-release` file:
 
-    cat /etc/os-release
+```bash
+cat /etc/os-release
+```
 
-Using uname command:
+Using `uname` command:
 
-    uname -srm
+```bash
+uname -srm
+```
 
 ## Create Users in Linux
 
-To [Create Users in Linux (useradd Command)](https://linuxize.com/post/how-to-create-users-in-linux-using-the-useradd-command/), for example to create a new user named username1 you would run:
+To [Create Users in Linux (`useradd` Command)](https://linuxize.com/post/how-to-create-users-in-linux-using-the-useradd-command/), for example to create a new user named `username1`, run:
 
-    sudo useradd username1
+```bash
+sudo useradd username1
+```
 
-Use the -m (--create-home) option to create the user home directory as /home/username1:
+Use the `-m` (`--create-home`) option to create the user's home directory as `/home/username1`:
 
-    sudo useradd -m username1
+```bash
+sudo useradd -m username1
+```
 
-To be able to log in as the newly created user, you need to set the user password. To do that run the passwd command followed by the username:
+To be able to log in as the newly created user, set the user password by running the `passwd` command followed by the username:
 
-    sudo passwd username1
+```bash
+sudo passwd username1
+```
 
-## Allow AD Domain Users to login through console (SSH)
+## Allow AD Domain Users to Login Through Console (SSH)
 
-Enter the following commands:
+If you are using Quest Authentication Services (Vastool), enter the following commands:
 
-1. Add the user (Domain\username) to the users.allow file.
+1. Add the user (`Domain\username`) to the `users.allow` file:
 
-    ```
-    sudo nano /etc/opt/quest/vas/users.allow
-    ```
+```bash
+sudo nano /etc/opt/quest/vas/users.allow
+```
 
-2. To apply the changes, execute the following:
+2. Apply the changes:
 
-    ```
-    sudo /opt/quest/bin/vastool flush
-    ```
+```bash
+sudo /opt/quest/bin/vastool flush
+```
 
 3. Validate the change:
-    ```
-    /opt/quest/bin/vastool user checkaccess <new_user>
-    ```
 
-**Note:** For Domain Users to be able to login through SSH, make sure the Active Directory user account has "UNIX Attributes" settings configured.
+```bash
+/opt/quest/bin/vastool user checkaccess <new_user>
+```
+
+**Note:** For Domain Users to be able to log in through SSH, make sure the Active Directory user account has "UNIX Attributes" settings configured.
 
 ## Add User to Sudoers in Debian
 
-To [add User to Sudoers in Debian](https://linuxize.com/post/how-to-add-user-to-sudoers-in-debian/) you can use the following command.
+To [add a User to Sudoers in Debian](https://linuxize.com/post/how-to-add-user-to-sudoers-in-debian/), use the following command:
 
-      usermod -aG sudo username1
+```bash
+sudo usermod -aG sudo username1
+```
 
-Make sure you change “username1” with the name of the user that you want to grant access to.
-An alternative way is to add the User to the sudoers File.
+Make sure you replace `username1` with the name of the user you want to grant access to.
 
-     sudo nano /etc/sudoers
+An alternative way is to safely edit the sudoers file using `visudo`:
 
-Edit the file and add a new entry, for example: username1 ALL=(root)NOPASSWD:ALL
+```bash
+sudo visudo
+```
 
-## apt-get command
+Add a new entry, for example:
 
-Debian, mother Linux of distributions like Ubuntu, Linux Mint, elementary OS etc, has a robust packaging system and every component and application is built into a package that is installed on your system. Debian uses a set of tools called Advanced Packaging Tool (APT) to manage this packaging system. Don’t confuse it with the command apt, it’s not the same.
+```text
+username1 ALL=(root) NOPASSWD:ALL
+```
 
-These commands are way too low level and they have so many functionalities which are perhaps never used by an average Linux user. On the other hand, the most commonly used package management commands are scattered across apt-get and apt-cache.
+## APT Package Management
 
-Debian Linux uses dpkg packaging system. A packaging system is a way to provide programs and applications for installation. This way, you don’t have to build a program from the source code which, is not a pretty way to handle packages.
+### `apt-get` Command
 
-## apt command
+Debian—the base distribution for Ubuntu, Linux Mint, elementary OS, and others—uses the `dpkg` packaging system and the Advanced Packaging Tool (APT) suite to manage software packages. Historically, common package management commands were split across low-level utilities like `apt-get` and `apt-cache`.
 
-The apt commands have been introduced to solve the complexity found in apt-get and apt-cache. 
+### `apt` Command
 
-apt consists some of the most widely used features from apt-get and apt-cache leaving aside obscure and seldom used features. It can also manage apt.conf file. With apt, you don’t have to fiddle your way from apt-get commands to apt-cache. apt is more structured and provides you with necessary options needed to manage packages.
+The `apt` command was introduced to streamline common workflows by combining the most frequently used features from `apt-get` and `apt-cache` into a single, more user-friendly command-line utility.
 
-apt is a command-line utility for installing, updating, removing, and otherwise managing deb packages on Ubuntu, Debian, and related Linux distributions. It combines the most frequently used commands from the apt-get and apt-cache tools with different default values of some options.
+```bash
+sudo apt update
+sudo apt upgrade
+```
 
-    sudo apt update
-    sudo apt upgrade
+For example, to install the Nano text editor on Debian or Ubuntu machines, execute:
 
-For example, to install Nano text editor on Debian or Ubuntu machines, execute the following command:
+```bash
+sudo apt install nano
+```
 
-    sudo apt install nano
+For reference, read [how to use the apt command](https://linuxize.com/post/how-to-use-apt-command/).
 
-For reference read [here](https://linuxize.com/post/how-to-use-apt-command/).
+### Difference Between `apt` and `apt-get` Commands
 
-## Difference between apt and apt-get commands
+| `apt` command      | Replaces command       | Function                                             |
+| :----------------- | :--------------------- | :--------------------------------------------------- |
+| `apt install`      | `apt-get install`      | Installs a package                                   |
+| `apt remove`       | `apt-get remove`       | Removes a package                                    |
+| `apt purge`        | `apt-get purge`        | Removes a package along with its configuration files |
+| `apt update`       | `apt-get update`       | Refreshes the repository package index               |
+| `apt upgrade`      | `apt-get upgrade`      | Upgrades all upgradable packages                     |
+| `apt autoremove`   | `apt-get autoremove`   | Removes unused dependency packages                   |
+| `apt full-upgrade` | `apt-get dist-upgrade` | Upgrades packages with automatic dependency handling |
+| `apt search`       | `apt-cache search`     | Searches repositories for a program                  |
+| `apt show`         | `apt-cache show`       | Displays detailed package information                |
 
-Let’s see which apt command replaces which apt-get and apt-cache command options.
+`apt` also includes a few unique commands of its own:
 
-| apt command | the command it replaces | function of the command |
-| ----------- | ----------------------- | ----------------------- |
-| apt install	 | apt-get  | install	Installs a package |
-| apt remove	 | apt-get remove	 | Removes a package |
-| apt purge	     | apt-get purge	 | Removes package with configuration |
-| apt update	 | apt-get update	 | Refreshes repository index |
-| apt upgrade	 | apt-get upgrade	 | Upgrades all upgradable packages |
-| apt autoremove	 | apt-get autoremove	 | Removes unwanted packages |
-| apt full-upgrade	 | apt-get dist-upgrade	 | Upgrades packages with auto-handling of dependencies |
-| apt search	 | apt-cache search	 | Searches for the program |
-| apt show	     | apt-cache show	 | Shows package details |
+| New `apt` command  | Function                                                       |
+| :----------------- | :------------------------------------------------------------- |
+| `apt list`         | Lists packages based on criteria (installed, upgradable, etc.) |
+| `apt edit-sources` | Opens the sources list file for editing                        |
 
-apt has a few commands of its own as well.
+### What is the Difference Between `apt remove` and `apt purge`?
 
-| new apt command	| function of the command | 
-| ----------------- | ----------------------- |
-| apt list	        | Lists packages with criteria (installed, upgradable etc) | 
-| apt edit-sources	| Edits sources list | 
+- **`apt remove`** removes the binaries of a package while leaving residual configuration files intact. If you reinstall the package later, your previous settings will remain.
+- **`apt purge`** completely removes everything related to a package, including its system configuration files. This is useful when you want to reset a broken configuration and start fresh (and can also be run on an already-removed package).
 
-## What is the difference between apt remove and apt purge?
+---
 
-* apt remove just removes the binaries of a package. It leaves residue configuration files.
-* apt purge removes everything related to a package including the configuration files.
+## Network Settings
 
-If you used apt remove to a get rid of a particular software and then install it again, your software will have the same configuration files. Of course, you will be asked to override the existing configuration files when you install it again.
+You can check active network interfaces and configured IP addresses using:
 
-Purge is useful when you have messed up with the configuration of a program. You want to completely erase its traces from the system and perhaps start afresh. And yes, you can use apt purge on an already removed package.
+```bash
+ip addr
+```
 
-------
-
-## Network settings
-
-You can get the IP address that is configured by using the following command:
-
-    ip addr | grep eth0
+_(Note: Modern Debian and Ubuntu systems use Predictable Network Interface Names such as `ens33`, `enp0s3`, or `eno1` instead of `eth0`.)_
 
 ## Set DNS Nameservers
 
-The /etc/resolv.conf is the main configuration file for the DNS name resolver library. The resolver is a set of functions in the C library that provide access to the Internet Domain Name System (DNS).  More reference [here](https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/).
+The `/etc/resolv.conf` file is the configuration file for the DNS name resolver library. For systems utilizing the `resolvconf` utility, you can set permanent nameservers by editing the head file ([more reference](https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/)):
 
-     $ sudo nano /etc/resolvconf/resolv.conf.d/head
+```bash
+sudo nano /etc/resolvconf/resolv.conf.d/head
+```
 
-If your network connection is direct to the Internet you can use public DNS servers:
+_(Note: On modern Ubuntu/Debian installations using `systemd-resolved` or Netplan, DNS settings are typically managed through `/etc/netplan/_.yaml`or`nmcli`rather than editing`/etc/resolv.conf` directly.)\*
 
-    nameserver 8.8.4.4
-    nameserver 8.8.8.8
+If your network connection is direct to the Internet, you can use public DNS servers:
 
-Inside a corporate network you have to use the internal DNS servers (IP address), for example:
+```text
+nameserver 8.8.4.4
+nameserver 8.8.8.8
+```
 
-    nameserver 10.248.2.1
-    nameserver 10.248.2.9
+Inside a corporate network, use your internal DNS server IP addresses, for example:
 
-Save the changes and restart the resolvconf.service or reboot the system.
+```text
+nameserver 10.248.2.1
+nameserver 10.248.2.9
+```
 
-Now when you check the /etc/resolv.conf file, the name server entries should be stored there permanently. 
+Save the changes and restart the service (`sudo systemctl restart resolvconf.service`) or reboot the system. You can verify the active DNS configuration with:
 
-    $ sudo nano /etc/resolv.conf
+```bash
+cat /etc/resolv.conf
+```
 
-## Configure Proxy settings
+## Configure Proxy Settings
 
-In order to access external services, you would normally need to setup a proxy.
+In order to access external services behind a corporate firewall, configure your proxy settings across APT, environment variables, and Git:
 
-    $ sudo tee /etc/apt/apt.conf > /dev/null << EOT
+1. **Configure APT proxy:**
 
-    Acquire::http::proxy "http://proxy.server.com:911";
-    Acquire::https::proxy "https://proxy.server.com:912";
-    EOT
+```bash
+sudo tee /etc/apt/apt.conf > /dev/null << EOT
+Acquire::http::proxy "http://proxy.server.com:911";
+Acquire::https::proxy "https://proxy.server.com:912";
+EOT
+```
 
-    $ sudo tee /etc/environment > /dev/null << EOT
+2. **Configure system-wide environment variables (`/etc/environment`):**
 
-    HTTP_PROXY="http://proxy.server.com:911"
-    http_proxy="http://proxy.server.com:911"
-    HTTPS_PROXY="https://proxy.server.com:912"
-    https_proxy="https://proxy.server.com:912"
-    FTP_PROXY="http://proxy.server.com:911"
-    ftp_proxy="http://proxy.server.com:911"
-    ALL_PROXY="http://proxy.server.com:911"
-    all_proxy="http://proxy.server.com:911"
-    NO_PROXY="localhost,127.0.0.1"
-    no_proxy="localhost,127.0.0.1"
-    NO_PROXY="mycompany.com"
-    no_proxy="mycompany.com"
-    EOT
+```bash
+sudo tee /etc/environment > /dev/null << EOT
+HTTP_PROXY="http://proxy.server.com:911"
+http_proxy="http://proxy.server.com:911"
+HTTPS_PROXY="https://proxy.server.com:912"
+https_proxy="https://proxy.server.com:912"
+FTP_PROXY="http://proxy.server.com:911"
+ftp_proxy="http://proxy.server.com:911"
+ALL_PROXY="http://proxy.server.com:911"
+all_proxy="http://proxy.server.com:911"
+NO_PROXY="localhost,127.0.0.1,mycompany.com"
+no_proxy="localhost,127.0.0.1,mycompany.com"
+EOT
+```
 
-    $ source /etc/environment
-    
-    $ sudo git config --system http.proxy http://proxy.server.com:911
-    $ sudo git config --system https.proxy https://proxy.server.com:912
+3. **Reload the environment file:**
 
-In order for these settings to take effect, you might need to reboot (sudo reboot).
+```bash
+source /etc/environment
+```
 
-## Configure a new volume
+4. **Configure Git proxy (optional):**
 
-Check what are the block storage devices that are attached:
+```bash
+sudo git config --system http.proxy http://proxy.server.com:911
+sudo git config --system https.proxy https://proxy.server.com:912
+```
 
-    lsblk --all
+In order for all system services to pick up the new environment variables, you may need to reboot (`sudo reboot`).
 
-for example, we see a disk named "xvdb".
+## Configure a New Volume
 
-mke2fs is used to create an ext2, ext3, or ext4 filesystem, usually in a disk partition
+Check attached block storage devices:
 
-    sudo mke2fs /dev/xvdb
+```bash
+lsblk --all
+```
 
-Mount the new volume in the Linux machine.  The parameters are: first the mount point and the folder the we want to mount that volume.
+For example, if you see an unformatted disk named `xvdb`, create an `ext4` filesystem on it:
 
-    sudo mount /dev/xvdb /mnt
+```bash
+sudo mkfs.ext4 /dev/xvdb
+```
 
-Change to the folder defined, or create files/folders on the new volume.
+Mount the new volume to a target directory (e.g., `/mnt`):
 
-    cd /mnt
-    ls -la
+```bash
+sudo mount /dev/xvdb /mnt
+```
 
-To unmount the volume to the folder, do the following:
+Navigate to the mount point to verify or create files:
 
-    umount /mnt
+```bash
+cd /mnt
+ls -la
+```
+
+To unmount the volume when finished:
+
+```bash
+sudo umount /mnt
+```
 
 ## Check Disk Space
 
-Linux has a strong built-in utility called ‘df‘. The ‘df‘ command stands for “disk filesystem“, it is used to get a full summary of available and used disk space usage of the file system on Linux system.
+The `df` (disk filesystem) utility provides a summary of available and used disk space. Adding the `-h` flag displays sizes in human-readable format (KB, MB, GB):
 
-Using ‘-h‘ parameter with (df -h) will show the file system disk space statistics in “human readable” format, means it gives the details in bytes, megabytes, and gigabyte.
+```bash
+df -h
+```
 
-    df -h
+Display information for all filesystems (including pseudo and duplicate filesystems):
 
-Display Information of all File System Disk Space Usage
+```bash
+df -a
+```
 
-    df -a
+View disk sizes alongside partition tables using `fdisk`:
 
-fdisk -l shows disk size along with disk partitioning information
+```bash
+sudo fdisk -l
+```
 
-    fdisk -l
+## Check Memory Usage
 
-## Check memory usage
+Use the `free` command with `-h` to display total, used, and available RAM and swap memory in human-readable format:
 
-The free command is the most simple and easy to use command to check memory usage on linux. 
-Here is a quick example, showing output in human-readable format.
+```bash
+free -h
+```
 
-    free -h
+Use `top` to monitor real-time CPU and memory usage per process as well as total system resource consumption:
 
-The top command is generally used to check memory and cpu usage per process. However it also reports total memory usage and can be used to monitor the total RAM usage.
+```bash
+top
+```
 
-    top
+## Other Useful Commands
 
-## Other commands
-
-- ps -l - to show all the running processes
-- dmesg - to list all the kernel messages
-- lsblk - to list all the block devices - here you will see your drives
+- `ps aux` — Display all running processes across the system.
+- `dmesg` — Print kernel ring buffer and hardware/boot messages.
+- `lsblk` — List information about all available block storage devices.
