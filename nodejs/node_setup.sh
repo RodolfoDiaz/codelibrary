@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install Node.js
-# https://nodejs.org/
-# .gitignore template: https://github.com/github/gitignore/blob/master/Node.gitignore
+# Install Node.js - https://nodejs.org/en
+# .gitignore templates for the following:
+# - Node.js / JavaScript apps: https://github.com/github/gitignore/blob/main/Node.gitignore
+# - Visual Studio apps: https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 ACTION="${1:-}"
 
@@ -26,6 +27,8 @@ case "$OS" in
         if [[ "$ACTION" == "i" ]]; then
             brew update
             brew install node
+
+            npm install -g npm@latest
         else
             brew uninstall node
         fi
@@ -36,7 +39,9 @@ case "$OS" in
 
         if [[ "$ACTION" == "i" ]]; then
             if [[ ! -d "$NVM_DIR" ]]; then
-                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.6/install.sh | bash
+                # Install NVM (Node Version Manager) if not already installed
+                # https://github.com/nvm-sh/nvm#installing-and-updating
+                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.41.0/install.sh | bash
             fi
 
             # Load nvm into current script session
@@ -50,8 +55,14 @@ case "$OS" in
 
             echo "Restart your terminal or run 'source ~/.bashrc' (or ~/.zshrc) to use Node.js."
         else
-            rm -rf "$HOME/.npm" "$HOME/.npmrc" "$NVM_DIR"
-            echo "Removed NVM and Node.js. Remember to remove NVM lines from ~/.bashrc or ~/.zshrc."
+            # Uninstall Node.js and NVM
+            # https://github.com/nvm-sh/nvm#uninstalling--removal
+            $ nvm_dir="${NVM_DIR:-~/.nvm}"
+            $ nvm unload
+            $ rm -rf "$nvm_dir"
+
+            rm -rf "$HOME/.npm" "$HOME/.npmrc"
+            echo "Removed NVM and Node.js. Remember to remove NVM lines from ~/.bashrc or ~/.zshrc. (see NVM - Uninstalling / Removal section in the GitHub documentation)."
         fi
         ;;
 
@@ -64,6 +75,8 @@ case "$OS" in
         if [[ "$ACTION" == "i" ]]; then
             # Use OpenJS.NodeJS.LTS for LTS, or OpenJS.NodeJS for Current
             winget.exe install --id OpenJS.NodeJS.LTS -e --source winget --accept-package-agreements --accept-source-agreements
+
+            npm install -g npm@latest
         else
             winget.exe uninstall --id OpenJS.NodeJS.LTS -e
         fi
