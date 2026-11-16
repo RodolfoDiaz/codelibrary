@@ -1,57 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 # Install Node.js
 # https://nodejs.org/
-# Get .gitignore templates at this link: https://github.com/github/gitignore/blob/master/Node.gitignore
+# .gitignore template: https://github.com/github/gitignore/blob/master/Node.gitignore
 
-if [ "$1" == "" ]; then
-    echo "No argurment found.  Use 'i' to install or 'u' to uninstall."
+ACTION="${1:-}"
+
+if [[ "$ACTION" != "i" && "$ACTION" != "u" ]]; then
+    echo "Usage: $0 [i|u]"
+    echo "  i : Install Node.js"
+    echo "  u : Uninstall Node.js"
+    exit 1
 fi
 
-if [ "$(uname)" == "Darwin" ]; then
-    if [ "$1" == "i" ]; then
-        brew update
-        brew install node
-    fi
+OS="$(uname -s)"
 
-    if [ "$1" == "u" ]; then
-        brew uninstall node
-    fi
-
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-
-    if [ "$1" == "i" ]; then
-        # Install Node.js using APT
-        # sudo apt update
-        # curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-        # sudo apt install -y nodejs
-
-        # Install Node Version Manager - https://github.com/nvm-sh/nvm#installing-and-updating
-        if ! [ -d ~/.nvm/ ]; then
-            cd ~
-            wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.6/install.sh | bash
+case "$OS" in
+    Darwin*)
+        if ! command -v brew > /dev/null 2>&1; then
+            echo "Error: Homebrew is not installed. Visit https://brew.sh/"
+            exit 1
         fi
 
-        source ~/.nvm/nvm.sh
+        if [[ "$ACTION" == "i" ]]; then
+            brew update
+            brew install node
+        else
+            brew uninstall node
+        fi
+        ;;
 
-        # Install Node.js and select the latest LTS version as default
-        nvm install --lts --latest-npm
-        nvm set-colors cgYmW
-        nvm use --lts
+    Linux*)
+        export NVM_DIR="$HOME/.nvm"
 
-        # Install Latest version:
-        # nvm install node --reinstall-packages-from=node
-        # Install Stable (LTS) version:
-        # nvm install lts/* --reinstall-packages-from=node
+        if [[ "$ACTION" == "i" ]]; then
+            if [[ ! -d "$NVM_DIR" ]]; then
+                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.6/install.sh | bash
+            fi
 
-        nvm ls
-        #  nvm uninstall <version>
-        # npm update -g
-        echo "RESTART YOUR TERMINAL OR RUN 'source ~/.bashrc' TO USE NODE.JS"
-    fi
+            # Load nvm into current script session
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-    if [ "$1" == "u" ]; then
-        # Uninstall Node.js and remove NVM
-        rm -rf ~/.npm
-        rm -rf ~/.npmrc
-        rm -rf ~/.nvm
-    fi
-fi
+            nvm install --lts --latest-npm
+            nvm alias default 'lts/*'
+            nvm use default
+            nvm set-colors cgYmW
+            nvm ls
+
+            echo "Restart your terminal or run 'source ~/.bashrc' (or ~/.zshrc) to use Node.js."
+        else
+            rm -rf "$HOME/.npm" "$HOME/.npmrc" "$NVM_DIR"
+            echo "Removed NVM and Node.js. Remember to remove NVM lines from ~/.bashrc or ~/.zshrc."
+        fi
+        ;;
+
+    MINGW* | MSYS* | CYGWIN*)
+        if ! command -v winget.exe > /dev/null 2>&1; then
+            echo "Error: winget is not available on this system."
+            exit 1
+        fi
+
+        if [[ "$ACTION" == "i" ]]; then
+            # Use OpenJS.NodeJS.LTS for LTS, or OpenJS.NodeJS for Current
+            winget.exe install --id OpenJS.NodeJS.LTS -e --source winget --accept-package-agreements --accept-source-agreements
+        else
+            winget.exe uninstall --id OpenJS.NodeJS.LTS -e
+        fi
+        ;;
+
+    *)
+        echo "Unsupported operating system: $OS"
+        exit 1
+        ;;
+esac
